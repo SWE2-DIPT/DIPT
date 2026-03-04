@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-public class NewMonoBehaviourScript : EditorWindow
+public class TestPlugin : EditorWindow
 {
 
     [MenuItem("DidIPressIt/Project")]
