@@ -1,6 +1,6 @@
 /*******************************************************
 * Script:      TestPlugin.cs
-* Author(s):   Nicholas Johnson (Add yourselves to this as you!)
+* Author(s):   Nicholas Johnson (Add yourselves to this!)
 * 
 * Description:
 *    A example plugin meant to showcase how to create plugins
@@ -9,6 +9,7 @@
 
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements;
 
 /// <summary>
 /// An example plugin.
@@ -21,13 +22,24 @@ public class TestPlugin : EditorWindow
         GetWindow<TestPlugin>();
     }
 
-    void OnGUI()
+    public void CreateGUI()
     {
-        GUILayout.Label("Controller Debug");
-        GUI.backgroundColor = Color.red;
-        if (GUILayout.Button("Test Button"))
+        var root = rootVisualElement;
+
+        var label = new Label("Controller Debug");
+        label.style.fontSize = 16;
+        label.style.marginBottom = 10;
+        root.Add(label);
+
+        var button = new Button(() =>
         {
             Debug.Log("Clicked!");
-        }
+        });
+        button.text = "Test Button";
+        button.style.backgroundColor = Color.red;
+        button.style.height = 40;
+        button.style.unityTextAlign = TextAnchor.MiddleCenter;
+
+        root.Add(button);
     }
 }
