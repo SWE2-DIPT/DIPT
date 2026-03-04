@@ -1,3 +1,12 @@
+/*******************************************************
+* Script:      TestPlugin.cs
+* Author(s):   Nicholas Johnson
+* 
+* Description:
+*    A example plugin meant to showcase how to create plugins
+*    in Unity.
+*******************************************************/
+
 using UnityEngine;
 using UnityEditor;
 
