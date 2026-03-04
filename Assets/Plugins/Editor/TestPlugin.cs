@@ -4,7 +4,7 @@ using UnityEditor;
 public class TestPlugin : EditorWindow
 {
 
-    [MenuItem("DidIPressIt/Project")]
+    [MenuItem("DIPT/Project")]
     public static void InitProjectSetupTool()
     {
         
