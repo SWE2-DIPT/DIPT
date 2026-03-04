@@ -16,8 +16,18 @@ using UnityEditor;
 public class TestPlugin : EditorWindow
 {
     [MenuItem("Tools/DIPT/Project")]
-    public static void InitProjectSetupTool()
+    public static void ShowWindow()
     {
-        
+        GetWindow<TestPlugin>();
+    }
+
+    void OnGUI()
+    {
+        GUILayout.Label("Controller Debug");
+        GUI.backgroundColor = Color.red;
+        if (GUILayout.Button("Test Button"))
+        {
+            Debug.Log("Clicked!");
+        }
     }
 }
