@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 * Script:      UI.uxml
 * Author(s):   Nicholas Johnson (Add yourselves to this!)
@@ -5,11 +6,9 @@
 * Description:
 *    A UXML file that hosts the contents of the GUI
 -->
-
-<?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <ui:VisualElement style="padding:10px; flex-direction:column;">
+    <ui:VisualElement style="padding:10px; flex-direction:column; flex-grow:1;">
         <ui:Label text="DIPT" name="titleLabel" style="font-size:16px; margin-bottom:10px;"/>
-        <ui:Button text="Test Button" name="testButton" style="height:40px; background-color:red;" />
+        <ui:Button text="Test Button" name="testButton" style="height:40px; background-color:blue;" />
     </ui:VisualElement>
 </ui:UXML>

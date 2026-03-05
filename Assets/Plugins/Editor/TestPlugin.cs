@@ -20,7 +20,9 @@ public class TestPlugin : EditorWindow
     [MenuItem("Tools/DIPT/Project")]
     public static void ShowWindow()
     {
-        GetWindow<TestPlugin>();
+        var window = GetWindow<TestPlugin>();
+        window.titleContent = new GUIContent("DIPT");
+        window.Show();
     }
 
     public void CreateGUI()
@@ -46,19 +48,7 @@ public class TestPlugin : EditorWindow
     /// <param name="path">Path from Project directory to .uxml file</param>
     void LoadUXML(string path)
     {
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            UnityEngine.Debug.LogError("LoadUXML failed: path cannot be null or empty.");
-            return;
-        }
-
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(path);
-
-        if (visualTree == null)
-        {
-            UnityEngine.Debug.LogError($"LoadUXML failed: No VisualTreeAsset found at '{path}'.");
-            return;
-        }
 
         rootVisualElement.Clear();
         visualTree.CloneTree(rootVisualElement);
