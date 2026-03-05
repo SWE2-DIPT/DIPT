@@ -8,7 +8,9 @@
 -->
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" stylesheet="UI.uss">
     <ui:VisualElement style="padding:10px; flex-direction:column; flex-grow:1;">
-        <ui:Label text="DIPT" name="titleLabel" style="font-size:16px; margin-bottom:10px;"/>
-        <ui:Button text="Test Button" name="testButton"/>
+        <ui:Button text="Y" name="Y-button" id="Y"/>
+        <ui:Button text="B" name="B-button" id="B"/>
+        <ui:Button text="A" name="A-button" id="Y"/>
+        <ui:Button text="X" name="X-button" id="Y"/>
     </ui:VisualElement>
 </ui:UXML>

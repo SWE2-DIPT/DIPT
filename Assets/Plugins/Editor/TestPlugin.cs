@@ -42,7 +42,7 @@ public class TestPlugin : EditorWindow
     /// </remarks>
     /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
     /// <param name="ussPath">Path from Project directory to .uss file</param>
-
+    /// 
     void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/UI.uss")
     {
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);

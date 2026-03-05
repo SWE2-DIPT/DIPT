@@ -1,7 +1,22 @@
 Button {
     height:40px; 
-    background-color:blue; 
     border-radius:50%; 
     width:100px; 
     height:100px;
+}
+
+#Y-button {
+    background-color:yellow;
+}
+
+#B-button {
+    background-color:red;
+}
+
+#A-button {
+    background-color:green;
+}
+
+#X-button {
+    background-color:blue;
 }
