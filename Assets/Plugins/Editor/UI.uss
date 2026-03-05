@@ -7,7 +7,7 @@ Button {
 }
 
 #Y-button {
-    background-color:#FFCC00;
+    background-color:#FFCC00; /* This is yellow, the default yellow looks stupid */
 }
 
 #B-button {
