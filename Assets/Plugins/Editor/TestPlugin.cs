@@ -28,31 +28,27 @@ public class TestPlugin : EditorWindow
 
     public void CreateGUI()
     {
-        LoadUXML("Assets/Plugins/Editor/UI.uxml");
+        LoadUXML();
     }
 
     /// <summary>
-    /// Loads the .uxml at <paramref name="uxmlPath"/> by:
-    /// <list type="number">
-    ///     <item>
-    ///         Loading the .uxml file into a VisualTreeAsset (a blueprint for the GUI).
-    ///     </item>
-    ///     <item>
-    ///         Cloning that visual tree and attaching it to the window's rootVisualElement.
-    ///     </item>
-    /// </list>
+    /// Loads the .uxml at <paramref name="uxmlPath"/> and 
+    /// the .uss at <paramref name="ussPath"/> and applies them 
+    /// to the plugin's root visual element.
     /// </summary>
     /// <remarks>
     /// Example usage:
-    /// <c> LoadUXML("Assets/Plugins/Editor/UI.uxml"); </c>
+    /// <c> LoadUXML("Assets/Plugins/Editor/UI.uxml", "Assets/Plugins/Editor/UI.uss"); </c>
     /// </remarks>
     /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
+    /// <param name="ussPath">Path from Project directory to .uss file</param>
+
     void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/UI.uss")
     {
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
         var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ussPath);
+        
         rootVisualElement.Clear();
-
         rootVisualElement.styleSheets.Add(styleSheet);
         visualTree.CloneTree(rootVisualElement);
     }
