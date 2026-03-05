@@ -12,6 +12,7 @@ using UnityEditor;
 using UnityEngine.UIElements;
 using System.Diagnostics;
 
+
 /// <summary>
 /// An example plugin.
 /// </summary>
@@ -49,8 +50,10 @@ public class TestPlugin : EditorWindow
     void LoadUXML(string path)
     {
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(path);
-
+        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Plugins/Editor/UI.uss");
         rootVisualElement.Clear();
+
+        rootVisualElement.styleSheets.Add(styleSheet);
         visualTree.CloneTree(rootVisualElement);
     }
 }

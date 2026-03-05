@@ -6,9 +6,9 @@
 * Description:
 *    A UXML file that hosts the contents of the GUI
 -->
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" stylesheet="UI.uss">
     <ui:VisualElement style="padding:10px; flex-direction:column; flex-grow:1;">
         <ui:Label text="DIPT" name="titleLabel" style="font-size:16px; margin-bottom:10px;"/>
-        <ui:Button text="Test Button" name="testButton" style="height:40px; background-color:blue; border-radius:50%; width:100px; height:100px;"/>
+        <ui:Button text="Test Button" name="testButton"/>
     </ui:VisualElement>
 </ui:UXML>
