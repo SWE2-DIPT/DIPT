@@ -32,7 +32,7 @@ public class TestPlugin : EditorWindow
     }
 
     /// <summary>
-    /// Loads the .uxml at <paramref name="path"/> by:
+    /// Loads the .uxml at <paramref name="uxmlPath"/> by:
     /// <list type="number">
     ///     <item>
     ///         Loading the .uxml file into a VisualTreeAsset (a blueprint for the GUI).
@@ -46,11 +46,11 @@ public class TestPlugin : EditorWindow
     /// Example usage:
     /// <c> LoadUXML("Assets/Plugins/Editor/UI.uxml"); </c>
     /// </remarks>
-    /// <param name="path">Path from Project directory to .uxml file</param>
-    void LoadUXML(string path)
+    /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
+    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/UI.uss")
     {
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(path);
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Plugins/Editor/UI.uss");
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
+        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ussPath);
         rootVisualElement.Clear();
 
         rootVisualElement.styleSheets.Add(styleSheet);
