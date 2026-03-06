@@ -1,29 +1,66 @@
-VisualElement.diamond-group {
-    padding:10px; 
-    flex-direction:column; 
-    flex-grow:1;
+.diamond-group {
+    display: grid;
+    /*grid-template-columns: repeat(3, 1fr);*/
+    padding:0px;
+    border-width: 0px;
+    border-color: #1F1F1F;
+
+
+    position: relative;
+    width: 120px;
+    height: 120px;
+
+    background-color:#252525;
+}
+
+.diamond-group Button {
+    width: 40px;
+    height: 40px;
+
+    padding: 0px;
+    margin: 0px;
+
+    border-width: 0px;
+
+    font-size: 36px;
+    unity-text-align: middle-center;
 }
 
 Button {
     height:40px; 
+    width:40px;
     border-radius:50%; /* This rounds the corners, use equal height + width for circle. */
-    font-size: 94px;
-    width:100px; 
-    height:100px;
+    font-size: 36px;
 }
 
 #Y-button {
     background-color:#FFCC00; /* This is yellow, the default yellow looks stupid */
+    position: absolute;
+    top: 0;
+    left: 40px;
 }
 
 #B-button {
     background-color:red;
+    /*
+    grid-column:3;
+    grid-row:2;
+    */
+    position: absolute;
+    bottom: 0;
+    left: 40px;
 }
 
 #A-button {
     background-color:green;
+    position: absolute;
+    top: 40px;
+    left: 0;
 }
 
 #X-button {
     background-color:blue;
+    position: absolute;
+    top: 40px;
+    right: 0;
 }
