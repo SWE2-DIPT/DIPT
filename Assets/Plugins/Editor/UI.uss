@@ -1,6 +1,12 @@
+VisualElement.diamond-group {
+    padding:10px; 
+    flex-direction:column; 
+    flex-grow:1;
+}
+
 Button {
     height:40px; 
-    border-radius:50%;
+    border-radius:50%; /* This rounds the corners, use equal height + width for circle. */
     font-size: 94px;
     width:100px; 
     height:100px;

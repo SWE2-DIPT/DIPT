@@ -7,7 +7,7 @@
 *    A UXML file that hosts the contents of the GUI
 -->
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" stylesheet="UI.uss">
-    <ui:VisualElement style="padding:10px; flex-direction:column; flex-grow:1;">
+    <ui:VisualElement name="YBAX-buttons" class="diamond-group">
         <ui:Button text="Y" name="Y-button"/>
         <ui:Button text="B" name="B-button"/>
         <ui:Button text="A" name="A-button"/>
