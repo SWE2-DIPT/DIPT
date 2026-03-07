@@ -7,10 +7,12 @@
 *    A UXML file that hosts the contents of the GUI
 -->
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" stylesheet="UI.uss">
-    <ui:VisualElement name="YBAX-buttons" class="diamond-group">
-            <ui:Button text="Y" name="Y-button" class="top"/>
-            <ui:Button text="B" name="B-button" class="right"/>
-            <ui:Button text="A" name="A-button" class="bottom"/>
-            <ui:Button text="X" name="X-button" class="left"/>
+    <ui:VisualElement  class="box-border">
+        <ui:VisualElement name="YBAX-buttons" class="diamond-group">
+                <ui:Button text="Y" name="Y-button" class="top"/>
+                <ui:Button text="B" name="B-button" class="right"/>
+                <ui:Button text="A" name="A-button" class="bottom"/>
+                <ui:Button text="X" name="X-button" class="left"/>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

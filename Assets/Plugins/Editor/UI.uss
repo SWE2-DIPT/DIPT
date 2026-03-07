@@ -1,9 +1,17 @@
-.diamond-group {
-    display: grid;
-    /*grid-template-columns: repeat(3, 1fr);*/
-    padding:0px;
+.box-border {
+    border-width: 5px;
+    border-color: #1F1F1F;
     border-radius: 10px;
 
+    width: 130px;
+    height: 130px;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.diamond-group {
+    padding:0px;
 
     position: relative;
     width: 120px;
@@ -12,22 +20,13 @@
     background-color:#252525;
 }
 
-.diamond-group Button {
-    width: 40px;
-    height: 40px;
-
-    padding: 0px;
-    margin: 0px;
-
-    border-width: 0px;
-
-    font-size: 36px;
-    unity-text-align: middle-center;
-}
-
 Button {
     height:40px; 
     width:40px;
+
+    padding: 0px;
+    margin: 0px;
+    border-width: 0px;
     border-radius:50%; /* This rounds the corners, use equal height + width for circle. */
     font-size: 36px;
 }
@@ -42,10 +41,6 @@ Button {
 
 #B-button {
     background-color:red;
-    /*
-    grid-column:3;
-    grid-row:2;
-    */
     position: absolute;
     margin-bottom:5px;
     bottom: 0;
