@@ -17,13 +17,11 @@ public class TestControllerConnectivity
             if(gamepad is DualShockGamepad)
             {
                 Debug.Log("playstation controller detected: " + gamepad.description);
-                current_gamepad = gamepad;
                 return controller_connected = true;
             }
             if(gamepad is XInputController)
             {
                 Debug.Log("Xbox controller detected: " + gamepad.description);
-                current_gamepad = gamepad;
                 return controller_connected = true;
             }
         }
@@ -35,7 +33,7 @@ public class TestControllerConnectivity
 
     public InputDevice get_current_gamepad() 
     {
-        return current_gamepad; 
+        return Gamepad.current; 
     }
 
 }
