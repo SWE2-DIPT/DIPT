@@ -10,7 +10,6 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UIElements;
-using System.Diagnostics;
 
 
 /// <summary>
@@ -18,17 +17,41 @@ using System.Diagnostics;
 /// </summary>
 public class TestPlugin : EditorWindow
 {
+    private static ControllerManager manager;
+    private static ControllerComponents components;
+
+    private void OnEnable()
+    {
+        manager = new ControllerManager();
+        components = new ControllerComponents();
+    }
+
     [MenuItem("Tools/DIPT/Project")]
     public static void ShowWindow()
     {
-        var window = GetWindow<TestPlugin>();
-        window.titleContent = new GUIContent("DIPT");
-        window.Show();
+        if(manager.is_gamepad_connected())
+        {
+            var window = GetWindow<TestPlugin>();
+            window.titleContent = new GUIContent("DIPT");
+            window.Show();
+        }
+        else
+        {
+            return;
+        }
     }
 
     public void CreateGUI()
     {
         LoadUXML();
+    }
+
+    void Update()
+    {
+        components.GetJoystickActivity();
+        components.GetTriggerActivity();
+        components.GetButtonActivity();
+        Debug.Log("Ticking");
     }
 
     /// <summary>
