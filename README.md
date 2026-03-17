@@ -1,6 +1,6 @@
 # DIPT
 Did I Press That (WIP)
- 
+
 # HOW TO USE:
 To use this plugin, you must:
     1.) Open this project (the DIPT directory) in Unity.
