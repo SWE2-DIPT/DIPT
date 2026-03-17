@@ -81,3 +81,44 @@ Button {
     color:#0078D4;
     position: absolute;
 }
+
+.Bumper-Row {
+    width: 95%;
+    height: 100px;
+    background-color: #1F1F1F;
+    border-radius: 10px;
+    
+    /* Center the row itself on the screen */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+
+    flex-direction: row; /* this aligns the items horizontally */
+    
+    justify-content: space-between; /* this pushes the buttons towards the edges */
+    
+    align-items: center; 
+
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.bumper-button {
+    width: 100px;
+    height: 70px;
+    color: white;
+    background-color: #333;
+    border-radius: 8px;
+}
+
+.trigger-button { 
+    /*THIS CLASS IS EXACTLY THE SAME AS THE bumper-button class
+    I made a seperate class so that later on, we can edit this  to make
+    the button a better shape resembling a trigger */
+    width: 100px;
+    height: 70px;
+    color: white;
+    background-color: #333;
+    border-radius: 8px;
+}
