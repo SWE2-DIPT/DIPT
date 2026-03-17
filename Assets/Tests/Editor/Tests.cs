@@ -1,12 +1,14 @@
 using NUnit.Framework;
+using System;
 using System.Reflection;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.UIElements;
 
-public class Tests
+public class Test
 {
     private TestPlugin window;
     private DummyController DummyController;
@@ -43,14 +45,15 @@ public class Tests
 
         Assert.IsTrue(result);
     }
-    
+
     [Test]
     public void ControllerJoystickTest()
     {
-        var dummy = new DummyController(true);
+        var dummy = new DummyController(Vector2.up, Vector2.down);
+        controller.current_gamepad = dummy;
 
         
+        
+
     }
-
-
 }

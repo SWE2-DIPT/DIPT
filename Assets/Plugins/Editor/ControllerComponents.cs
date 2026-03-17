@@ -31,6 +31,7 @@ public class ControllerComponents
 
         Debug.Log($"Left Joystick: X:{LeftJoystick.x} | Y:{LeftJoystick.y}");
         Debug.Log($"Right Joystick: X:{RightJoystick.x} | Y:{RightJoystick.y}");
+
     }
 
     public void GetTriggerActivity()
