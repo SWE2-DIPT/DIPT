@@ -1,0 +1,19 @@
+name: Unit Tests
+
+on:
+  push:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      
+      - uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          unityVersion: 6000.3.9f1
+          projectPath: .
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
