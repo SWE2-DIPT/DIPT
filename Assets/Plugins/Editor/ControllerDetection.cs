@@ -16,22 +16,37 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class ControllerDectection : EditorWindow
 {
+    public string controllerType = "";
+
     [MenuItem("Tools/DIPT/ControllerDetection")]
     public static void ShowWindow()
     {
         GetWindow(typeof(ControllerDectection));
     }
     
+    public void FindControllerType()
+    {
+        var gamepad = Gamepad.current;
+        if (gamepad == null)
+        {
+            controllerType = "No Gamepads Detected";
+            return;
+        }
+        controllerType = gamepad.layout;
+    }
+
     void OnGUI()
     {
         var gamepad = Gamepad.current;
         if (gamepad == null)
         {
-            GUILayout.Label("No Gamepads Detected", EditorStyles.boldLabel);
+            FindControllerType();
+            GUILayout.Label(controllerType, EditorStyles.boldLabel);
             return;
         }
 
-        GUILayout.Label(gamepad.layout, EditorStyles.boldLabel);
+        FindControllerType();
+        GUILayout.Label(controllerType, EditorStyles.boldLabel);
         foreach (var control in gamepad.allControls)
         {
             GUILayout.Label(control.displayName);

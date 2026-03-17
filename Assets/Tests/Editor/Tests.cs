@@ -9,6 +9,7 @@ using UnityEngine.UIElements;
 public class Tests
 {
     private TestPlugin window;
+    private ControllerDectection controllerDectection;
     private DummyController DummyController;
     private ControllerManager controller;
     
@@ -16,13 +17,21 @@ public class Tests
     public void Setup()
     {
         window = EditorWindow.GetWindow<TestPlugin>();
+        controllerDectection = EditorWindow.GetWindow<ControllerDectection>();
         controller = new ControllerManager();
     }
 
     [TearDown]
     public void TearDown()
     {
-     
+        if (controllerDectection != null)
+        {
+            controllerDectection.Close();
+        }
+        if (window != null)
+        {
+            window.Close();
+        }
     }
 
     [Test]
@@ -62,6 +71,31 @@ public class Tests
     {
         window = null;
         Assert.IsNull(window, "Window should be null.");
+    }
+
+    // Test for no Controller plugged in
+    [Test]
+    public void NoController()
+    {
+        foreach (var device in InputSystem.devices)
+        {
+            if (device is Gamepad)
+            {
+                InputSystem.RemoveDevice(device);
+            }
+        }
+        controllerDectection.FindControllerType();
+        Assert.AreEqual("No Gamepads Detected", controllerDectection.controllerType);
+    }
+
+    // Test for a Controller plugged in
+    [Test]
+    public void AController()
+    {
+        Gamepad virtualDevice = InputSystem.AddDevice<Gamepad>();
+        controllerDectection.FindControllerType();
+        Assert.AreEqual("Gamepad", controllerDectection.controllerType);
+        InputSystem.RemoveDevice(virtualDevice);
     }
 
     // Some more things we should test.
