@@ -5,7 +5,7 @@ Did I Press That (WIP)
 To use this plugin, you must:
     1.) Open this project (the DIPT directory) in Unity.
     2.) Go to Tools > DIPT > TestPlugin from the menu bar (the bar with File, Edit, Assets, etc).
- 
+
 # IMPORTANT
 For Unity to recognize this file as a plugin, it must be in a folder named "Editor".
 
