@@ -31,8 +31,6 @@ public class Tests
         Assert.IsNotNull(window, "TestPlugin window should be created.");
     }
 
-<<<<<<< Updated upstream
-
     [Test]
     public void ControllerCheckTrue()
     {
@@ -53,8 +51,6 @@ public class Tests
         
     }
 
-
-=======
     [Test]
     public void WindowClosing()
     {
@@ -71,6 +67,5 @@ public class Tests
     // Some more things we should test.
     // 1.) Test that UI elements are created
     //     - Load in all the buttons
-    // 2.) 
->>>>>>> Stashed changes
+    // 2.)
 }
