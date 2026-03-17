@@ -15,30 +15,27 @@ using UnityEngine.UIElements;
 /// <summary>
 /// An example plugin.
 /// </summary>
-public class TestPlugin : EditorWindow
+public class ControllerGUI : EditorWindow
 {
     private static ControllerManager manager;
     private static ControllerComponents components;
+
+    VisualElement BF_Button, LF_Button, RF_Button, UF_Button;
 
     private void OnEnable()
     {
         manager = new ControllerManager();
         components = new ControllerComponents();
+
+        
     }
 
     [MenuItem("Tools/DIPT/Project")]
     public static void ShowWindow()
     {
-        if(manager.is_gamepad_connected())
-        {
-            var window = GetWindow<TestPlugin>();
-            window.titleContent = new GUIContent("DIPT");
-            window.Show();
-        }
-        else
-        {
-            return;
-        }
+        var window = GetWindow<ControllerGUI>();
+        window.titleContent = new GUIContent("DIPT");
+        window.Show();
     }
 
     public void CreateGUI()
@@ -51,6 +48,9 @@ public class TestPlugin : EditorWindow
         components.GetJoystickActivity();
         components.GetTriggerActivity();
         components.GetButtonActivity();
+
+        UpdateGui();
+
         Debug.Log("Ticking");
     }
 
@@ -74,5 +74,36 @@ public class TestPlugin : EditorWindow
         rootVisualElement.Clear();
         rootVisualElement.styleSheets.Add(styleSheet);
         visualTree.CloneTree(rootVisualElement);
+
+        BF_Button = rootVisualElement.Q<VisualElement>("A-button");
+        UF_Button = rootVisualElement.Q<VisualElement>("Y-button");
+        RF_Button = rootVisualElement.Q<VisualElement>("B-button");
+        LF_Button = rootVisualElement.Q<VisualElement>("X-button");
+    }
+
+    private void UpdateGui()
+    {
+        if (components.get_bottom_face_button())
+            BF_Button.AddToClassList("Pressed");
+        else
+            BF_Button.RemoveFromClassList("Pressed");
+
+        if (components.get_top_face_button())
+            UF_Button.AddToClassList("Pressed");
+        else
+            UF_Button.RemoveFromClassList("Pressed");
+
+        if (components.get_right_face_button())
+            RF_Button.AddToClassList("Pressed");
+        else
+            RF_Button.RemoveFromClassList("Pressed");
+
+        if (components.get_left_face_button())
+            LF_Button.AddToClassList("Pressed");
+        else
+            LF_Button.RemoveFromClassList("Pressed");
+
+
+
     }
 }

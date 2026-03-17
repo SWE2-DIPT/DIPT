@@ -8,23 +8,24 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.UIElements;
 
-public class Test
+public class Test 
 {
-    private TestPlugin window;
+    private ControllerGUI window;
     private DummyController DummyController;
     private ControllerManager controller;
+    private ControllerComponents components;
     
     [SetUp]
     public void Setup()
     {
-        window = EditorWindow.GetWindow<TestPlugin>();
+        window = EditorWindow.GetWindow<ControllerGUI>();
         controller = new ControllerManager();
     }
 
     [TearDown]
     public void TearDown()
     {
-     
+       
     }
 
     [Test]
@@ -49,11 +50,13 @@ public class Test
     [Test]
     public void ControllerJoystickTest()
     {
-        var dummy = new DummyController(Vector2.up, Vector2.down);
+        var dummy = new DummyController(new Vector2(-0.5f, 0.8f), new Vector2(0.5f, -0.8f));
         controller.current_gamepad = dummy;
 
-        
-        
+        Vector2 left_stick = components.get_left_stick();
+        Vector2 right_stick = components.get_right_stick();
 
+        Assert.AreEqual(new Vector2(-0.5f, 0.8f), left_stick);
+        Assert.AreEqual(new Vector2(0.5f, -0.8f), right_stick);
     }
 }

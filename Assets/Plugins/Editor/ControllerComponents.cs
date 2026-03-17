@@ -1,13 +1,23 @@
+using Codice.Client.Common.GameUI;
 using System.Security.Policy;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.DualShock;
 
+enum buttons
+{
+    BottomFace,
+    TopFace,
+    RightFace,
+    LeftFace,
+    RightBumper,
+    LeftBumper
+};
 public class ControllerComponents
 {
-    
     private Vector2 RightJoystick, LeftJoystick;
     private float RightTrigger, LeftTrigger;
+    private bool current_button_active;
     private bool BottomFaceButton, LeftFaceButton, RightFaceButton, TopFaceButton;
     private bool RightBumper, LeftBumper;
     private ControllerManager manager;
@@ -65,15 +75,27 @@ public class ControllerComponents
         LeftFaceButton = gamepad.xButton.IsPressed();
         RightFaceButton = gamepad.bButton.IsPressed();
         TopFaceButton = gamepad.yButton.IsPressed();
-        
+
         if (BottomFaceButton)
-            Debug.Log("Bottom face button is pressed");
+        {
+            current_button_active = BottomFaceButton;
+            
+        }
         else if (LeftFaceButton)
+        {
+            current_button_active = LeftFaceButton;
             Debug.Log("Left face button is pressed");
+        }
         else if (RightFaceButton)
+        {
+            current_button_active = RightFaceButton;
             Debug.Log("Right face button is pressed");
+        }
         else if (TopFaceButton)
+        {
+            current_button_active = TopFaceButton;
             Debug.Log("Top face button is pressed");
+        }
         else
             Debug.Log("no buttons have been pressed");
 
@@ -81,9 +103,43 @@ public class ControllerComponents
         LeftBumper = gamepad.leftShoulder.IsPressed();
 
         if (RightBumper)
+        {
+            current_button_active = RightBumper;
             Debug.Log("Right Bumper button is pressed");
+        }
         if (LeftBumper)
             Debug.Log("Left Bumper button is pressed");
 
     }
+
+    public Vector2 get_right_stick()
+    {
+        return RightJoystick;
+    }
+    public Vector2 get_left_stick()
+    {
+        return LeftJoystick;
+    }
+
+    public bool get_bottom_face_button()
+    {
+        return BottomFaceButton;
+    }
+    
+    public bool get_top_face_button()
+    {
+        return TopFaceButton;
+    }
+
+    public bool get_right_face_button()
+    {
+        return RightFaceButton;
+    }
+
+    public bool get_left_face_button()
+    {
+        return LeftFaceButton;
+    }
+
+  
 }

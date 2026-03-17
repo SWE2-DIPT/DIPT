@@ -38,6 +38,19 @@ Button {
     background-color:#1F1F1F;
 }
 
+Button.Pressed {
+    height:33%; 
+    width:33%;
+
+    padding: 0px;
+    margin: 0px;
+    border-width: 0px;
+    border-radius:50%; /* This rounds the corners, use equal height + width for circle. */
+    font-size: 36px;
+
+    background-color: white;
+}
+
 .top {
     margin-top: 5px;
     top: 0%;
@@ -82,6 +95,7 @@ Button {
     position: absolute;
 }
 
+<<<<<<< Updated upstream
 .Bumper-Row {
     width: 95%;
     height: 100px;
@@ -122,3 +136,5 @@ Button {
     background-color: #333;
     border-radius: 8px;
 }
+=======
+>>>>>>> Stashed changes
