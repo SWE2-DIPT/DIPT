@@ -21,6 +21,8 @@ public class ControllerGUI : EditorWindow
     private static ControllerComponents components;
 
     VisualElement BF_Button, LF_Button, RF_Button, UF_Button;
+    VisualElement R_Bumper, L_Bumper;
+    VisualElement R_Trigger, L_Trigger;
 
     private void OnEnable()
     {
@@ -48,8 +50,11 @@ public class ControllerGUI : EditorWindow
         components.GetJoystickActivity();
         components.GetTriggerActivity();
         components.GetButtonActivity();
+        components.GetDpadActivity();
 
-        UpdateGui();
+        UpdateGuiButtons();
+        UpdateGuiAnalogs();
+        
 
         Debug.Log("Ticking");
     }
@@ -79,31 +84,59 @@ public class ControllerGUI : EditorWindow
         UF_Button = rootVisualElement.Q<VisualElement>("Y-button");
         RF_Button = rootVisualElement.Q<VisualElement>("B-button");
         LF_Button = rootVisualElement.Q<VisualElement>("X-button");
+
+        R_Bumper = rootVisualElement.Q<VisualElement>("RB-button");
+        L_Bumper = rootVisualElement.Q<VisualElement>("LB-button");
+
+        L_Trigger = rootVisualElement.Q<VisualElement>("LT-button");
+        R_Trigger = rootVisualElement.Q<VisualElement>("RT-button");
     }
 
-    private void UpdateGui()
+    private void UpdateGuiButtons()
     {
         if (components.get_bottom_face_button())
-            BF_Button.AddToClassList("Pressed");
+            BF_Button.AddToClassList("ButtonPressed");
         else
-            BF_Button.RemoveFromClassList("Pressed");
+            BF_Button.RemoveFromClassList("ButtonPressed");
 
         if (components.get_top_face_button())
-            UF_Button.AddToClassList("Pressed");
+            UF_Button.AddToClassList("ButtonPressed");
         else
-            UF_Button.RemoveFromClassList("Pressed");
+            UF_Button.RemoveFromClassList("ButtonPressed");
 
         if (components.get_right_face_button())
-            RF_Button.AddToClassList("Pressed");
+            RF_Button.AddToClassList("ButtonPressed");
         else
-            RF_Button.RemoveFromClassList("Pressed");
+            RF_Button.RemoveFromClassList("ButtonPressed");
 
         if (components.get_left_face_button())
-            LF_Button.AddToClassList("Pressed");
+            LF_Button.AddToClassList("ButtonPressed");
         else
-            LF_Button.RemoveFromClassList("Pressed");
+            LF_Button.RemoveFromClassList("ButtonPressed");
+
+        if (components.get_right_bumper())
+            R_Bumper.AddToClassList("bumper-button-pressed");
+        else
+            R_Bumper.RemoveFromClassList("bumper-button-pressed");
 
 
+        if (components.get_left_bumper())
+            L_Bumper.AddToClassList("bumper-button-pressed");
+        else
+            L_Bumper.RemoveFromClassList("bumper-button-pressed");
 
+    }
+
+    public void UpdateGuiAnalogs()
+    {
+        if (components.get_left_trigger() != 0.0f)
+            L_Trigger.AddToClassList("trigger-button-triggered");
+        else
+            L_Trigger.RemoveFromClassList("trigger-button-triggered");
+
+        if (components.get_right_trigger() != 0.0f)
+            R_Trigger.AddToClassList("trigger-button-triggered");
+        else
+            R_Trigger.RemoveFromClassList("trigger-button-triggered");
     }
 }

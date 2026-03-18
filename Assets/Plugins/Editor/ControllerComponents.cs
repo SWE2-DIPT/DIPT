@@ -18,23 +18,28 @@ public class ControllerComponents
     private Vector2 RightJoystick, LeftJoystick;
     private float RightTrigger, LeftTrigger;
     private bool current_button_active;
+    private bool DpadUp, DpadDown, DpadLeft, DpadRight;
     private bool BottomFaceButton, LeftFaceButton, RightFaceButton, TopFaceButton;
     private bool RightBumper, LeftBumper;
+    
     private ControllerManager manager;
+    private Gamepad gamepad;
     
     public ControllerComponents()
     {
         manager = new ControllerManager();
-    }
 
-    public void GetJoystickActivity()
-    {
-        var gamepad = Gamepad.current;
+        gamepad = Gamepad.current;
+
         if (gamepad == null)
         {
             Debug.Log("gamepad disconnected");
             return;
         }
+    }
+
+    public void GetJoystickActivity()
+    { 
 
         LeftJoystick = gamepad.leftStick.ReadValue();
         RightJoystick = gamepad.rightStick.ReadValue();
@@ -46,14 +51,7 @@ public class ControllerComponents
 
     public void GetTriggerActivity()
     {
-        var gamepad = Gamepad.current;
-
-        if (gamepad == null)
-        {
-            Debug.Log("gamepad disconnected");
-            return;
-        }
-
+      
         RightTrigger = gamepad.rightTrigger.ReadValue();
         LeftTrigger = gamepad.leftTrigger.ReadValue();
 
@@ -63,14 +61,7 @@ public class ControllerComponents
 
     public void GetButtonActivity()
     {
-        var gamepad = Gamepad.current;
-
-        if (gamepad == null)
-        {
-            Debug.Log("gamepad disconnected");
-            return;
-        }
-
+        
         BottomFaceButton = gamepad.aButton.IsPressed();
         LeftFaceButton = gamepad.xButton.IsPressed();
         RightFaceButton = gamepad.bButton.IsPressed();
@@ -78,17 +69,16 @@ public class ControllerComponents
 
         if (BottomFaceButton)
         {
-            current_button_active = BottomFaceButton;
-            
+            Debug.Log("bottom face button is pressed");
         }
         else if (LeftFaceButton)
         {
-            current_button_active = LeftFaceButton;
+          
             Debug.Log("Left face button is pressed");
         }
         else if (RightFaceButton)
         {
-            current_button_active = RightFaceButton;
+            
             Debug.Log("Right face button is pressed");
         }
         else if (TopFaceButton)
@@ -102,14 +92,22 @@ public class ControllerComponents
         RightBumper = gamepad.rightShoulder.IsPressed();
         LeftBumper = gamepad.leftShoulder.IsPressed();
 
-        if (RightBumper)
-        {
-            current_button_active = RightBumper;
-            Debug.Log("Right Bumper button is pressed");
-        }
-        if (LeftBumper)
-            Debug.Log("Left Bumper button is pressed");
+        if (RightBumper) Debug.Log("Right Bumper button is pressed");
+        if (LeftBumper)  Debug.Log("Left Bumper button is pressed");
+    }
 
+    public void GetDpadActivity()
+    {
+        DpadLeft = gamepad.dpad.left.IsPressed();
+        DpadRight = gamepad.dpad.right.IsPressed();
+        DpadUp = gamepad.dpad.up.IsPressed();
+        DpadDown = gamepad.dpad.down.IsPressed();
+
+        if (DpadLeft) Debug.Log("Dpad Left");
+        if (DpadRight) Debug.Log("Dpad right");
+        if (DpadUp) Debug.Log("Dpad up");
+        if (DpadDown) Debug.Log("Dpad down");
+            
     }
 
     public Vector2 get_right_stick()
@@ -119,6 +117,16 @@ public class ControllerComponents
     public Vector2 get_left_stick()
     {
         return LeftJoystick;
+    }
+
+    public float get_right_trigger()
+    {
+        return RightTrigger;
+    }
+
+    public float get_left_trigger()
+    {
+        return LeftTrigger;
     }
 
     public bool get_bottom_face_button()
@@ -141,5 +149,14 @@ public class ControllerComponents
         return LeftFaceButton;
     }
 
+    public bool get_right_bumper()
+    {
+        return RightBumper;
+    }
+
+    public bool get_left_bumper()
+    {
+        return LeftBumper;
+    }
   
 }

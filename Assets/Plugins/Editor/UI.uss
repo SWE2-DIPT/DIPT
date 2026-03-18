@@ -38,7 +38,7 @@ Button {
     background-color:#1F1F1F;
 }
 
-Button.Pressed {
+Button.ButtonPressed {
     height:33%; 
     width:33%;
 
@@ -95,7 +95,6 @@ Button.Pressed {
     position: absolute;
 }
 
-<<<<<<< Updated upstream
 .Bumper-Row {
     width: 95%;
     height: 100px;
@@ -126,6 +125,14 @@ Button.Pressed {
     border-radius: 8px;
 }
 
+.bumper-button-pressed {
+    width: 100px;
+    height: 70px;
+    color: #333;
+    background-color: white;
+    border-radius: 8px;
+}
+
 .trigger-button { 
     /*THIS CLASS IS EXACTLY THE SAME AS THE bumper-button class
     I made a seperate class so that later on, we can edit this  to make
@@ -136,5 +143,11 @@ Button.Pressed {
     background-color: #333;
     border-radius: 8px;
 }
-=======
->>>>>>> Stashed changes
+
+.trigger-button-triggered {
+    width: 100px;
+    height: 70px;
+    color: #333;
+    background-color: white;
+    border-radius: 8px;
+}
