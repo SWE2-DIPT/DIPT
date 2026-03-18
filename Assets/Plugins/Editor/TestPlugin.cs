@@ -26,19 +26,12 @@ public class TestPlugin : EditorWindow
         components = new ControllerComponents();
     }
 
-    [MenuItem("Tools/DIPT/Project")]
+    [MenuItem("Tools/DIPT/InputVisualizer")]
     public static void ShowWindow()
     {
-        if(manager.is_gamepad_connected())
-        {
-            var window = GetWindow<TestPlugin>();
-            window.titleContent = new GUIContent("DIPT");
-            window.Show();
-        }
-        else
-        {
-            return;
-        }
+        var window = GetWindow<TestPlugin>();
+        window.titleContent = new GUIContent("DIPT");
+        window.Show();
     }
 
     public void CreateGUI()
