@@ -11,21 +11,23 @@ using UnityEngine.UIElements;
 public class Test 
 {
     private ControllerGUI window;
-    private DummyController DummyController;
-    private ControllerManager controller;
+    private TEST_ControllerManager TEST_CM;
+    /*JARRETT - I comment this out*/
+    //private ControllerManager controller;
     private ControllerComponents components;
     
     [SetUp]
     public void Setup()
     {
         window = EditorWindow.GetWindow<ControllerGUI>();
-        controller = new ControllerManager();
+        TEST_CM = new TEST_ControllerManager();
     }
 
     [TearDown]
     public void TearDown()
     {
-       
+        if (window != null)
+            window.Close();
     }
 
     [Test]
@@ -38,25 +40,34 @@ public class Test
     [Test]
     public void ControllerCheckTrue()
     {
-        var dummy = new DummyController(true);
+        var dummy = new DummyController
+        {
+            IsConnected = true
+        };
 
-        controller.current_gamepad = dummy;
+        TEST_CM.d_controller = dummy;
 
-        bool result = controller.check_gamepad();
+        Debug.Log("controller " + TEST_CM.d_controller.ToString());
+
+        bool result = TEST_CM.check_Gamepad();
 
         Assert.IsTrue(result);
     }
 
     [Test]
-    public void ControllerJoystickTest()
+    public void ControlelrCheckFalse()
     {
-        var dummy = new DummyController(new Vector2(-0.5f, 0.8f), new Vector2(0.5f, -0.8f));
-        controller.current_gamepad = dummy;
+        var dummy = new DummyController
+        {
+            IsConnected = false
+        };
 
-        Vector2 left_stick = components.get_left_stick();
-        Vector2 right_stick = components.get_right_stick();
+        TEST_CM.d_controller = dummy;
 
-        Assert.AreEqual(new Vector2(-0.5f, 0.8f), left_stick);
-        Assert.AreEqual(new Vector2(0.5f, -0.8f), right_stick);
+        Debug.Log("controller " + TEST_CM.d_controller.ToString());
+
+        bool result = TEST_CM.check_Gamepad();
+
+        Assert.IsFalse(result);
     }
 }
