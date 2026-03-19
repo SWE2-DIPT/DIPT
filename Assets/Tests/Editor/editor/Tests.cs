@@ -79,7 +79,7 @@ public class Tests
     public void WindowClosing()
     {
         window.Close();
-        Assert.IsNull(window, "Window should be null.");
+        Assert.IsTrue(window == null, "Window should be null.");
     }
 
     [Test]
