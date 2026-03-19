@@ -1,24 +1,15 @@
 # DIPT
 Did I Press That (WIP)
+A Free Controller Debugging Tool For Unity
 
-# HOW TO USE:
-To use this plugin, you must:
-    1.) Open this project (the DIPT directory) in Unity.
-    2.) Go to Tools > DIPT > TestPlugin from the menu bar (the bar with File, Edit, Assets, etc).
+# HOW TO INSTALL:
+1. Download the ZIP file from GitHub.
+2. Extract the contents to preferred file location.
+3. In the Unity Hub, add project from disk and select the extracted folder.
+4. Wait for Unity to import the project and open the project.
+5. Navigate to the toolbar at the top of the Unity Editor Window and hover over Tools then DIPT then you can open our 3 tools: ControllerDectection, InputVisualizer, LogPlugin
 
-# IMPORTANT
-For Unity to recognize this file as a plugin, it must be in a folder named "Editor".
-
-Below is an XML comment, it will display in VS & VSCode when hovering over
-a field/method. I will use these whenever creating a method that will be called
-in another file.
-
-/// <summary>
-/// When you put this right before a class, method, or variable, it will be displayed
-/// when you hover over it in VS or VSCode. In this case, hovering over example would
-/// show this text.
-/// </summary>
-public class Example
-{
-...
-}
+# HOW TO TEST:
+1. Open the project in Unity after downloading
+2. Navigate to the toolbar at the top of the Unity Editor Window and hover over Window then General then click Test Runner to open the window
+3. The tests can be revealed with the dropdown and then can be ran with the buttons at the bottom of the window.
