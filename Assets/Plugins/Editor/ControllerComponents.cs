@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 enum buttons
 {
@@ -58,18 +59,6 @@ public class ControllerComponents
         }
     }
 
-    public void GetJoystickActivity()
-    { 
-
-        if (Vector2.Distance(rightJoystick, prevRightJoystick) > joystickThreshold)
-        {
-            ControllerDebugLogger.LogMovement(
-                $"Right Joystick moved to X:{rightJoystick.x:F2} | Y:{rightJoystick.y:F2}"
-            );
-            prevRightJoystick = rightJoystick;
-        }
-    }
-
     public void GetTriggerActivity()
     {
         var gamepad = Gamepad.current;
@@ -113,6 +102,8 @@ public class ControllerComponents
         CheckButtonState("Top Face Button", topFaceButton, ref prevTopFaceButton);
         CheckButtonState("Right Bumper", rightBumper, ref prevRightBumper);
         CheckButtonState("Left Bumper", leftBumper, ref prevLeftBumper);
+
+        
     }
 
     private void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
@@ -128,4 +119,55 @@ public class ControllerComponents
 
         previousState = currentState;
     }
+
+    public void GetComponentState(bool buttonPressed, VisualElement element, string state)
+    {
+        if(buttonPressed)
+        {
+            element.AddToClassList(state);
+        }
+        else
+        {
+            element.RemoveFromClassList(state);
+        }
+    }
+
+    public float GetRightTrigger()
+    {
+        return rightTrigger;
+    }
+
+    public float GetLeftTrigger()
+    {
+        return leftTrigger;
+    }
+
+    public bool GetBottomFaceButton()
+    {
+        return bottomFaceButton;
+    }
+    public bool GetUpFaceButton()
+    {
+        return topFaceButton;
+    }
+    public bool GetRightFaceButton()
+    {
+        return rightFaceButton;
+    }
+    public bool GetLeftFaceButton()
+    {
+        return leftFaceButton;
+    }
+    
+    public bool GetRightBumper()
+    {
+        return rightBumper;
+    }
+
+    public bool GetLeftBumper()
+    {
+        return leftBumper;
+    }
+
+    
 }
