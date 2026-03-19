@@ -7,29 +7,36 @@
 *    in Unity.
 *******************************************************/
 
-using UnityEngine;
+using Codice.Client.BaseCommands;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 
 /// <summary>
 /// An example plugin.
 /// </summary>
-public class TestPlugin : EditorWindow
+public class ControllerGUI : EditorWindow
 {
     private static ControllerManager manager;
     private static ControllerComponents components;
+
+    VisualElement BF_Button, LF_Button, RF_Button, UF_Button;
+    VisualElement R_Bumper, L_Bumper;
+    VisualElement R_Trigger, L_Trigger;
 
     private void OnEnable()
     {
         manager = new ControllerManager();
         components = new ControllerComponents();
+
+        
     }
 
     [MenuItem("Tools/DIPT/InputVisualizer")]
     public static void ShowWindow()
     {
-        var window = GetWindow<TestPlugin>();
+        var window = GetWindow<ControllerGUI>();
         window.titleContent = new GUIContent("DIPT");
         window.Show();
     }
@@ -44,6 +51,12 @@ public class TestPlugin : EditorWindow
         components.GetJoystickActivity();
         components.GetTriggerActivity();
         components.GetButtonActivity();
+
+        UpdateGuiButtons();
+        UpdateGuiAnalogs();
+
+
+
         Debug.Log("Ticking");
     }
 
@@ -67,5 +80,34 @@ public class TestPlugin : EditorWindow
         rootVisualElement.Clear();
         rootVisualElement.styleSheets.Add(styleSheet);
         visualTree.CloneTree(rootVisualElement);
+
+        BF_Button = rootVisualElement.Q<VisualElement>("A-button");
+        UF_Button = rootVisualElement.Q<VisualElement>("Y-button");
+        RF_Button = rootVisualElement.Q<VisualElement>("B-button");
+        LF_Button = rootVisualElement.Q<VisualElement>("X-button");
+
+        R_Bumper = rootVisualElement.Q<VisualElement>("RB-button");
+        L_Bumper = rootVisualElement.Q<VisualElement>("LB-button");
+
+        L_Trigger = rootVisualElement.Q<VisualElement>("LT-button");
+        R_Trigger = rootVisualElement.Q<VisualElement>("RT-button");
+    }
+
+    private void UpdateGuiButtons()
+    {
+        components.GetComponentState(components.GetBottomFaceButton(),BF_Button, "ButtonPressed");
+        components.GetComponentState(components.GetUpFaceButton(),UF_Button, "ButtonPressed");
+        components.GetComponentState(components.GetRightFaceButton(),RF_Button, "ButtonPressed");
+        components.GetComponentState(components.GetLeftFaceButton(),LF_Button, "ButtonPressed");
+
+        components.GetComponentState(components.GetLeftBumper(), L_Bumper, "bumper-button-pressed");
+        components.GetComponentState(components.GetRightBumper(), R_Bumper, "bumper-button-pressed");
+
+    }
+
+    public void UpdateGuiAnalogs()
+    {
+        components.GetComponentState(components.GetRightTrigger() != 0.0f, R_Trigger, "trigger-button-triggered");
+        components.GetComponentState(components.GetLeftTrigger() != 0.0f, L_Trigger, "trigger-button-triggered");
     }
 }

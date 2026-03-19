@@ -1,18 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class DummyController : Gamepad
+public class DummyController
 {
 
     public bool IsConnected { get; set; }
     public Vector2 LeftStick { get; set; }
     public Vector2 RightStick { get; set; }
-    public DummyController(bool is_conneced) { IsConnected = is_conneced;  }
+    public float RightTrigger { get; set; }
+    public float LeftTrigger { get; set; }
 
-    public DummyController(Vector2 left, Vector2 right, bool connected = true)
-    {
-        LeftStick = left;
-        RightStick = right;
-        IsConnected = connected;
-    }
+    public bool button_a, button_b, button_c, button_d;
+    public DummyController(bool is_conneced = true) { IsConnected = is_conneced;  }
+
+  
 }

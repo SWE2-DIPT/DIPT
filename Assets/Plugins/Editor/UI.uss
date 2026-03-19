@@ -35,6 +35,19 @@ Button {
     background-color:#1F1F1F;
 }
 
+Button.ButtonPressed {
+    height:33%; 
+    width:33%;
+
+    padding: 0px;
+    margin: 0px;
+    border-width: 0px;
+    border-radius:50%; /* This rounds the corners, use equal height + width for circle. */
+    font-size: 36px;
+
+    background-color: white;
+}
+
 .top {
     margin-top: 5px;
     top: 0%;
@@ -109,6 +122,14 @@ Button {
     border-radius: 8px;
 }
 
+.bumper-button-pressed {
+    width: 100px;
+    height: 70px;
+    color: #333;
+    background-color: white;
+    border-radius: 8px;
+}
+
 .trigger-button { 
     /*THIS CLASS IS EXACTLY THE SAME AS THE bumper-button class
     I made a seperate class so that later on, we can edit this  to make
@@ -117,5 +138,13 @@ Button {
     height: 70px;
     color: white;
     background-color: #333;
+    border-radius: 8px;
+}
+
+.trigger-button-triggered {
+    width: 100px;
+    height: 70px;
+    color: #333;
+    background-color: white;
     border-radius: 8px;
 }
