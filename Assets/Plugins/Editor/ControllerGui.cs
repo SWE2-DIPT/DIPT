@@ -57,7 +57,7 @@ public class ControllerGUI : EditorWindow
 
 
 
-        Debug.Log("Ticking");
+        // Debug.Log("Ticking");
     }
 
     /// <summary>
