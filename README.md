@@ -1,7 +1,17 @@
 # DIPT
-Did I Press That (WIP)
-A Free Controller Debugging Tool For Unity
-
+Did I Press That (DIPT) is a free Unity plugin that provides pre-built debugging tools for common game controllers, such as the Xbox and Playstation 4
+controller.
+These debugging tools include:
+- A mock controller GUI that includes:
+  - Input visualization, showing when buttons are pressed down, the positions of joysticks, etc.
+  - Displayed values of these inputs, like the exact position of the joystick.
+  - Input emulation, allowing you to use components of the GUI with your mouse (for testing controller specific inputs, like joystick walking speed).
+  - Automatic controller detection, opening the appropriate GUI for each of them.
+- An input log:
+  - Tracks when buttons are pressed and released, alongside how long they were pressed.
+  - Gives values of the joysticks at certain intervals.
+  - Allows manual saving of the log file (to prevent clogging up your system).
+- A list of all possible inputs from connected controller.
 # HOW TO INSTALL:
 1. Install Unity 6.3 LTS (6000.3.9f1)
 2. Download the ZIP file from GitHub.
