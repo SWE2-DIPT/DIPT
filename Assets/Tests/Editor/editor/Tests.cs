@@ -9,7 +9,7 @@ using UnityEngine.UIElements;
 public class Tests
 {
     private ControllerGUI window;
-    private ControllerDectection controllerDectection;
+    private ControllerEmulation controllerDectection;
     private TEST_ControllerManager TEST_CM;
     private ControllerManager controller;
     
@@ -17,7 +17,7 @@ public class Tests
     public void Setup()
     {
         window = EditorWindow.GetWindow<ControllerGUI>();
-        controllerDectection = EditorWindow.GetWindow<ControllerDectection>();
+        controllerDectection = EditorWindow.GetWindow<ControllerEmulation>();
         controller = new ControllerManager();
         TEST_CM = new TEST_ControllerManager();
         

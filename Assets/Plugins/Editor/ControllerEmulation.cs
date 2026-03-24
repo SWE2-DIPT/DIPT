@@ -1,9 +1,10 @@
 /*******************************************************
-* Script:      ControllerDetection.cs
+* Script:      ControllerEmulation.cs
 * Author(s):   Senny Lu (Add yourselves to this!)
 * 
 * Description:
-*    
+*    Controller Emulation only for buttons for now
+*    Left and right trigger are set to fully pressed 1 when button is pressed
 *******************************************************/
 
 using UnityEngine;
@@ -13,19 +14,20 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem.Controls;
+using System;
 
 /// <summary>
 /// An example plugin.
 /// </summary>
-public class ControllerDectection : EditorWindow
+public class ControllerEmulation : EditorWindow
 {
     public string controllerType = "";
     private Gamepad emulator;
 
-    [MenuItem("Tools/DIPT/ControllerDetection")]
+    [MenuItem("Tools/DIPT/ControllerEmulation")]
     public static void ShowWindow()
     {
-        GetWindow(typeof(ControllerDectection));
+        GetWindow(typeof(ControllerEmulation));
     }
     
     public void FindControllerType()
@@ -43,6 +45,10 @@ public class ControllerDectection : EditorWindow
     {
         emulator = InputSystem.AddDevice<Gamepad>();
     }
+    void OnDisable()
+    {
+        InputSystem.RemoveDevice(emulator);
+    }
 
     void OnGUI()
     {
@@ -58,11 +64,24 @@ public class ControllerDectection : EditorWindow
         GUILayout.Label(controllerType, EditorStyles.boldLabel);
 
         uint buttonsPressed = 0;
+        int leftTriggerPressBool = 0;
+        int rightTriggerPressBool = 0;
 
         foreach (var control in gamepad.allControls)
         {
+            GamepadButton gamepadButton;
+            if (control is DpadControl)
+            {
+                string[] DpadControlNames = {"Up","Down","Left","Right"};
+                for (int i = 0; i<4; i++)
+                {
+                    if (GUILayout.RepeatButton(DpadControlNames[i]))
+                    {
+                        gamepadButton = (GamepadButton)i;
+                    }
+                }
+            }
             if (control is ButtonControl){
-                GamepadButton gamepadButton;
                 switch (control.name)
                 {
                     case "buttonNorth":
@@ -106,14 +125,25 @@ public class ControllerDectection : EditorWindow
                 }
 
                 if (GUILayout.RepeatButton(control.displayName)){
-                    buttonsPressed |= 1u << (int)gamepadButton;
+                    // GamepadState.buttons is 32bit while gamepadButton could be 32 or 33
+                    if ((int)gamepadButton < 32)
+                    {
+                        buttonsPressed |= 1u << (int)gamepadButton;
+                    }
+                    else
+                    {
+                        if ((int)gamepadButton == 32) leftTriggerPressBool = 1;
+                        if ((int)gamepadButton == 33) rightTriggerPressBool = 1;
+                    }
                 }
             }
         }
         
         InputSystem.QueueStateEvent(gamepad, new GamepadState
         {
-            buttons = buttonsPressed
+            buttons = buttonsPressed,
+            leftTrigger = leftTriggerPressBool,
+            rightTrigger = rightTriggerPressBool
         });
     }
 }
