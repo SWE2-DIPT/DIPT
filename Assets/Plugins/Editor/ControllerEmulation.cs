@@ -15,6 +15,7 @@ using UnityEngine.InputSystem.LowLevel;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem.Controls;
 using System;
+using Unity.Collections;
 
 /// <summary>
 /// An example plugin.
@@ -23,6 +24,7 @@ public class ControllerEmulation : EditorWindow
 {
     public string controllerType = "";
     private Gamepad emulator;
+    private bool mouseDrag = false;
 
     [MenuItem("Tools/DIPT/ControllerEmulation")]
     public static void ShowWindow()
@@ -138,12 +140,82 @@ public class ControllerEmulation : EditorWindow
                 }
             }
         }
+
+        // mouse tracking for joysticks
+        Event e = Event.current;
+        Vector2 mousePos = e.mousePosition;
+
+        GUILayout.Label("Mouse Position: " + mousePos);
+        if (e.type == EventType.MouseDown)
+        {
+            Debug.Log("Mouse clicked at: " + mousePos);
+        }
+        if (e.type == EventType.MouseDrag)
+        {
+            Debug.Log("Dragging at: " + mousePos);
+        }
+
+        Rect area = GUILayoutUtility.GetRect(400, 200);
+        float joystickRadius = 50;
+        float joystickStickRadius = 30;
+        float marginBetweenJoysticks = 30;
+        Vector2 leftJoystickCenter = new Vector2(area.center.x - (joystickRadius + marginBetweenJoysticks), area.center.y);
+        Vector2 leftJoystickStick = leftJoystickCenter;
+
+        Vector2 rightJoystickCenter = new Vector2(area.center.x + (joystickRadius + marginBetweenJoysticks), area.center.y);
+        Vector2 rightJoystickStick = rightJoystickCenter;
         
+        // draw joystick pads
+        Handles.color = Color.green;
+        Handles.DrawSolidDisc(leftJoystickCenter, Vector3.forward, joystickRadius);
+        Handles.DrawSolidDisc(rightJoystickCenter, Vector3.forward, joystickRadius);
+
+        // check mouse clicked in which joystick pad
+        // if (e.type == EventType.MouseDown)
+        // {
+        //     if (Vector2.Distance(mousePos, leftJoystickCenter) < joystickRadius)
+        // }
+
+        // mouse dragging joystick stick
+        if (e.type == EventType.MouseDrag)
+        {
+            mouseDrag = true;
+        }
+        if (e.type == EventType.MouseUp)
+        {
+            mouseDrag = false;
+        }
+        
+        // moving joystick stick
+        if (mouseDrag && Vector2.Distance(mousePos, leftJoystickCenter) < (joystickRadius+10))
+        {
+            leftJoystickStick = mousePos;
+            // add calculation for joystick for gamepadState
+        }
+        if (mouseDrag && Vector2.Distance(mousePos, rightJoystickCenter) < (joystickRadius+10))
+        {
+            rightJoystickStick = mousePos;
+            // add calculation for joystick for gamepadState
+        }
+
+        // draw joystick sticks
+        Handles.color = Color.blue;
+        Handles.DrawSolidDisc(leftJoystickStick, Vector3.forward, joystickStickRadius);
+        Handles.DrawSolidDisc(rightJoystickStick, Vector3.forward, joystickStickRadius);
+
+        // gamepad states for emulated gamepad
         InputSystem.QueueStateEvent(gamepad, new GamepadState
         {
             buttons = buttonsPressed,
             leftTrigger = leftTriggerPressBool,
             rightTrigger = rightTriggerPressBool
         });
+
+    }
+
+    // refreshes window every tick
+    void Update()
+    {
+        Repaint();
     }
 }
