@@ -25,11 +25,6 @@ public class ControllerComponents
     private bool rightBumper;
     private bool leftBumper;
 
-    private bool dpadUp;
-    private bool dpadDown;
-    private bool dpadLeft;
-    private bool dpadRight;
-
     private bool prevBottomFaceButton;
     private bool prevLeftFaceButton;
     private bool prevRightFaceButton;
@@ -100,12 +95,6 @@ public class ControllerComponents
         topFaceButton = gamepad.buttonNorth.isPressed;
         rightBumper = gamepad.rightShoulder.isPressed;
         leftBumper = gamepad.leftShoulder.isPressed;
-
-        dpadUp = gamepad.dpad.up.isPressed;
-        dpadDown = gamepad.dpad.down.isPressed;
-        dpadLeft = gamepad.dpad.left.isPressed;
-        dpadRight = gamepad.dpad.right.isPressed;
-
 
         CheckButtonState("Bottom Face Button", bottomFaceButton, ref prevBottomFaceButton);
         CheckButtonState("Left Face Button", leftFaceButton, ref prevLeftFaceButton);
@@ -180,28 +169,5 @@ public class ControllerComponents
         return leftBumper;
     }
 
-    public bool GetDpadUp()
-    {
-        Debug.Log("up dpad");
-        return dpadUp;
-    }
-
-    public bool GetDpadDown()
-    {
-        Debug.Log("down dpad");
-        return dpadDown;
-    }
-
-    public bool GetDpawRight()
-    {
-        Debug.Log("right dpad");
-        return dpadRight;
-    }
-
-    public bool GetDpadLeft()
-    {
-        Debug.Log("left dpad");
-        return dpadLeft;
-    }
     
 }

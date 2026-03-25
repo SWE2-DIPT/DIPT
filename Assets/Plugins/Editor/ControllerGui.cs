@@ -24,7 +24,6 @@ public class ControllerGUI : EditorWindow
     VisualElement BF_Button, LF_Button, RF_Button, UF_Button;
     VisualElement R_Bumper, L_Bumper;
     VisualElement R_Trigger, L_Trigger;
-    VisualElement R_TriggerFilled;
 
     private void OnEnable()
     {
@@ -92,8 +91,6 @@ public class ControllerGUI : EditorWindow
 
         L_Trigger = rootVisualElement.Q<VisualElement>("LT-button");
         R_Trigger = rootVisualElement.Q<VisualElement>("RT-button");
-        R_TriggerFilled = rootVisualElement.Q<VisualElement>("trigger-button-filling");
-        
     }
 
     private void UpdateGuiButtons()
@@ -105,11 +102,12 @@ public class ControllerGUI : EditorWindow
 
         components.GetComponentState(components.GetLeftBumper(), L_Bumper, "bumper-button-pressed");
         components.GetComponentState(components.GetRightBumper(), R_Bumper, "bumper-button-pressed");
+
     }
 
     public void UpdateGuiAnalogs()
     {
-        R_Trigger.style.height = new Length(components.GetRightTrigger() * 100, LengthUnit.Percent);
-        L_Trigger.style.height = new Length(components.GetLeftTrigger() * 100, LengthUnit.Percent);
+        components.GetComponentState(components.GetRightTrigger() != 0.0f, R_Trigger, "trigger-button-triggered");
+        components.GetComponentState(components.GetLeftTrigger() != 0.0f, L_Trigger, "trigger-button-triggered");
     }
 }
