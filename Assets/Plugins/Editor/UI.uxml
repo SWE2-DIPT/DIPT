@@ -29,4 +29,9 @@
 		<ui:Button text="LT" name="LT-button" class="trigger-button" />
 		<ui:Button text="RT" name="RT-button" class="trigger-button" />
 	</ui:VisualElement>
+
+<!-- 	<ui:VisualElement class="trigger-fill">
+		<ui:VisualElement name="fill-bounds" class="trigger-fill-bounds" />
+		<ui:VisualElement name="Trigger-Filling" class="trigger-button-filling" />
+	</ui:VisualElement> -->
 </ui:UXML>
