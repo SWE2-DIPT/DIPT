@@ -19,7 +19,7 @@
     height: 100%;
     border-radius: 10%;
 
-    background-color:#252525;
+    background-color:#3b3b3b;
 }
 
 Button {
