@@ -38,14 +38,4 @@
 		<ui:Button text="LT" name="LT-button" class="trigger-button" />
 		<ui:Button text="RT" name="RT-button" class="trigger-button" />
 	</ui:VisualElement>
-
-	
-	
-	<!-- things to add
-	D-pad( up, down, left, right)
-	start and select button (options button)
-	joy sticks
-	Keep naming simlar to senny's emulation 
-	make triggers longer vertically
-	-->
 </ui:UXML>
