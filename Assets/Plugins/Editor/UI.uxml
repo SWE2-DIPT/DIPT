@@ -11,20 +11,29 @@
 	<ui:Style src="UI.uss" />
 	<!-- Unless I link the uss file like this, for some reason on my machine,
 	it won't link the uss file - Andrew -->
-	<ui:VisualElement  class="box-border" style="width: 130px; height: 130px;">
-        <ui:VisualElement name="YBAX-buttons" class="diamond-group">
-                <ui:Button text="Y" name="Y-button" class="top"/>
-                <ui:Button text="B" name="B-button" class="right"/>
-                <ui:Button text="A" name="A-button" class="bottom"/>
-                <ui:Button text="X" name="X-button" class="left"/>
-        </ui:VisualElement>
-    </ui:VisualElement>
+
+	<ui:VisualElement class="Controls-Row">
+		<ui:VisualElement  class="box-border" style="width: 130px; height: 130px;">
+			<ui:VisualElement name="YBAX-buttons" class="diamond-group">
+					<ui:Button text="Y" name="Y-button" class="top"/>
+					<ui:Button text="B" name="B-button" class="right"/>
+					<ui:Button text="A" name="A-button" class="bottom"/>
+					<ui:Button text="X" name="X-button" class="left"/>
+			</ui:VisualElement>
+		</ui:VisualElement>
+		<ui:VisualElement name="dpad-container" class="box-border" style="width: 130px; height: 130px;">
+			<ui:Button name="up-pad" class="dpad-btn up-pad" />
+			<ui:Button name="right-pad" class="dpad-btn right-pad" />
+			<ui:Button name="down-pad" class="dpad-btn down-pad" />
+			<ui:Button name="left-pad" class="dpad-btn left-pad" />
+		</ui:VisualElement>
+	</ui:VisualElement>
 	
 	<ui:VisualElement class="Bumper-Row">
 		<ui:Button text="LB" name="LB-button" class="bumper-button" />
 		<ui:Button text="RB" name="RB-button" class="bumper-button" />
 	</ui:VisualElement>
-	<ui:VisualElement class="Bumper-Row"> <!-- just used the same class 
+	<ui:VisualElement class="Bumper-Row trigger-row"> <!-- just used the same class 
 												for the trigger containers-->
 		<ui:Button text="LT" name="LT-button" class="trigger-button" />
 		<ui:Button text="RT" name="RT-button" class="trigger-button" />
@@ -34,4 +43,13 @@
 		<ui:VisualElement name="fill-bounds" class="trigger-fill-bounds" />
 		<ui:VisualElement name="Trigger-Filling" class="trigger-button-filling" />
 	</ui:VisualElement> -->
+	
+	
+	<!-- things to add
+	D-pad( up, down, left, right)
+	start and select button (options button)
+	joy sticks
+	Keep naming simlar to senny's emulation 
+	make triggers longer vertically
+	-->
 </ui:UXML>

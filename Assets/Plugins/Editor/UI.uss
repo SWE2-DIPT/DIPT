@@ -121,6 +121,10 @@ Button.ButtonPressed {
     padding-right: 20px;
 }
 
+.trigger-row {
+    height: 140px; /* over ride bumper row class height */
+}
+
 .bumper-button {
     width: 100px;
     height: 70px;
@@ -142,7 +146,7 @@ Button.ButtonPressed {
     I made a seperate class so that later on, we can edit this  to make
     the button a better shape resembling a trigger */
     width: 100px;
-    height: 70px;
+    height: 100px;
     color: white;
     background-color: #333;
     border-radius: 8px;
@@ -200,3 +204,38 @@ Button.ButtonPressed {
     background: white;
     border-radius
 } */
+/* Base style for the D-pad rectangles */
+.dpad-btn {
+    position: absolute;
+    background-color: #333;
+    /*border-radius: 4px;*/ /* Slight rounding for a plastic look */
+    width: 30px;
+    height: 50px;
+}
+
+/* Vertical Rectangles (Up/Down) */
+.up-pad {
+    rotate: 0deg;
+    translate: 0 -35px; /* Moves it up from the center */
+    border-radius: 5px 5px 15px 15px;
+}
+
+.down-pad {
+    rotate: 0deg;
+    translate: 0 35px;  /* Moves it down from the center */
+    border-radius: 15px 15px 5px 5px;
+}
+
+/* Horizontal Rectangles (Left/Right) */
+.left-pad {
+    /* We swap width/height logic by rotating a vertical rectangle */
+    rotate: 90deg; 
+    translate: -35px 0; /* Moves it left from the center */
+    border-radius: 15px 15px 5px 5px;
+}
+
+.right-pad {
+    rotate: 90deg;
+    translate: 35px 0;  /* Moves it right from the center */
+    border-radius: 5px 5px 15px 15px;
+}
