@@ -19,9 +19,11 @@
 		</ui:VisualElement>
 	</ui:VisualElement>
 
-	<ui:VisualElement class="Bumper-Row">
-		<ui:Button text="LB" name="LB-button" class="bumper-button" />
-		<ui:Button text="RB" name="RB-button" class="bumper-button" />
+	<ui:VisualElement class="box-border">
+		<ui:VisualElement class="Bumper-Row">
+			<ui:Button text="LB" name="LB-button" class="bumper-button" />
+			<ui:Button text="RB" name="RB-button" class="bumper-button" />
+		</ui:VisualElement>
 	</ui:VisualElement>
 
 	<ui:VisualElement class="Controls-Row">

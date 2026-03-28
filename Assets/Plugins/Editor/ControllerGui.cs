@@ -109,6 +109,7 @@ public class ControllerGUI : EditorWindow
 
     public void UpdateGuiAnalogs()
     {
+        // These two lines set the trigger width to 0 until pressed. I will fix this later.
         R_Trigger.style.height = new Length(components.GetRightTrigger() * 100, LengthUnit.Percent);
         L_Trigger.style.height = new Length(components.GetLeftTrigger() * 100, LengthUnit.Percent);
     }
