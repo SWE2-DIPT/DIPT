@@ -11,6 +11,18 @@
 	<ui:Style src="UI.uss" />
 	<!-- Unless I link the uss file like this, for some reason on my machine,
 	it won't link the uss file - Andrew -->
+	<ui:VisualElement class="box-border">
+		<ui:VisualElement class="Bumper-Row trigger-row"> <!-- just used the same class 
+													for the trigger containers-->
+			<ui:Button text="LT" name="LT-button" class="trigger-button" />
+			<ui:Button text="RT" name="RT-button" class="trigger-button" />
+		</ui:VisualElement>
+	</ui:VisualElement>
+
+	<ui:VisualElement class="Bumper-Row">
+		<ui:Button text="LB" name="LB-button" class="bumper-button" />
+		<ui:Button text="RB" name="RB-button" class="bumper-button" />
+	</ui:VisualElement>
 
 	<ui:VisualElement class="Controls-Row">
 		<ui:VisualElement  class="box-border" style="width: 130px; height: 130px;">
@@ -29,13 +41,5 @@
 		</ui:VisualElement>
 	</ui:VisualElement>
 	
-	<ui:VisualElement class="Bumper-Row">
-		<ui:Button text="LB" name="LB-button" class="bumper-button" />
-		<ui:Button text="RB" name="RB-button" class="bumper-button" />
-	</ui:VisualElement>
-	<ui:VisualElement class="Bumper-Row trigger-row"> <!-- just used the same class 
-												for the trigger containers-->
-		<ui:Button text="LT" name="LT-button" class="trigger-button" />
-		<ui:Button text="RT" name="RT-button" class="trigger-button" />
-	</ui:VisualElement>
+
 </ui:UXML>
