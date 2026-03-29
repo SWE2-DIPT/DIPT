@@ -2,15 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
-enum buttons
-{
-    BottomFace,
-    TopFace,
-    RightFace,
-    LeftFace,
-    RightBumper,
-    LeftBumper
-};
+enum buttons { BottomFace, TopFace, RightFace, LeftFace, RightBumper, LeftBumper };
 public class ControllerComponents
 {
     // Joysticks

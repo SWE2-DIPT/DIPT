@@ -14,15 +14,23 @@
 	<ui:VisualElement class="box-border">
 		<ui:VisualElement class="Bumper-Row trigger-row"> <!-- just used the same class 
 													for the trigger containers-->
-			<ui:Button text="LT" name="LT-button" class="trigger-button" />
-			<ui:Button text="RT" name="RT-button" class="trigger-button" />
+			<ui:VisualElement name="LT-button" class="trigger-button button">
+				<ui:Label text="LT" class="button-label"/>
+			</ui:VisualElement>
+			<ui:VisualElement name="RT-button" class="trigger-button button">
+				<ui:Label text="RT" class="button-label"/>
+			</ui:VisualElement>
 		</ui:VisualElement>
 	</ui:VisualElement>
 
 	<ui:VisualElement class="box-border">
 		<ui:VisualElement class="Bumper-Row">
-			<ui:Button text="LB" name="LB-button" class="bumper-button" />
-			<ui:Button text="RB" name="RB-button" class="bumper-button" />
+			<ui:VisualElement name="LB-button" class="bumper-button">
+				<ui:Label text="LB" class="button-label"/>
+			</ui:VisualElement>
+			<ui:VisualElement name="RB-button" class="bumper-button">
+				<ui:Label text="RB" class="button-label"/>
+			</ui:VisualElement>
 		</ui:VisualElement>
 	</ui:VisualElement>
 
@@ -32,10 +40,18 @@
 		</ui:VisualElement>
 		<ui:VisualElement  class="box-border" style="width: 130px; height: 130px;">
 			<ui:VisualElement name="YBAX-buttons" class="diamond-group">
-					<ui:Button text="Y" name="Y-button" class="top"/>
-					<ui:Button text="B" name="B-button" class="right"/>
-					<ui:Button text="A" name="A-button" class="bottom"/>
-					<ui:Button text="X" name="X-button" class="left"/>
+					<ui:VisualElement name="Y-button" class="top button">
+						<ui:Label text="Y" class="button-label"/>
+					</ui:VisualElement>
+					<ui:VisualElement name="B-button" class="right button">
+						<ui:Label text="B" class="button-label"/>
+					</ui:VisualElement>
+					<ui:VisualElement name="A-button" class="bottom button">
+						<ui:Label text="A" class="button-label"/>
+					</ui:VisualElement>
+					<ui:VisualElement name="X-button" class="left button">
+						<ui:Label text="X" class="button-label"/>
+					</ui:VisualElement>
 			</ui:VisualElement>
 		</ui:VisualElement>
 	</ui:VisualElement>
@@ -49,5 +65,8 @@
 		<ui:VisualElement name="right-joystick" class="box-border" style="width: 130px; height: 130px;">
 			<!--Insert Joystick 2 here-->
 		</ui:VisualElement>
+	</ui:VisualElement>
+	<ui:VisualElement text="advanced" name="advanced">
+		<ui:Label text="Advanced" class="button-label"/>
 	</ui:VisualElement>
 </ui:UXML>

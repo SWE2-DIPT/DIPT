@@ -24,7 +24,7 @@ public class ControllerGUI : EditorWindow
 
     VisualElement R_Trigger, L_Trigger;
 
-    Dictionary<string, Button> buttons = new Dictionary<string, Button>();
+    Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
 
     private void OnEnable()
     {
@@ -78,12 +78,13 @@ public class ControllerGUI : EditorWindow
         rootVisualElement.Clear();
         rootVisualElement.styleSheets.Add(styleSheet);
         visualTree.CloneTree(rootVisualElement);
-
+        
         // Initialize Buttons with functions:
         InitializeButtons(new string[] {
             "A-button", "Y-button", "B-button", "X-button",
             "RB-button", "LB-button",
             "LT-button", "RT-button",
+            "advanced"
         });
     }
 
@@ -107,7 +108,7 @@ public class ControllerGUI : EditorWindow
         foreach (string name in buttonNames)
         {
             // Query each name in buttonNames:
-            var button = rootVisualElement.Q<Button>(name);
+            var button = rootVisualElement.Q<VisualElement>(name);
 
             // Skip unimplemented names:
             if (button == null)
