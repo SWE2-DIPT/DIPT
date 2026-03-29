@@ -57,10 +57,10 @@
 	</ui:VisualElement>
 	<ui:VisualElement class="Controls-Row">
 		<ui:VisualElement name="dpad-container" class="box-border" style="width: 130px; height: 130px;">
-			<ui:Button name="up-pad" class="dpad-btn up-pad" />
-			<ui:Button name="right-pad" class="dpad-btn right-pad" />
-			<ui:Button name="down-pad" class="dpad-btn down-pad" />
-			<ui:Button name="left-pad" class="dpad-btn left-pad" />
+			<ui:VisualElement name="up-pad" class="dpad-btn up-pad button" />
+			<ui:VisualElement name="right-pad" class="dpad-btn right-pad button" />
+			<ui:VisualElement name="down-pad" class="dpad-btn down-pad button" />
+			<ui:VisualElement name="left-pad" class="dpad-btn left-pad button" />
 		</ui:VisualElement>
 		<ui:VisualElement name="right-joystick" class="box-border" style="width: 130px; height: 130px;">
 			<!--Insert Joystick 2 here-->

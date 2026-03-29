@@ -78,12 +78,13 @@ public class ControllerGUI : EditorWindow
         rootVisualElement.Clear();
         rootVisualElement.styleSheets.Add(styleSheet);
         visualTree.CloneTree(rootVisualElement);
-        
+
         // Initialize Buttons with functions:
         InitializeButtons(new string[] {
             "A-button", "Y-button", "B-button", "X-button",
             "RB-button", "LB-button",
             "LT-button", "RT-button",
+            "up-pad", "down-pad", "left-pad", "right-pad",
             "advanced"
         });
     }
@@ -116,7 +117,7 @@ public class ControllerGUI : EditorWindow
                 Debug.LogWarning($"Button '{name}' not found in UXML!");
                 continue;
             }
-
+            
             // Put into dictionary (hash table);
             buttons[name] = button;
             // Assign pressed events:
@@ -155,6 +156,18 @@ public class ControllerGUI : EditorWindow
             case "LB-button":
                 components.SetLeftBumper(pressed);
                 break;
+            case "up-pad":
+                components.SetDpadUp(pressed);
+                break;
+            case "down-pad":
+                components.SetDpadDown(pressed);
+                break;
+            case "left-pad":
+                components.SetDpadLeft(pressed);
+                break;
+            case "right-pad":
+                components.SetDpadRight(pressed);
+                break;
         }
     }
 
@@ -167,6 +180,11 @@ public class ControllerGUI : EditorWindow
 
         components.GetComponentState(components.GetLeftBumper(), buttons["LB-button"], "bumper-button-pressed");
         components.GetComponentState(components.GetRightBumper(), buttons["RB-button"], "bumper-button-pressed");
+
+        components.GetComponentState(components.GetDpadUp(), buttons["up-pad"], "DPadPressed");
+        components.GetComponentState(components.GetDpadDown(), buttons["down-pad"], "DPadPressed");
+        components.GetComponentState(components.GetDpadLeft(), buttons["left-pad"], "DPadPressed");
+        components.GetComponentState(components.GetDpadRight(), buttons["right-pad"], "DPadPressed");
     }
 
     public void UpdateGuiAnalogs()

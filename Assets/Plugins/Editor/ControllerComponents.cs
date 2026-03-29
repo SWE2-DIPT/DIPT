@@ -17,6 +17,7 @@ public class ControllerComponents
     private bool dpadUp, dpadDown, dpadLeft, dpadRight;
 
     private bool prevBottomFaceButton, prevLeftFaceButton, prevRightFaceButton, prevTopFaceButton;
+    private bool prevDpadUp, prevDpadDown, prevDpadLeft, prevDpadRight;
     private bool prevRightBumper, prevLeftBumper;
 
     private Vector2 prevLeftJoystick, prevRightJoystick;
@@ -94,7 +95,10 @@ public class ControllerComponents
         CheckButtonState("Right Bumper", rightBumper, ref prevRightBumper);
         CheckButtonState("Left Bumper", leftBumper, ref prevLeftBumper);
 
-        
+        CheckButtonState("DPad Up", dpadUp, ref prevDpadUp);
+        CheckButtonState("DPad Down", dpadDown, ref prevDpadDown);
+        CheckButtonState("DPad Left", dpadLeft, ref prevDpadLeft);
+        CheckButtonState("DPad Right", dpadRight, ref prevDpadRight);
     }
 
     private void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
@@ -164,25 +168,21 @@ public class ControllerComponents
 
     public bool GetDpadUp()
     {
-        Debug.Log("up dpad");
         return dpadUp;
     }
 
     public bool GetDpadDown()
     {
-        Debug.Log("down dpad");
         return dpadDown;
     }
 
-    public bool GetDpawRight()
+    public bool GetDpadRight()
     {
-        Debug.Log("right dpad");
         return dpadRight;
     }
 
     public bool GetDpadLeft()
     {
-        Debug.Log("left dpad");
         return dpadLeft;
     }
 
@@ -214,5 +214,24 @@ public class ControllerComponents
     public void SetLeftBumper(bool value)
     {
         leftBumper = value;
+    }
+    public void SetDpadUp(bool value)
+    {
+        dpadUp = value;
+    }
+
+    public void SetDpadDown(bool value)
+    {
+        dpadDown = value;
+    }
+
+    public void SetDpadLeft(bool value)
+    {
+        dpadLeft = value;
+    }
+
+    public void SetDpadRight(bool value)
+    {
+        dpadRight = value;
     }
 }

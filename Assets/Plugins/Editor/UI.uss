@@ -222,3 +222,7 @@
     background-color:#1F1F1F;
 }
 
+.dpad-btn.DPadPressed {
+    background-color: white;
+}
+
