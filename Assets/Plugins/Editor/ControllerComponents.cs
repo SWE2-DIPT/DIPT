@@ -13,34 +13,22 @@ enum buttons
 };
 public class ControllerComponents
 {
-    private Vector2 rightJoystick;
-    private Vector2 leftJoystick;
-    private float rightTrigger;
-    private float leftTrigger;
+    // Joysticks
+    private Vector2 rightJoystick, leftJoystick;
+    // Triggers
+    private float rightTrigger, leftTrigger;
 
-    private bool bottomFaceButton;
-    private bool leftFaceButton;
-    private bool rightFaceButton;
-    private bool topFaceButton;
-    private bool rightBumper;
-    private bool leftBumper;
+    private bool bottomFaceButton, leftFaceButton, rightFaceButton, topFaceButton;
+    private bool rightBumper, leftBumper;
 
-    private bool dpadUp;
-    private bool dpadDown;
-    private bool dpadLeft;
-    private bool dpadRight;
+    // D-Pad
+    private bool dpadUp, dpadDown, dpadLeft, dpadRight;
 
-    private bool prevBottomFaceButton;
-    private bool prevLeftFaceButton;
-    private bool prevRightFaceButton;
-    private bool prevTopFaceButton;
-    private bool prevRightBumper;
-    private bool prevLeftBumper;
+    private bool prevBottomFaceButton, prevLeftFaceButton, prevRightFaceButton, prevTopFaceButton;
+    private bool prevRightBumper, prevLeftBumper;
 
-    private Vector2 prevLeftJoystick;
-    private Vector2 prevRightJoystick;
-    private float prevLeftTrigger;
-    private float prevRightTrigger;
+    private Vector2 prevLeftJoystick, prevRightJoystick;
+    private float prevLeftTrigger, prevRightTrigger;
 
     private const float joystickThreshold = 0.10f;
     private const float triggerThreshold = 0.05f;
@@ -133,6 +121,8 @@ public class ControllerComponents
 
     public void GetComponentState(bool buttonPressed, VisualElement element, string state)
     {
+        if (element == null)
+            return;
         if(buttonPressed)
         {
             element.AddToClassList(state);

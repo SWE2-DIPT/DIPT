@@ -11,6 +11,7 @@ using Codice.Client.BaseCommands;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 
 /// <summary>
@@ -25,6 +26,8 @@ public class ControllerGUI : EditorWindow
     VisualElement R_Bumper, L_Bumper;
     VisualElement R_Trigger, L_Trigger;
     VisualElement R_TriggerFilled;
+
+    Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
 
     private void OnEnable()
     {
@@ -72,9 +75,9 @@ public class ControllerGUI : EditorWindow
     /// </remarks>
     /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
     /// <param name="ussPath">Path from Project directory to .uss file</param>
-    /// 
     void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/UI.uss")
     {
+        // Load in the UXML and USS:
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
         var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ussPath);
         
@@ -82,18 +85,53 @@ public class ControllerGUI : EditorWindow
         rootVisualElement.styleSheets.Add(styleSheet);
         visualTree.CloneTree(rootVisualElement);
 
-        BF_Button = rootVisualElement.Q<VisualElement>("A-button");
-        UF_Button = rootVisualElement.Q<VisualElement>("Y-button");
-        RF_Button = rootVisualElement.Q<VisualElement>("B-button");
-        LF_Button = rootVisualElement.Q<VisualElement>("X-button");
+        // Initialize Buttons with functions:
+        InitializeButtons(new string[] {
+            "A-button", "Y-button", "B-button", "X-button",
+            "RB-button", "LB-button",
+            "LT-button", "RT-button",
+        });
+    }
 
-        R_Bumper = rootVisualElement.Q<VisualElement>("RB-button");
-        L_Bumper = rootVisualElement.Q<VisualElement>("LB-button");
+    /// <summary>
+    /// Finds all buttons listed in <paramref name="buttonNames"/> and assigns them
+    /// their functionalities.
+    /// </summary>
+    /// <remarks>
+    /// Example usage:
+    /// <c> 
+    /// InitializeButtons(new string[] {
+    ///    "A-button", "Y-button", "B-button", "X-button",
+    ///    "RB-button", "LB-button",
+    ///    "LT-button", "RT-button",
+    /// }); 
+    /// </c>
+    /// </remarks>
+    /// <param name="buttonNames">Array of names for the buttons you want queried</param>
+    void InitializeButtons(string[] buttonNames)
+    {
+        foreach (string name in buttonNames)
+        {
+            // Query each name in buttonNames:
+            var button = rootVisualElement.Q<VisualElement>(name);
 
-        L_Trigger = rootVisualElement.Q<VisualElement>("LT-button");
-        R_Trigger = rootVisualElement.Q<VisualElement>("RT-button");
-        R_TriggerFilled = rootVisualElement.Q<VisualElement>("trigger-button-filling");
-        
+            if (button == null)
+            {
+                Debug.LogWarning($"Button '{name}' not found in UXML!");
+                continue;
+            }
+
+            buttons[name] = button;
+
+            button.RegisterCallback<ClickEvent>(evt =>
+            {
+                components.GetComponentState(true, button, "ButtonPressed");
+            });
+            button.RegisterCallback<MouseUpEvent>(evt =>
+            {
+                components.GetComponentState(false, button, "ButtonPressed");
+            });
+        }
     }
 
     private void UpdateGuiButtons()
@@ -110,7 +148,9 @@ public class ControllerGUI : EditorWindow
     public void UpdateGuiAnalogs()
     {
         // These two lines set the trigger width to 0 until pressed. I will fix this later.
-        R_Trigger.style.height = new Length(components.GetRightTrigger() * 100, LengthUnit.Percent);
-        L_Trigger.style.height = new Length(components.GetLeftTrigger() * 100, LengthUnit.Percent);
+        if (R_Trigger != null)
+            R_Trigger.style.height = new Length(components.GetRightTrigger() * 100, LengthUnit.Percent);
+        if (L_Trigger != null)
+            L_Trigger.style.height = new Length(components.GetLeftTrigger() * 100, LengthUnit.Percent);
     }
 }
