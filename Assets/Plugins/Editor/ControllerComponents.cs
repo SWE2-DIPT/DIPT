@@ -193,5 +193,34 @@ public class ControllerComponents
         Debug.Log("left dpad");
         return dpadLeft;
     }
-    
+
+    public void SetBottomFaceButton(bool value)
+    {
+        bottomFaceButton = value;
+    }
+
+    public void SetTopFaceButton(bool value)
+    {
+        topFaceButton = value;
+    }
+
+    public void SetRightFaceButton(bool value)
+    {
+        rightFaceButton = value;
+    }
+
+    public void SetLeftFaceButton(bool value)
+    {
+        leftFaceButton = value;
+    }
+
+    public void SetRightBumper(bool value)
+    {
+        rightBumper = value;
+    }
+
+    public void SetLeftBumper(bool value)
+    {
+        leftBumper = value;
+    }
 }

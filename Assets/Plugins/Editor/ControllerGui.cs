@@ -12,7 +12,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
-
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// An example plugin.
@@ -22,12 +22,9 @@ public class ControllerGUI : EditorWindow
     private static ControllerManager manager;
     private static ControllerComponents components;
 
-    VisualElement BF_Button, LF_Button, RF_Button, UF_Button;
-    VisualElement R_Bumper, L_Bumper;
     VisualElement R_Trigger, L_Trigger;
-    VisualElement R_TriggerFilled;
 
-    Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
+    Dictionary<string, Button> buttons = new Dictionary<string, Button>();
 
     private void OnEnable()
     {
@@ -58,9 +55,6 @@ public class ControllerGUI : EditorWindow
 
         UpdateGuiButtons();
         UpdateGuiAnalogs();
-
-
-
         // Debug.Log("Ticking");
     }
 
@@ -113,36 +107,65 @@ public class ControllerGUI : EditorWindow
         foreach (string name in buttonNames)
         {
             // Query each name in buttonNames:
-            var button = rootVisualElement.Q<VisualElement>(name);
+            var button = rootVisualElement.Q<Button>(name);
 
+            // Skip unimplemented names:
             if (button == null)
             {
                 Debug.LogWarning($"Button '{name}' not found in UXML!");
                 continue;
             }
 
+            // Put into dictionary (hash table);
             buttons[name] = button;
+            // Assign pressed events:
+            button.RegisterCallback<PointerDownEvent>(evt =>
+            {
+                Debug.Log($"{name}: DOWN");
+                SetButtonState(name, true);
+            });
+            button.RegisterCallback<PointerUpEvent>(evt =>
+            {
+                Debug.Log($"{name}: UP");
+                SetButtonState(name, false);
+            });
+        }
+    }
 
-            button.RegisterCallback<ClickEvent>(evt =>
-            {
-                components.GetComponentState(true, button, "ButtonPressed");
-            });
-            button.RegisterCallback<MouseUpEvent>(evt =>
-            {
-                components.GetComponentState(false, button, "ButtonPressed");
-            });
+    void SetButtonState(string name, bool pressed)
+    {
+        switch (name)
+        {
+            case "A-button":
+                components.SetBottomFaceButton(pressed);
+                break;
+            case "Y-button":
+                components.SetTopFaceButton(pressed);
+                break;
+            case "B-button":
+                components.SetRightFaceButton(pressed);
+                break;
+            case "X-button":
+                components.SetLeftFaceButton(pressed);
+                break;
+            case "RB-button":
+                components.SetRightBumper(pressed);
+                break;
+            case "LB-button":
+                components.SetLeftBumper(pressed);
+                break;
         }
     }
 
     private void UpdateGuiButtons()
     {
-        components.GetComponentState(components.GetBottomFaceButton(),BF_Button, "ButtonPressed");
-        components.GetComponentState(components.GetUpFaceButton(),UF_Button, "ButtonPressed");
-        components.GetComponentState(components.GetRightFaceButton(),RF_Button, "ButtonPressed");
-        components.GetComponentState(components.GetLeftFaceButton(),LF_Button, "ButtonPressed");
+        components.GetComponentState(components.GetBottomFaceButton(), buttons["A-button"], "ButtonPressed");
+        components.GetComponentState(components.GetUpFaceButton(), buttons["Y-button"], "ButtonPressed");
+        components.GetComponentState(components.GetRightFaceButton(), buttons["B-button"], "ButtonPressed");
+        components.GetComponentState(components.GetLeftFaceButton(), buttons["X-button"], "ButtonPressed");
 
-        components.GetComponentState(components.GetLeftBumper(), L_Bumper, "bumper-button-pressed");
-        components.GetComponentState(components.GetRightBumper(), R_Bumper, "bumper-button-pressed");
+        components.GetComponentState(components.GetLeftBumper(), buttons["LB-button"], "bumper-button-pressed");
+        components.GetComponentState(components.GetRightBumper(), buttons["RB-button"], "bumper-button-pressed");
     }
 
     public void UpdateGuiAnalogs()
