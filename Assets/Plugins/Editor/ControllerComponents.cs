@@ -114,8 +114,7 @@ public class ControllerComponents
         CheckButtonState("Right Bumper", rightBumper, ref prevRightBumper);
         CheckButtonState("Left Bumper", leftBumper, ref prevLeftBumper);
 
-        
-    }
+    } 
 
     private void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
     {
@@ -133,7 +132,7 @@ public class ControllerComponents
 
     public void GetComponentState(bool buttonPressed, VisualElement element, string state)
     {
-        if(buttonPressed)
+        if (buttonPressed)
         {
             element.AddToClassList(state);
         }
@@ -142,6 +141,22 @@ public class ControllerComponents
             element.RemoveFromClassList(state);
         }
     }
+
+    public void GetButtonState(bool buttonPressed, VisualElement element, StyleColor idle_color, StyleColor idle_backColor, 
+                                                                        StyleColor pressed_color, StyleColor pressed_backColor)
+    {
+        if (buttonPressed)
+        {
+            element.style.color = pressed_color;
+            element.style.backgroundColor = pressed_backColor; 
+        }
+        else
+        {
+            element.style.color = idle_color;
+            element.style.backgroundColor = idle_backColor;
+        }
+    }
+
 
     public float GetRightTrigger()
     {
@@ -192,7 +207,7 @@ public class ControllerComponents
         return dpadDown;
     }
 
-    public bool GetDpawRight()
+    public bool GetDpadRight()
     {
         Debug.Log("right dpad");
         return dpadRight;

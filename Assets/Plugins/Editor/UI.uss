@@ -42,19 +42,6 @@ Button {
     background-color:#1F1F1F;
 }
 
-Button.ButtonPressed {
-    height:33%; 
-    width:33%;
-
-    padding: 0px;
-    margin: 0px;
-    border-width: 0px;
-    border-radius:50%; /* This rounds the corners, use equal height + width for circle. */
-    font-size: 36px;
-
-    background-color: white;
-}
-
 .top {
     margin-top: 5px;
     top: 0%;
@@ -150,61 +137,29 @@ Button.ButtonPressed {
     color: white;
     background-color: #333;
     border-radius: 8px;
+    z-index: 2;
 }
-
-/* .trigger-button-triggered {
+.trigger-fill-container {
     width: 100px;
-    height: 70px;
-    color: #333;
-    background-color: white;
-    border-radius: 8px;
-} */
-
-.trigger-button-filling {
-    width: 0px;
-    height: 70px;
-    color: #333;
-    background-color: white;
-    border-radius: 8px;
-    justify-content: flex-end;
+    height: 100px;
+    position: relative;
 }
 
-.trigger-fill-bounds
-{
-     width: 100px;
-    height: 70px;
-    color: white;
-    background-color: #333;
-    border-radius: 8px;
-    justify-content: flex-end; 
-}
-
-.trigger-button-filling {
-    width: 0px;
-    height: 70px;
-    color: #333;
-    background-color: white;
-    border-radius: 8px;
-    justify-content: flex-end;
-}
-/* 
-.trigger-fill-bounds
-{
-     width: 100px;
-    height: 70px;
-    color: white;
-    background-color: #333;
-    border-radius: 8px;
-    justify-content: flex-end; 
-}
-
-.trigger-button-filled {
+.trigger-fill {
     width: 100px;
     height: 0px;
-    background: white;
-    border-radius
-} */
-/* Base style for the D-pad rectangles */
+    bottom: 0;        
+    left: 0;
+    background-color: white;
+    border-radius: 8px;
+    position: absolute;
+    z-index: 0;
+}
+
+.trigger-value {
+
+}
+
 .dpad-btn {
     position: absolute;
     background-color: #333;
@@ -238,4 +193,12 @@ Button.ButtonPressed {
     rotate: 90deg;
     translate: 35px 0;  /* Moves it right from the center */
     border-radius: 5px 5px 15px 15px;
+}
+
+.dpad-pressed {
+    position: absolute;
+    background-color: white;
+    /*border-radius: 4px;*/ /* Slight rounding for a plastic look */
+    width: 30px;
+    height: 50px;
 }

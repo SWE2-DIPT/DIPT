@@ -33,16 +33,24 @@
 		<ui:Button text="LB" name="LB-button" class="bumper-button" />
 		<ui:Button text="RB" name="RB-button" class="bumper-button" />
 	</ui:VisualElement>
+
 	<ui:VisualElement class="Bumper-Row trigger-row"> <!-- just used the same class 
 												for the trigger containers-->
-		<ui:Button text="LT" name="LT-button" class="trigger-button" />
-		<ui:Button text="RT" name="RT-button" class="trigger-button" />
+		<ui:VisualElement class="trigger-container">
+			<ui:Button text="LT" name="LT-button" class="trigger-button" />
+			<ui:VisualElement name="LT-fill" class="trigger-fill" />	
+			<ui:Label text="Val: " name="LT-trigger-value-label" />
+		</ui:VisualElement>
+		
+
+		<ui:VisualElement class="trigger-container">
+			<ui:Button text="RT" name="RT-button" class="trigger-button" />
+			<ui:VisualElement name="RT-fill" class="trigger-fill" />
+			<ui:Label text="Val: " name="RT-trigger-value-label" />
+		</ui:VisualElement>
+
 	</ui:VisualElement>
 
-<!-- 	<ui:VisualElement class="trigger-fill">
-		<ui:VisualElement name="fill-bounds" class="trigger-fill-bounds" />
-		<ui:VisualElement name="Trigger-Filling" class="trigger-button-filling" />
-	</ui:VisualElement> -->
 	
 	
 	<!-- things to add
