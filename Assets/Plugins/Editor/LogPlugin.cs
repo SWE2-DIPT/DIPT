@@ -1,3 +1,12 @@
+/*******************************************************
+* Script:      LogPlugin.cs
+* Author(s):   Nick Stearns (Add yourselves to this!)
+* 
+* Description:
+*    A example plugin meant to showcase how to create plugins
+*    in Unity.
+*******************************************************/
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -5,6 +14,9 @@ using System.Collections.Generic;
 public class LogPlugin : EditorWindow
 {
     public enum InputState { All, Pressed, Released, Movement }
+
+    Color grey = new Color(0.8f, 0.8f, 0.8f);
+
 
     private class LogEntry
     {
@@ -87,13 +99,12 @@ public class LogPlugin : EditorWindow
     private void OnGUI()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-        GUILayout.Label("Filter:", GUILayout.Width(50));
-
-        string[] options = { "Show All", "Show Pressed", "Show Released", "Show Movement" };
-        activeState = (InputState)GUILayout.Toolbar((int)activeState, options, EditorStyles.toolbarButton);
-
+        GUILayout.Label("Filter", GUILayout.Width(50));
+        DrawFilterButton(InputState.All, "All");
+        DrawFilterButton(InputState.Pressed, "Pressed");
+        DrawFilterButton(InputState.Released, "Released");
+        DrawFilterButton(InputState.Movement, "Movement");
         EditorGUILayout.EndHorizontal();
-        EditorGUILayout.Space(5);
 
         isPolling = EditorGUILayout.Toggle("Polling Enabled", isPolling);
 
@@ -127,12 +138,17 @@ public class LogPlugin : EditorWindow
         EditorGUILayout.BeginHorizontal();
 
         if (GUILayout.Button("Clear Current", GUILayout.Height(30)))
+        {
             ClearCurrent();
-
+        }
         if (GUILayout.Button("Clear All", GUILayout.Height(30)))
         {
             allLogs.Clear();
             Repaint();
+        }
+        if (GUILayout.Button("Save", GUILayout.Height(30)))
+        {
+            SaveLogsToFile();
         }
 
         EditorGUILayout.EndHorizontal();
@@ -169,7 +185,6 @@ public class LogPlugin : EditorWindow
 
             case InputState.Movement: // DEBUG LINES
                 return $"[{timestamp}] DEBUG movement log"; // DEBUG LINES
-
             default: // DEBUG LINES
                 return $"[{timestamp}] DEBUG log"; // DEBUG LINES
         }
@@ -177,15 +192,18 @@ public class LogPlugin : EditorWindow
 
     private void DrawLogArea(ref Vector2 scrollPos, List<LogEntry> logs, string title)
     {
-        EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
-
-        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandHeight(true));
+        DrawFilterTitle(ref scrollPos, title);
 
         for (int i = 0; i < logs.Count; i++)
         {
             if (activeState == InputState.All || logs[i].state == activeState)
             {
-                EditorGUILayout.LabelField(logs[i].message, EditorStyles.helpBox);
+                Color originalColor = GUI.backgroundColor;
+                GUI.backgroundColor = GetColorForState(logs[i].state);
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                EditorGUILayout.LabelField(logs[i].message);
+                EditorGUILayout.EndVertical();
+                GUI.backgroundColor = originalColor;
             }
         }
 
@@ -202,7 +220,63 @@ public class LogPlugin : EditorWindow
         {
             allLogs.RemoveAll(log => log.state == activeState);
         }
-
         Repaint();
+    }
+    private Color GetColorForState(InputState state)
+    {
+        switch (state)
+        {
+            case InputState.Pressed:
+                return new Color(0.6f, 1f, 0.6f); // light green
+            case InputState.Released:
+                return new Color(1f, 0.6f, 0.6f); // light red
+            case InputState.Movement:
+                return new Color(0.6f, 0.8f, 1f); // light blue
+
+            default:
+                return Color.white;
+        }
+    }
+
+    private void DrawFilterTitle(ref Vector2 scrollPos, string title)
+    {
+        Color oColor = GUI.color;
+        GUI.color = GetColorForState(activeState);
+        EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
+        GUI.color = oColor;
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandHeight(true));
+    }
+
+    private void DrawFilterButton(InputState state, string label)
+    {
+        Color originalTextColor = GUI.contentColor;
+        Color originalBackground = GUI.backgroundColor;
+
+        GUI.contentColor = GetColorForState(state);
+        // Active button text color
+        if (activeState == state)
+        {
+            GUI.backgroundColor = grey;
+        }
+        else
+        {
+            //GUI.contentColor = Color.white;
+            GUI.backgroundColor = new Color(0.3f, 0.3f, 0.3f);
+        }
+
+        if (GUILayout.Button(label, EditorStyles.toolbarButton))
+        {
+            activeState = state;
+        }
+
+        // Restore colors
+        GUI.contentColor = originalTextColor;
+        GUI.backgroundColor = originalBackground;
+    }
+
+    private void SaveLogsToFile()
+    {
+
+        return;
     }
 }
