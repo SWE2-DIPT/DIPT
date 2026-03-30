@@ -125,6 +125,7 @@
     color: white;
     background-color:#1F1F1F;
     border-radius: 8px;
+    font-size: 300%;
 }
 
 .bumper-button-pressed {
