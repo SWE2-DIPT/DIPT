@@ -87,8 +87,10 @@ public class ControllerEmulation : EditorWindow
                     if (GUILayout.RepeatButton(DpadControlNames[i]))
                     {
                         gamepadButton = (GamepadButton)i;
+                        buttonsPressed |= 1u << (int)gamepadButton;
                     }
                 }
+                
             }
             if (control is ButtonControl){
                 switch (control.name)
@@ -111,12 +113,6 @@ public class ControllerEmulation : EditorWindow
                     case "rightShoulder":
                         gamepadButton = GamepadButton.RightShoulder;
                         break;
-                    case "leftTrigger":
-                        gamepadButton = GamepadButton.LeftTrigger;
-                        break;
-                    case "rightTrigger":
-                        gamepadButton = GamepadButton.RightTrigger;
-                        break;
                     case "start":
                         gamepadButton = GamepadButton.Start;
                         break;
@@ -134,16 +130,7 @@ public class ControllerEmulation : EditorWindow
                 }
 
                 if (GUILayout.RepeatButton(control.displayName)){
-                    // GamepadState.buttons is 32bit while gamepadButton could be 32 or 33
-                    if ((int)gamepadButton < 32)
-                    {
-                        buttonsPressed |= 1u << (int)gamepadButton;
-                    }
-                    else
-                    {
-                        if ((int)gamepadButton == 32) leftTriggerValue = 1;
-                        if ((int)gamepadButton == 33) rightTriggerValue = 1;
-                    }
+                    buttonsPressed |= 1u << (int)gamepadButton;
                 }
             }
         }
@@ -293,6 +280,7 @@ public class ControllerEmulation : EditorWindow
             leftStickValues = (leftJoystickStick - leftJoystickCenter) / joystickRadius;
             leftStickValues.y *= -1;
         }
+
         if (mouseDrag && inRightJoystick)// add mouse click
         {
             // distance normal for radius from center
