@@ -16,6 +16,7 @@ using Unity.VisualScripting;
 using UnityEngine.InputSystem.Controls;
 using System;
 using Unity.Collections;
+// using System.Numerics;
 
 /// <summary>
 /// An example plugin.
@@ -25,6 +26,10 @@ public class ControllerEmulation : EditorWindow
     public string controllerType = "";
     private Gamepad emulator;
     private bool mouseDrag = false;
+    private bool inLeftJoystick = false;
+    private bool inRightJoystick = false;
+    private Vector2 leftStickValues = Vector2.zero;
+    private Vector2 rightStickValues = Vector2.zero;
 
     [MenuItem("Tools/DIPT/ControllerEmulation")]
     public static void ShowWindow()
@@ -145,17 +150,7 @@ public class ControllerEmulation : EditorWindow
         Event e = Event.current;
         Vector2 mousePos = e.mousePosition;
 
-        GUILayout.Label("Mouse Position: " + mousePos);
-        if (e.type == EventType.MouseDown)
-        {
-            Debug.Log("Mouse clicked at: " + mousePos);
-        }
-        if (e.type == EventType.MouseDrag)
-        {
-            Debug.Log("Dragging at: " + mousePos);
-        }
-
-        Rect area = GUILayoutUtility.GetRect(400, 200);
+        Rect area = GUILayoutUtility.GetRect(300, 120);
         float joystickRadius = 50;
         float joystickStickRadius = 30;
         float marginBetweenJoysticks = 30;
@@ -171,10 +166,19 @@ public class ControllerEmulation : EditorWindow
         Handles.DrawSolidDisc(rightJoystickCenter, Vector3.forward, joystickRadius);
 
         // check mouse clicked in which joystick pad
-        // if (e.type == EventType.MouseDown)
-        // {
-        //     if (Vector2.Distance(mousePos, leftJoystickCenter) < joystickRadius)
-        // }
+        if (e.type == EventType.MouseDown)
+        {
+            if (Vector2.Distance(mousePos, leftJoystickCenter) < joystickRadius)
+            {
+                inLeftJoystick = true;
+                inRightJoystick = false;
+            }
+            if (Vector2.Distance(mousePos, rightJoystickCenter) < joystickRadius)
+            {
+                inLeftJoystick = false;
+                inRightJoystick = true;
+            }
+        }
 
         // mouse dragging joystick stick
         if (e.type == EventType.MouseDrag)
@@ -184,18 +188,58 @@ public class ControllerEmulation : EditorWindow
         if (e.type == EventType.MouseUp)
         {
             mouseDrag = false;
+            inLeftJoystick = false;
+            inRightJoystick = false;
+            leftStickValues = Vector2.zero;
+            rightStickValues = Vector2.zero;
         }
         
         // moving joystick stick
-        if (mouseDrag && Vector2.Distance(mousePos, leftJoystickCenter) < (joystickRadius+10))
+        if (mouseDrag && inLeftJoystick)
         {
-            leftJoystickStick = mousePos;
-            // add calculation for joystick for gamepadState
+            // distance normal for radius from center
+            float normalizeValue = joystickRadius / Vector2.Distance(mousePos, leftJoystickCenter);
+            // set joystick stick to right distance from joystick pad
+            if (Vector2.Distance(mousePos, leftJoystickCenter) > joystickRadius)
+            {
+                // get distance from center
+                Vector2 normMousePos = mousePos - leftJoystickCenter;
+                // normalize distance from center to be at most radius
+                normMousePos.x *= normalizeValue;
+                normMousePos.y *= normalizeValue;
+
+                leftJoystickStick = leftJoystickCenter + normMousePos;
+            }
+            else
+            {
+                leftJoystickStick = mousePos;
+            }
+            // get joystick values
+            leftStickValues = (leftJoystickStick - leftJoystickCenter) / joystickRadius;
+            leftStickValues.y *= -1;
         }
-        if (mouseDrag && Vector2.Distance(mousePos, rightJoystickCenter) < (joystickRadius+10))
+        if (mouseDrag && inRightJoystick)
         {
-            rightJoystickStick = mousePos;
-            // add calculation for joystick for gamepadState
+            // distance normal for radius from center
+            float normalizeValue = joystickRadius / Vector2.Distance(mousePos, rightJoystickCenter);
+            // set joystick stick to right distance from joystick pad
+            if (Vector2.Distance(mousePos, rightJoystickCenter) > joystickRadius)
+            {
+                // get distance from center
+                Vector2 normMousePos = mousePos - rightJoystickCenter;
+                // normalize distance from center to be at most radius
+                normMousePos.x *= normalizeValue;
+                normMousePos.y *= normalizeValue;
+
+                rightJoystickStick = rightJoystickCenter + normMousePos;
+            }
+            else
+            {
+                rightJoystickStick = mousePos;
+            }
+            // get joystick values
+            rightStickValues = (rightJoystickStick - rightJoystickCenter) / joystickRadius;
+            rightStickValues.y *= -1;
         }
 
         // draw joystick sticks
@@ -208,7 +252,9 @@ public class ControllerEmulation : EditorWindow
         {
             buttons = buttonsPressed,
             leftTrigger = leftTriggerPressBool,
-            rightTrigger = rightTriggerPressBool
+            rightTrigger = rightTriggerPressBool,
+            leftStick = leftStickValues,
+            rightStick = rightStickValues,
         });
 
     }
