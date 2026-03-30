@@ -26,9 +26,10 @@ public class ControllerGUI : EditorWindow
     private static ControllerComponents components;
 
     VisualElement R_Trigger, L_Trigger;
+    Label R_trigger_value, L_trigger_value;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
-
+    
     private void OnEnable()
     {
         manager = new ControllerManager();
@@ -90,6 +91,9 @@ public class ControllerGUI : EditorWindow
             "up-pad", "down-pad", "left-pad", "right-pad",
             "advanced"
         });
+
+        R_trigger_value = rootVisualElement.Q<Label>("RT-trigger-value-label");
+        L_trigger_value = rootVisualElement.Q<Label>("LT-trigger-value-label");
     }
 
     /// <summary>
@@ -211,13 +215,10 @@ public class ControllerGUI : EditorWindow
                                                                color_hex("#1F1F1F"), color_hex("#0078D4"));
 
 
-        components.GetComponentState(components.GetLeftBumper(), L_Bumper, "bumper-button-pressed");
-        components.GetComponentState(components.GetRightBumper(), R_Bumper, "bumper-button-pressed");
-
-        components.GetComponentState(components.GetDpadUp(), Dpad_up, "dpad-pressed");
-        components.GetComponentState(components.GetDpadDown(), Dpad_down, "dpad-pressed");
-        components.GetComponentState(components.GetDpadRight(), Dpad_right, "dpad-pressed");
-        components.GetComponentState(components.GetDpadLeft(), Dpad_left, "dpad-pressed");
+        components.GetComponentState(components.GetDpadUp(), buttons["up-pad"], "dpad-pressed");
+        components.GetComponentState(components.GetDpadDown(), buttons["down-pad"], "dpad-pressed");
+        components.GetComponentState(components.GetDpadRight(), buttons["right-pad"], "dpad-pressed");
+        components.GetComponentState(components.GetDpadLeft(), buttons["left-pad"], "dpad-pressed");
     }
 
     public void UpdateGuiAnalogs()
@@ -230,13 +231,14 @@ public class ControllerGUI : EditorWindow
             R_Trigger.style.height = new Length(RT * 100, LengthUnit.Percent);
         if (L_Trigger != null)
             L_Trigger.style.height = new Length(LT * 100, LengthUnit.Percent);
-        
-        //R_TriggerFill.style.height = Length.Percent(RT * 100);
-        RT_TriggerValue.style.fontSize = 20f;
-        RT_TriggerValue.text = $"Value: {RT:F2}";
 
-        //L_TriggerFill.style.height = Length.Percent(LT * 100);
-        LT_TriggerValue.style.fontSize = 20f;
-        LT_TriggerValue.text = $"Value: {LT:F2}";
+        //buttons["RT-button"].style.height = Length.Percent(RT * 100);
+        R_trigger_value.style.fontSize = 20f;
+        R_trigger_value.text = $"{RT:F2}";
+        
+
+        //buttons["LT-button"].style.height = Length.Percent(LT * 100);
+        L_trigger_value.style.fontSize = 20f;
+        L_trigger_value.text = $"{LT:F2}";
     }
 }
