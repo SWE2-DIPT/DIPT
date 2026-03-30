@@ -129,6 +129,22 @@ public class ControllerComponents
         }
     }
 
+    public void GetButtonState(bool buttonPressed, VisualElement element, StyleColor idle_color, StyleColor idle_backColor, 
+                                                                        StyleColor pressed_color, StyleColor pressed_backColor)
+    {
+        if (buttonPressed)
+        {
+            element.style.color = pressed_color;
+            element.style.backgroundColor = pressed_backColor; 
+        }
+        else
+        {
+            element.style.color = idle_color;
+            element.style.backgroundColor = idle_backColor;
+        }
+    }
+
+
     public float GetRightTrigger()
     {
         return rightTrigger;

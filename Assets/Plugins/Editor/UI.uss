@@ -144,9 +144,9 @@
     color: white;
     background-color: #333;
     border-radius: 8px;
+    z-index: 2;
 }
-
-/* .trigger-button-triggered {
+.trigger-fill-container {
     width: 100px;
     height: 70px;
     color: #333;
@@ -173,7 +173,26 @@
     justify-content: flex-end; 
 }
 
-/* Base style for the D-pad rectangles */
+/* Base style for the D-pad rectangles 
+    height: 100px;
+    position: relative;
+}*/
+
+.trigger-fill {
+    width: 100px;
+    height: 0px;
+    bottom: 0;        
+    left: 0;
+    background-color: white;
+    border-radius: 8px;
+    position: absolute;
+    z-index: 0;
+}
+
+.trigger-value {
+
+}
+
 .dpad-btn {
     position: absolute;
     background-color: #333;
