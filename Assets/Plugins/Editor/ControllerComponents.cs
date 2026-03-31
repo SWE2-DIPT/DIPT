@@ -1,6 +1,6 @@
 /*******************************************************
-* Script:      LogPlugin.cs
-* Author(s):   Nick Stearns, Jarrett Williams(Add yourselves to this!)
+* Script:      ControllerComponents.cs
+* Author(s):   Nick Stearns, Jarrett Williams (Add yourselves to this!)
 * 
 * Description:
 *    A example plugin meant to showcase how to create plugins

@@ -222,3 +222,20 @@
     background-color: white;
 }
 
+.joystick-zone {
+    border-radius:50%;
+    background-color:white;
+
+    height:90%;
+    width:90%;
+    justify-content: center;
+    align-items: center;
+}
+
+.joystick {
+    border-radius:50%;
+    background-color:black;
+
+    height:70%;
+    width:70%;
+}
