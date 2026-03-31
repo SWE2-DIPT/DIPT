@@ -1,56 +1,42 @@
 /*******************************************************
 * Script:      ControllerDetection.cs
-* Author(s):   Senny Lu (Add yourselves to this!)
+* Author(s):   Senny Lu
 * 
 * Description:
-*    
+*    Controller Emulation for gamepad
 *******************************************************/
 
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using Unity.VisualScripting;
+using UnityEngine.InputSystem.Controls;
+using System;
+using Unity.Collections;
 
-/// <summary>
-/// An example plugin.
-/// </summary>
-public class ControllerDectection : EditorWindow
+public class ControllerDetection
 {
-    public string controllerType = "";
-
-    [MenuItem("Tools/DIPT/ControllerDetection")]
-    public static void ShowWindow()
-    {
-        GetWindow(typeof(ControllerDectection));
-    }
-    
-    public void FindControllerType()
+    // returns name of most recently used controller
+    public string FindCurrentController()
     {
         var gamepad = Gamepad.current;
         if (gamepad == null)
         {
-            controllerType = "No Gamepads Detected";
-            return;
+            return "No Gamepads Detected";
         }
-        controllerType = gamepad.layout;
+        return gamepad.layout;
     }
 
-    void OnGUI()
+    // returns name of controller in parameter
+    public string FindControllerType(Gamepad controller)
     {
-        var gamepad = Gamepad.current;
+        var gamepad = controller;
         if (gamepad == null)
         {
-            FindControllerType();
-            GUILayout.Label(controllerType, EditorStyles.boldLabel);
-            return;
+            return "No Gamepads Detected";
         }
-
-        FindControllerType();
-        GUILayout.Label(controllerType, EditorStyles.boldLabel);
-        foreach (var control in gamepad.allControls)
-        {
-            GUILayout.Label(control.displayName);
-        }
+        return gamepad.layout;
     }
-
 }

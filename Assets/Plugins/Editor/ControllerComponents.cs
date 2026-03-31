@@ -1,46 +1,41 @@
+/*******************************************************
+* Script:      ControllerComponents.cs
+* Author(s):   Nick Stearns, Jarrett Williams (Add yourselves to this!)
+* 
+* Description:
+*    A example plugin meant to showcase how to create plugins
+*    in Unity.
+*******************************************************/
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
-enum buttons
-{
-    BottomFace,
-    TopFace,
-    RightFace,
-    LeftFace,
-    RightBumper,
-    LeftBumper
-};
+enum buttons { BottomFace, TopFace, RightFace, LeftFace, RightBumper, LeftBumper, dpadUp };
 public class ControllerComponents
 {
-    private Vector2 rightJoystick;
-    private Vector2 leftJoystick;
-    private float rightTrigger;
-    private float leftTrigger;
+    // Joysticks
+    private Vector2 rightJoystick, leftJoystick;
+    // Triggers
+    private float rightTrigger, leftTrigger;
 
-    private bool bottomFaceButton;
-    private bool leftFaceButton;
-    private bool rightFaceButton;
-    private bool topFaceButton;
-    private bool rightBumper;
-    private bool leftBumper;
+    // Buttons
+    private bool bottomFaceButton, leftFaceButton, rightFaceButton, topFaceButton;
+    private bool rightBumper, leftBumper;
+    private bool start, select;
+    private bool leftJoystickButton, rightJoystickButton;
 
-    private bool dpadUp;
-    private bool dpadDown;
-    private bool dpadLeft;
-    private bool dpadRight;
+    // D-Pad
+    private bool dpadUp, dpadDown, dpadLeft, dpadRight;
 
-    private bool prevBottomFaceButton;
-    private bool prevLeftFaceButton;
-    private bool prevRightFaceButton;
-    private bool prevTopFaceButton;
-    private bool prevRightBumper;
-    private bool prevLeftBumper;
-
-    private Vector2 prevLeftJoystick;
-    private Vector2 prevRightJoystick;
-    private float prevLeftTrigger;
-    private float prevRightTrigger;
+    //Prev bool states
+    private bool prevBottomFaceButton, prevLeftFaceButton, prevRightFaceButton, prevTopFaceButton;
+    private bool prevDpadUp, prevDpadDown, prevDpadLeft, prevDpadRight;
+    private bool prevRightBumper, prevLeftBumper;
+    private bool prevStart, prevSelect;
+    private bool prevLeftJoystickButton, prevRightJoystickButton;
+    private Vector2 prevLeftJoystick, prevRightJoystick;
+    private float prevLeftTrigger, prevRightTrigger;
 
     private const float joystickThreshold = 0.10f;
     private const float triggerThreshold = 0.05f;
@@ -106,6 +101,11 @@ public class ControllerComponents
         dpadLeft = gamepad.dpad.left.isPressed;
         dpadRight = gamepad.dpad.right.isPressed;
 
+        start = gamepad.startButton.isPressed;
+        select = gamepad.selectButton.isPressed;
+
+        leftJoystickButton = gamepad.leftStickButton.isPressed;
+        rightJoystickButton = gamepad.rightStickButton.isPressed;
 
         CheckButtonState("Bottom Face Button", bottomFaceButton, ref prevBottomFaceButton);
         CheckButtonState("Left Face Button", leftFaceButton, ref prevLeftFaceButton);
@@ -114,7 +114,15 @@ public class ControllerComponents
         CheckButtonState("Right Bumper", rightBumper, ref prevRightBumper);
         CheckButtonState("Left Bumper", leftBumper, ref prevLeftBumper);
 
-    } 
+        CheckButtonState("DPad Up", dpadUp, ref prevDpadUp);
+        CheckButtonState("DPad Down", dpadDown, ref prevDpadDown);
+        CheckButtonState("DPad Left", dpadLeft, ref prevDpadLeft);
+        CheckButtonState("DPad Right", dpadRight, ref prevDpadRight);
+        CheckButtonState("Start Button", start, ref prevStart);
+        CheckButtonState("Select Button", select, ref prevSelect);
+        CheckButtonState("Left Joystick Press", leftJoystickButton, ref prevLeftJoystickButton);
+        CheckButtonState("Right Joystick Press", rightJoystickButton, ref prevRightJoystickButton);
+    }
 
     private void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
     {
@@ -132,7 +140,9 @@ public class ControllerComponents
 
     public void GetComponentState(bool buttonPressed, VisualElement element, string state)
     {
-        if (buttonPressed)
+        if (element == null)
+            return;
+        if(buttonPressed)
         {
             element.AddToClassList(state);
         }
@@ -197,26 +207,70 @@ public class ControllerComponents
 
     public bool GetDpadUp()
     {
-        Debug.Log("up dpad");
         return dpadUp;
     }
 
     public bool GetDpadDown()
     {
-        Debug.Log("down dpad");
         return dpadDown;
     }
 
     public bool GetDpadRight()
     {
-        Debug.Log("right dpad");
         return dpadRight;
     }
 
     public bool GetDpadLeft()
     {
-        Debug.Log("left dpad");
         return dpadLeft;
     }
-    
+
+    public void SetBottomFaceButton(bool value)
+    {
+        bottomFaceButton = value;
+    }
+
+    public void SetTopFaceButton(bool value)
+    {
+        topFaceButton = value;
+    }
+
+    public void SetRightFaceButton(bool value)
+    {
+        rightFaceButton = value;
+    }
+
+    public void SetLeftFaceButton(bool value)
+    {
+        leftFaceButton = value;
+    }
+
+    public void SetRightBumper(bool value)
+    {
+        rightBumper = value;
+    }
+
+    public void SetLeftBumper(bool value)
+    {
+        leftBumper = value;
+    }
+    public void SetDpadUp(bool value)
+    {
+        dpadUp = value;
+    }
+
+    public void SetDpadDown(bool value)
+    {
+        dpadDown = value;
+    }
+
+    public void SetDpadLeft(bool value)
+    {
+        dpadLeft = value;
+    }
+
+    public void SetDpadRight(bool value)
+    {
+        dpadRight = value;
+    }
 }
