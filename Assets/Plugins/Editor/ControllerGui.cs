@@ -34,8 +34,6 @@ public class ControllerGUI : EditorWindow
     {
         manager = new ControllerManager();
         components = new ControllerComponents();
-
-        
     }
 
     [MenuItem("Tools/DIPT/InputVisualizer")]

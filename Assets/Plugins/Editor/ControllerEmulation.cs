@@ -40,7 +40,8 @@ public class ControllerEmulation : EditorWindow
      /*10*/ "LeftShoulder", 
      /*11*/ "RightShoulder", 
      /*12*/ "Start", 
-     /*13*/ "Select"};
+     /*13*/ "Select"
+    };
 
     [MenuItem("Tools/DIPT/ControllerEmulation")]
     public static void ShowWindow()
