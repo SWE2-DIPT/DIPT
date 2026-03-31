@@ -75,7 +75,7 @@ public class ControllerEmulation : EditorWindow
         Vector2 mousePos = e.mousePosition;
 
         // check mouse button is down
-        if (!Mouse.current.leftButton.isPressed)
+        if (Mouse.current == null || !Mouse.current.leftButton.isPressed)
         {
             mouseDown = false;
         }
