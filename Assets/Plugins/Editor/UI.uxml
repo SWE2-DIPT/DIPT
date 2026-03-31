@@ -46,6 +46,19 @@
 				<ui:VisualElement class="joystick"/>
 			</ui:VisualElement>
 		</ui:VisualElement>
+		<ui:VisualElement  class="box-border" style="width: 53px; height: 130px;">
+			<!--Insert System buttons here-->
+			<ui:VisualElement class="horizontal-group">
+				<ui:VisualElement class="button horiz xbox">
+				</ui:VisualElement>
+				<ui:VisualElement class="button horiz">
+				</ui:VisualElement>
+				<ui:VisualElement class="button horiz">
+				</ui:VisualElement>
+				<ui:VisualElement class="button horiz">
+				</ui:VisualElement>
+			</ui:VisualElement>
+		</ui:VisualElement>
 		<ui:VisualElement  class="box-border" style="width: 130px; height: 130px;">
 			<ui:VisualElement name="YBAX-buttons" class="diamond-group">
 					<ui:VisualElement name="Y-button" class="top button">
