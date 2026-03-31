@@ -100,7 +100,10 @@ public class ControllerEmulation : EditorWindow
         GUI.Box(rightTriggerBox,"Right Trigger");
 
         Rect activeLeftTriggerBox = leftTriggerBox;
+        activeLeftTriggerBox.height = 0;
         Rect activeRightTriggerBox = rightTriggerBox;
+        activeRightTriggerBox.height = 0;
+        
 
         // check mouse clicked in which analog pad
         if (e.type == EventType.MouseDown)
