@@ -1,8 +1,17 @@
+/*******************************************************
+* Script:      LogPlugin.cs
+* Author(s):   Nick Stearns, Jarrett Williams(Add yourselves to this!)
+* 
+* Description:
+*    A example plugin meant to showcase how to create plugins
+*    in Unity.
+*******************************************************/
+
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
-enum buttons { BottomFace, TopFace, RightFace, LeftFace, RightBumper, LeftBumper };
+enum buttons { BottomFace, TopFace, RightFace, LeftFace, RightBumper, LeftBumper, dpadUp };
 public class ControllerComponents
 {
     // Joysticks
@@ -10,16 +19,21 @@ public class ControllerComponents
     // Triggers
     private float rightTrigger, leftTrigger;
 
+    // Buttons
     private bool bottomFaceButton, leftFaceButton, rightFaceButton, topFaceButton;
     private bool rightBumper, leftBumper;
+    private bool start, select;
+    private bool leftJoystickButton, rightJoystickButton;
 
     // D-Pad
     private bool dpadUp, dpadDown, dpadLeft, dpadRight;
 
+    //Prev bool states
     private bool prevBottomFaceButton, prevLeftFaceButton, prevRightFaceButton, prevTopFaceButton;
     private bool prevDpadUp, prevDpadDown, prevDpadLeft, prevDpadRight;
     private bool prevRightBumper, prevLeftBumper;
-
+    private bool prevStart, prevSelect;
+    private bool prevLeftJoystickButton, prevRightJoystickButton;
     private Vector2 prevLeftJoystick, prevRightJoystick;
     private float prevLeftTrigger, prevRightTrigger;
 
@@ -87,6 +101,11 @@ public class ControllerComponents
         dpadLeft = gamepad.dpad.left.isPressed;
         dpadRight = gamepad.dpad.right.isPressed;
 
+        start = gamepad.startButton.isPressed;
+        select = gamepad.selectButton.isPressed;
+
+        leftJoystickButton = gamepad.leftStickButton.isPressed;
+        rightJoystickButton = gamepad.rightStickButton.isPressed;
 
         CheckButtonState("Bottom Face Button", bottomFaceButton, ref prevBottomFaceButton);
         CheckButtonState("Left Face Button", leftFaceButton, ref prevLeftFaceButton);
@@ -99,6 +118,10 @@ public class ControllerComponents
         CheckButtonState("DPad Down", dpadDown, ref prevDpadDown);
         CheckButtonState("DPad Left", dpadLeft, ref prevDpadLeft);
         CheckButtonState("DPad Right", dpadRight, ref prevDpadRight);
+        CheckButtonState("Start Button", start, ref prevStart);
+        CheckButtonState("Select Button", select, ref prevSelect);
+        CheckButtonState("Left Joystick Press", leftJoystickButton, ref prevLeftJoystickButton);
+        CheckButtonState("Right Joystick Press", rightJoystickButton, ref prevRightJoystickButton);
     }
 
     private void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
@@ -128,6 +151,22 @@ public class ControllerComponents
             element.RemoveFromClassList(state);
         }
     }
+
+    public void GetButtonState(bool buttonPressed, VisualElement element, StyleColor idle_color, StyleColor idle_backColor, 
+                                                                        StyleColor pressed_color, StyleColor pressed_backColor)
+    {
+        if (buttonPressed)
+        {
+            element.style.color = pressed_color;
+            element.style.backgroundColor = pressed_backColor; 
+        }
+        else
+        {
+            element.style.color = idle_color;
+            element.style.backgroundColor = idle_backColor;
+        }
+    }
+
 
     public float GetRightTrigger()
     {

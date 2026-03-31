@@ -8,11 +8,14 @@
 *******************************************************/
 
 using Codice.Client.BaseCommands;
+using System.ComponentModel;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using static UnityEngine.Rendering.DebugUI;
+
 
 /// <summary>
 /// An example plugin.
@@ -23,9 +26,10 @@ public class ControllerGUI : EditorWindow
     private static ControllerComponents components;
 
     VisualElement R_Trigger, L_Trigger;
+    Label R_trigger_value, L_trigger_value;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
-
+    
     private void OnEnable()
     {
         manager = new ControllerManager();
@@ -87,6 +91,9 @@ public class ControllerGUI : EditorWindow
             "up-pad", "down-pad", "left-pad", "right-pad",
             "advanced"
         });
+
+        R_trigger_value = rootVisualElement.Q<Label>("RT-trigger-value-label");
+        L_trigger_value = rootVisualElement.Q<Label>("LT-trigger-value-label");
     }
 
     /// <summary>
@@ -171,13 +178,17 @@ public class ControllerGUI : EditorWindow
         }
     }
 
+    //getter for colors
+    private Color color_hex (string hex)
+    {
+        Color color;
+        ColorUtility.TryParseHtmlString(hex, out color);
+        return color;
+    }
+
     private void UpdateGuiButtons()
     {
-        components.GetComponentState(components.GetBottomFaceButton(), buttons["A-button"], "ButtonPressed");
-        components.GetComponentState(components.GetUpFaceButton(), buttons["Y-button"], "ButtonPressed");
-        components.GetComponentState(components.GetRightFaceButton(), buttons["B-button"], "ButtonPressed");
-        components.GetComponentState(components.GetLeftFaceButton(), buttons["X-button"], "ButtonPressed");
-
+       
         components.GetComponentState(components.GetLeftBumper(), buttons["LB-button"], "bumper-button-pressed");
         components.GetComponentState(components.GetRightBumper(), buttons["RB-button"], "bumper-button-pressed");
 
@@ -185,14 +196,49 @@ public class ControllerGUI : EditorWindow
         components.GetComponentState(components.GetDpadDown(), buttons["down-pad"], "DPadPressed");
         components.GetComponentState(components.GetDpadLeft(), buttons["left-pad"], "DPadPressed");
         components.GetComponentState(components.GetDpadRight(), buttons["right-pad"], "DPadPressed");
+        //Y
+        components.GetButtonState(components.GetUpFaceButton(), buttons["Y-button"], 
+                                                               color_hex("#FFCC00"), color_hex("#1F1F1F"), 
+                                                               color_hex("#1F1F1F"), color_hex("#FFCC00"));
+        //A
+        components.GetButtonState(components.GetBottomFaceButton(), buttons["A-button"],
+                                                               color_hex("#107C10"), color_hex("#1F1F1F"),
+                                                               color_hex("#1F1F1F"), color_hex("#107C10"));
+        //B
+        components.GetButtonState(components.GetRightFaceButton(), buttons["B-button"],
+                                                               color_hex("#D83B01"), color_hex("#1F1F1F"),
+                                                               color_hex("#1F1F1F"), color_hex("#D83B01"));
+
+        //X
+        components.GetButtonState(components.GetLeftFaceButton(), buttons["X-button"],
+                                                               color_hex("#0078D4"), color_hex("#1F1F1F"),
+                                                               color_hex("#1F1F1F"), color_hex("#0078D4"));
+
+
+        components.GetComponentState(components.GetDpadUp(), buttons["up-pad"], "dpad-pressed");
+        components.GetComponentState(components.GetDpadDown(), buttons["down-pad"], "dpad-pressed");
+        components.GetComponentState(components.GetDpadRight(), buttons["right-pad"], "dpad-pressed");
+        components.GetComponentState(components.GetDpadLeft(), buttons["left-pad"], "dpad-pressed");
     }
 
     public void UpdateGuiAnalogs()
-    {
+    {   
+        
+        float RT = components.GetRightTrigger();
+        float LT = components.GetLeftTrigger();
         // These two lines set the trigger width to 0 until pressed. I will fix this later.
         if (R_Trigger != null)
-            R_Trigger.style.height = new Length(components.GetRightTrigger() * 100, LengthUnit.Percent);
+            R_Trigger.style.height = new Length(RT * 100, LengthUnit.Percent);
         if (L_Trigger != null)
-            L_Trigger.style.height = new Length(components.GetLeftTrigger() * 100, LengthUnit.Percent);
+            L_Trigger.style.height = new Length(LT * 100, LengthUnit.Percent);
+
+        //buttons["RT-button"].style.height = Length.Percent(RT * 100);
+        R_trigger_value.style.fontSize = 20f;
+        R_trigger_value.text = $"{RT:F2}";
+        
+
+        //buttons["LT-button"].style.height = Length.Percent(LT * 100);
+        L_trigger_value.style.fontSize = 20f;
+        L_trigger_value.text = $"{LT:F2}";
     }
 }

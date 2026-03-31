@@ -9,27 +9,22 @@ using UnityEngine.UIElements;
 public class Tests
 {
     private ControllerGUI window;
-    private ControllerEmulation controllerDectection;
+    private ControllerDetection controllerDectection;
     private TEST_ControllerManager TEST_CM;
     private ControllerManager controller;
     
     [SetUp]
     public void Setup()
     {
+        controllerDectection = new ControllerDetection();
         window = EditorWindow.GetWindow<ControllerGUI>();
-        controllerDectection = EditorWindow.GetWindow<ControllerEmulation>();
         controller = new ControllerManager();
         TEST_CM = new TEST_ControllerManager();
-        
     }
 
     [TearDown]
     public void TearDown()
     {
-        if (controllerDectection != null)
-        {
-            controllerDectection.Close();
-        }
         if (window != null)
         {
             window.Close();

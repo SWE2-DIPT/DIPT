@@ -16,9 +16,14 @@
 													for the trigger containers-->
 			<ui:VisualElement name="LT-button" class="trigger-button button">
 				<ui:Label text="LT" class="button-label"/>
+				<ui:Label text="Val: " name="LT-trigger-value-label" />
+				<ui:VisualElement name="LT-fill" class="trigger-fill" />
 			</ui:VisualElement>
+
 			<ui:VisualElement name="RT-button" class="trigger-button button">
 				<ui:Label text="RT" class="button-label"/>
+				<ui:Label text="Val: " name="RT-trigger-value-label" />
+				<ui:VisualElement name="RT-fill" class="trigger-fill" />
 			</ui:VisualElement>
 		</ui:VisualElement>
 	</ui:VisualElement>

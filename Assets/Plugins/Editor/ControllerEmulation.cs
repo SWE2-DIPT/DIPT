@@ -1,10 +1,9 @@
 /*******************************************************
 * Script:      ControllerEmulation.cs
-* Author(s):   Senny Lu (Add yourselves to this!)
+* Author(s):   Senny Lu
 * 
 * Description:
-*    Controller Emulation only for buttons for now
-*    Left and right trigger are set to fully pressed 1 when button is pressed
+*    Controller Emulation for gamepad
 *******************************************************/
 
 using UnityEngine;
@@ -16,135 +15,58 @@ using Unity.VisualScripting;
 using UnityEngine.InputSystem.Controls;
 using System;
 using Unity.Collections;
-// using System.Numerics;
 
-/// <summary>
-/// An example plugin.
-/// </summary>
+
 public class ControllerEmulation : EditorWindow
 {
-    public string controllerType = "";
-    private Gamepad emulator;
+    private GamepadEmulator emulator;
     private bool mouseDrag = false;
+    private bool mouseDown = false;
     private bool inLeftJoystick = false;
     private bool inRightJoystick = false;
-    private Vector2 leftStickValues = Vector2.zero;
-    private Vector2 rightStickValues = Vector2.zero;
     private bool inLeftTrigger = false;
     private bool inRightTrigger = false;
-    private float leftTriggerValue = 0f;
-    private float rightTriggerValue = 0f;
+    private string[] buttonNames = 
+    {/*0*/ "DpadUp",
+     /*1*/ "DpadDown", 
+     /*2*/ "DpadLeft", 
+     /*3*/ "DpadRight", 
+     /*4*/ "North", 
+     /*5*/ "East", 
+     /*6*/ "South", 
+     /*7*/ "West", 
+     /*8*/ "LeftStick", 
+     /*9*/ "RightStick", 
+     /*10*/ "LeftShoulder", 
+     /*11*/ "RightShoulder", 
+     /*12*/ "Start", 
+     /*13*/ "Select"};
 
     [MenuItem("Tools/DIPT/ControllerEmulation")]
     public static void ShowWindow()
     {
         GetWindow(typeof(ControllerEmulation));
     }
-    
-    public void FindControllerType()
-    {
-        var gamepad = Gamepad.current;
-        if (gamepad == null)
-        {
-            controllerType = "No Gamepads Detected";
-            return;
-        }
-        controllerType = gamepad.layout;
-    }
 
     void OnEnable()
     {
-        emulator = InputSystem.AddDevice<Gamepad>();
+        emulator = new GamepadEmulator();
     }
     void OnDisable()
     {
-        InputSystem.RemoveDevice(emulator);
+        emulator.dispose();
     }
 
     void OnGUI()
     {
-        var gamepad = emulator;
-        if (gamepad == null)
-        {
-            FindControllerType();
-            GUILayout.Label(controllerType, EditorStyles.boldLabel);
-            return;
-        }
+        emulator.releaseAllButtons();
         
-        FindControllerType();
-        GUILayout.Label(controllerType, EditorStyles.boldLabel);
-
-        uint buttonsPressed = 0;
-
-        foreach (var control in gamepad.allControls)
+        // create a button for each controller button input
+        foreach (var button in buttonNames)
         {
-            GamepadButton gamepadButton;
-            if (control is DpadControl)
+            if (GUILayout.RepeatButton(button))
             {
-                string[] DpadControlNames = {"Up","Down","Left","Right"};
-                for (int i = 0; i<4; i++)
-                {
-                    if (GUILayout.RepeatButton(DpadControlNames[i]))
-                    {
-                        gamepadButton = (GamepadButton)i;
-                    }
-                }
-            }
-            if (control is ButtonControl){
-                switch (control.name)
-                {
-                    case "buttonNorth":
-                        gamepadButton = GamepadButton.North;
-                        break;
-                    case "buttonSouth":
-                        gamepadButton = GamepadButton.South;
-                        break;
-                    case "buttonEast":
-                        gamepadButton = GamepadButton.East;
-                        break;
-                    case "buttonWest":
-                        gamepadButton = GamepadButton.West;
-                        break;
-                    case "leftShoulder":
-                        gamepadButton = GamepadButton.LeftShoulder;
-                        break;
-                    case "rightShoulder":
-                        gamepadButton = GamepadButton.RightShoulder;
-                        break;
-                    case "leftTrigger":
-                        gamepadButton = GamepadButton.LeftTrigger;
-                        break;
-                    case "rightTrigger":
-                        gamepadButton = GamepadButton.RightTrigger;
-                        break;
-                    case "start":
-                        gamepadButton = GamepadButton.Start;
-                        break;
-                    case "select":
-                        gamepadButton = GamepadButton.Select;
-                        break;
-                    case "leftStickPress":
-                        gamepadButton = GamepadButton.LeftStick;
-                        break;
-                    case "rightStickPress":
-                        gamepadButton = GamepadButton.RightStick;
-                        break;
-                    default:
-                        continue;
-                }
-
-                if (GUILayout.RepeatButton(control.displayName)){
-                    // GamepadState.buttons is 32bit while gamepadButton could be 32 or 33
-                    if ((int)gamepadButton < 32)
-                    {
-                        buttonsPressed |= 1u << (int)gamepadButton;
-                    }
-                    else
-                    {
-                        if ((int)gamepadButton == 32) leftTriggerValue = 1;
-                        if ((int)gamepadButton == 33) rightTriggerValue = 1;
-                    }
-                }
+                emulator.pressButton(button);
             }
         }
 
@@ -152,25 +74,31 @@ public class ControllerEmulation : EditorWindow
         Event e = Event.current;
         Vector2 mousePos = e.mousePosition;
 
-        // mouse dragging
+        // check mouse button is down
+        if (!Mouse.current.leftButton.isPressed)
+        {
+            mouseDown = false;
+        }
+
+        // check mouse dragging
         if (e.type == EventType.MouseDown)
         {
             mouseDrag = true;
+            mouseDown = true;
         }
-        // mouse release
-        if (e.type == EventType.MouseUp)
+
+        // check mouse release
+        if (mouseDrag && !mouseDown)
         {
             mouseDrag = false;
             inLeftJoystick = false;
             inRightJoystick = false;
             inLeftTrigger = false;
             inRightTrigger = false;
-            leftStickValues = Vector2.zero;
-            rightStickValues = Vector2.zero;
-            leftTriggerValue = 0f;
-            rightTriggerValue = 0f;
+            emulator.clear();
         }
         
+        // analog triggers area creation
         Rect analogArea = GUILayoutUtility.GetRect(300, 120);
         float marginBetweenAnalog = 30;
         float analogWidth = 100;
@@ -183,62 +111,11 @@ public class ControllerEmulation : EditorWindow
         GUI.Box(rightTriggerBox,"Right Trigger");
 
         Rect activeLeftTriggerBox = leftTriggerBox;
+        activeLeftTriggerBox.height = 0;
         Rect activeRightTriggerBox = rightTriggerBox;
+        activeRightTriggerBox.height = 0;
 
-        // check mouse clicked in which analog pad
-        if (e.type == EventType.MouseDown)
-        {
-            if (leftTriggerBox.Contains(mousePos))
-            {
-                inLeftTrigger = true;
-                inRightTrigger = false;
-            }
-            if (rightTriggerBox.Contains(mousePos))
-            {
-                inLeftTrigger = false;
-                inRightTrigger = true;
-            }
-        }
-        
-        if (mouseDrag && inLeftTrigger) // add mouse click
-        {
-            float relativeMouseY = mousePos.y - topOfTriggerBoxes;
-            if (mousePos.y < bottomOfTriggerBoxes && mousePos.y > topOfTriggerBoxes)
-            {
-                activeLeftTriggerBox.y = mousePos.y;
-                activeLeftTriggerBox.height = analogHeight - relativeMouseY;
-            } else if (mousePos.y > bottomOfTriggerBoxes)
-            {
-                activeLeftTriggerBox.height = 0;
-            } else if (mousePos.y < topOfTriggerBoxes)
-            {
-                activeLeftTriggerBox.y = topOfTriggerBoxes;
-                activeLeftTriggerBox.height = analogHeight;
-            }
-            leftTriggerValue = activeLeftTriggerBox.height / analogHeight;
-        }
-        if (mouseDrag && inRightTrigger) // add mouse click
-        {
-            float relativeMouseY = mousePos.y - topOfTriggerBoxes;
-            if (mousePos.y < bottomOfTriggerBoxes && mousePos.y > topOfTriggerBoxes)
-            {
-                activeRightTriggerBox.y = mousePos.y;
-                activeRightTriggerBox.height = analogHeight - relativeMouseY;
-            } else if (mousePos.y > bottomOfTriggerBoxes)
-            {
-                activeRightTriggerBox.height = 0;
-            } else if (mousePos.y < topOfTriggerBoxes)
-            {
-                activeRightTriggerBox.y = topOfTriggerBoxes;
-                activeRightTriggerBox.height = analogHeight;
-            }
-            rightTriggerValue = activeRightTriggerBox.height / analogHeight;
-        }
-        GUI.color = Color.blue;
-        GUI.Box(activeLeftTriggerBox,"");
-        GUI.Box(activeRightTriggerBox,"");
-
-
+        // joystick area creation
         Rect joystickArea = GUILayoutUtility.GetRect(300, 120);
         float joystickRadius = 50;
         float joystickStickRadius = 30;
@@ -254,23 +131,79 @@ public class ControllerEmulation : EditorWindow
         Handles.DrawSolidDisc(leftJoystickCenter, Vector3.forward, joystickRadius);
         Handles.DrawSolidDisc(rightJoystickCenter, Vector3.forward, joystickRadius);
 
-        // check mouse clicked in which joystick pad
+
+        // check location of mouse click in which area
         if (e.type == EventType.MouseDown)
         {
+            inLeftJoystick = false;
+            inRightJoystick = false;
+            inLeftTrigger = false;
+            inRightTrigger = false;
+
             if (Vector2.Distance(mousePos, leftJoystickCenter) < joystickRadius)
             {
                 inLeftJoystick = true;
-                inRightJoystick = false;
             }
             if (Vector2.Distance(mousePos, rightJoystickCenter) < joystickRadius)
             {
-                inLeftJoystick = false;
                 inRightJoystick = true;
             }
+            if (leftTriggerBox.Contains(mousePos))
+            {
+                inLeftTrigger = true;
+            }
+            if (rightTriggerBox.Contains(mousePos))
+            {
+                inRightTrigger = true;
+            }
         }
+
+        // moving bar if in left trigger
+        if (mouseDrag && inLeftTrigger)
+        {
+            float relativeMouseY = mousePos.y - topOfTriggerBoxes;
+            if (mousePos.y < bottomOfTriggerBoxes && mousePos.y > topOfTriggerBoxes)
+            {
+                activeLeftTriggerBox.y = mousePos.y;
+                activeLeftTriggerBox.height = analogHeight - relativeMouseY;
+            } else if (mousePos.y > bottomOfTriggerBoxes)
+            {
+                activeLeftTriggerBox.height = 0;
+            } else if (mousePos.y < topOfTriggerBoxes)
+            {
+                activeLeftTriggerBox.y = topOfTriggerBoxes;
+                activeLeftTriggerBox.height = analogHeight;
+            }
+            emulator.pressLeftTrigger(activeLeftTriggerBox.height / analogHeight);
+        }
+
+        // moving bar if in right trigger
+        if (mouseDrag && inRightTrigger)
+        {
+            float relativeMouseY = mousePos.y - topOfTriggerBoxes;
+            if (mousePos.y < bottomOfTriggerBoxes && mousePos.y > topOfTriggerBoxes)
+            {
+                activeRightTriggerBox.y = mousePos.y;
+                activeRightTriggerBox.height = analogHeight - relativeMouseY;
+            } else if (mousePos.y > bottomOfTriggerBoxes)
+            {
+                activeRightTriggerBox.height = 0;
+            } else if (mousePos.y < topOfTriggerBoxes)
+            {
+                activeRightTriggerBox.y = topOfTriggerBoxes;
+                activeRightTriggerBox.height = analogHeight;
+            }
+            emulator.pressRightTrigger(activeRightTriggerBox.height / analogHeight);
+        }
+
+        // draw trigger bars
+        GUI.color = Color.blue;
+        GUI.Box(activeLeftTriggerBox,"");
+        GUI.Box(activeRightTriggerBox,"");
+
         
-        // moving joystick stick
-        if (mouseDrag && inLeftJoystick)// add mouse click
+        // moving joystick stick if in left joystick
+        if (mouseDrag && inLeftJoystick)
         {
             // distance normal for radius from center
             float normalizeValue = joystickRadius / Vector2.Distance(mousePos, leftJoystickCenter);
@@ -290,10 +223,12 @@ public class ControllerEmulation : EditorWindow
                 leftJoystickStick = mousePos;
             }
             // get joystick values
-            leftStickValues = (leftJoystickStick - leftJoystickCenter) / joystickRadius;
-            leftStickValues.y *= -1;
+            Vector2 move = (leftJoystickStick - leftJoystickCenter) / joystickRadius;
+            emulator.moveLeftJoystick(move.x, -move.y);
         }
-        if (mouseDrag && inRightJoystick)// add mouse click
+
+        // moving joystick stick if in right joystick
+        if (mouseDrag && inRightJoystick)
         {
             // distance normal for radius from center
             float normalizeValue = joystickRadius / Vector2.Distance(mousePos, rightJoystickCenter);
@@ -313,8 +248,8 @@ public class ControllerEmulation : EditorWindow
                 rightJoystickStick = mousePos;
             }
             // get joystick values
-            rightStickValues = (rightJoystickStick - rightJoystickCenter) / joystickRadius;
-            rightStickValues.y *= -1;
+            Vector2 move = (rightJoystickStick - rightJoystickCenter) / joystickRadius;
+            emulator.moveRightJoystick(move.x, -move.y);
         }
 
         // draw joystick sticks
@@ -322,16 +257,8 @@ public class ControllerEmulation : EditorWindow
         Handles.DrawSolidDisc(leftJoystickStick, Vector3.forward, joystickStickRadius);
         Handles.DrawSolidDisc(rightJoystickStick, Vector3.forward, joystickStickRadius);
 
-        // gamepad states for emulated gamepad
-        InputSystem.QueueStateEvent(gamepad, new GamepadState
-        {
-            buttons = buttonsPressed,
-            leftTrigger = leftTriggerValue,
-            rightTrigger = rightTriggerValue,
-            leftStick = leftStickValues,
-            rightStick = rightStickValues,
-        });
-
+        // emulate gamepad states for emulated gamepad
+        emulator.emulate();
     }
 
     // refreshes window every tick
