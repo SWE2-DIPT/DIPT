@@ -21,6 +21,7 @@ public class ControllerEmulation : EditorWindow
 {
     private GamepadEmulator emulator;
     private bool mouseDrag = false;
+    private bool mouseDown = false;
     private bool inLeftJoystick = false;
     private bool inRightJoystick = false;
     private bool inLeftTrigger = false;
@@ -59,7 +60,8 @@ public class ControllerEmulation : EditorWindow
     void OnGUI()
     {
         emulator.releaseAllButtons();
-
+        
+        // create a button for each controller button input
         foreach (var button in buttonNames)
         {
             if (GUILayout.RepeatButton(button))
@@ -72,13 +74,21 @@ public class ControllerEmulation : EditorWindow
         Event e = Event.current;
         Vector2 mousePos = e.mousePosition;
 
-        // mouse dragging
+        // check mouse button is down
+        if (!Mouse.current.leftButton.isPressed)
+        {
+            mouseDown = false;
+        }
+
+        // check mouse dragging
         if (e.type == EventType.MouseDown)
         {
             mouseDrag = true;
+            mouseDown = true;
         }
-        // mouse release
-        if (e.type == EventType.MouseUp)
+
+        // check mouse release
+        if (mouseDrag && !mouseDown)
         {
             mouseDrag = false;
             inLeftJoystick = false;
@@ -88,6 +98,7 @@ public class ControllerEmulation : EditorWindow
             emulator.clear();
         }
         
+        // analog triggers area creation
         Rect analogArea = GUILayoutUtility.GetRect(300, 120);
         float marginBetweenAnalog = 30;
         float analogWidth = 100;
@@ -103,24 +114,52 @@ public class ControllerEmulation : EditorWindow
         activeLeftTriggerBox.height = 0;
         Rect activeRightTriggerBox = rightTriggerBox;
         activeRightTriggerBox.height = 0;
-        
 
-        // check mouse clicked in which analog pad
+        // joystick area creation
+        Rect joystickArea = GUILayoutUtility.GetRect(300, 120);
+        float joystickRadius = 50;
+        float joystickStickRadius = 30;
+        float marginBetweenJoysticks = 30;
+        Vector2 leftJoystickCenter = new Vector2(joystickArea.center.x - (joystickRadius + marginBetweenJoysticks), joystickArea.center.y);
+        Vector2 leftJoystickStick = leftJoystickCenter;
+
+        Vector2 rightJoystickCenter = new Vector2(joystickArea.center.x + (joystickRadius + marginBetweenJoysticks), joystickArea.center.y);
+        Vector2 rightJoystickStick = rightJoystickCenter;
+        
+        // draw joystick pads
+        Handles.color = Color.green;
+        Handles.DrawSolidDisc(leftJoystickCenter, Vector3.forward, joystickRadius);
+        Handles.DrawSolidDisc(rightJoystickCenter, Vector3.forward, joystickRadius);
+
+
+        // check location of mouse click in which area
         if (e.type == EventType.MouseDown)
         {
+            inLeftJoystick = false;
+            inRightJoystick = false;
+            inLeftTrigger = false;
+            inRightTrigger = false;
+
+            if (Vector2.Distance(mousePos, leftJoystickCenter) < joystickRadius)
+            {
+                inLeftJoystick = true;
+            }
+            if (Vector2.Distance(mousePos, rightJoystickCenter) < joystickRadius)
+            {
+                inRightJoystick = true;
+            }
             if (leftTriggerBox.Contains(mousePos))
             {
                 inLeftTrigger = true;
-                inRightTrigger = false;
             }
             if (rightTriggerBox.Contains(mousePos))
             {
-                inLeftTrigger = false;
                 inRightTrigger = true;
             }
         }
-        
-        if (mouseDrag && inLeftTrigger) // add mouse click
+
+        // moving bar if in left trigger
+        if (mouseDrag && inLeftTrigger)
         {
             float relativeMouseY = mousePos.y - topOfTriggerBoxes;
             if (mousePos.y < bottomOfTriggerBoxes && mousePos.y > topOfTriggerBoxes)
@@ -137,7 +176,9 @@ public class ControllerEmulation : EditorWindow
             }
             emulator.pressLeftTrigger(activeLeftTriggerBox.height / analogHeight);
         }
-        if (mouseDrag && inRightTrigger) // add mouse click
+
+        // moving bar if in right trigger
+        if (mouseDrag && inRightTrigger)
         {
             float relativeMouseY = mousePos.y - topOfTriggerBoxes;
             if (mousePos.y < bottomOfTriggerBoxes && mousePos.y > topOfTriggerBoxes)
@@ -154,43 +195,15 @@ public class ControllerEmulation : EditorWindow
             }
             emulator.pressRightTrigger(activeRightTriggerBox.height / analogHeight);
         }
+
+        // draw trigger bars
         GUI.color = Color.blue;
         GUI.Box(activeLeftTriggerBox,"");
         GUI.Box(activeRightTriggerBox,"");
 
-
-        Rect joystickArea = GUILayoutUtility.GetRect(300, 120);
-        float joystickRadius = 50;
-        float joystickStickRadius = 30;
-        float marginBetweenJoysticks = 30;
-        Vector2 leftJoystickCenter = new Vector2(joystickArea.center.x - (joystickRadius + marginBetweenJoysticks), joystickArea.center.y);
-        Vector2 leftJoystickStick = leftJoystickCenter;
-
-        Vector2 rightJoystickCenter = new Vector2(joystickArea.center.x + (joystickRadius + marginBetweenJoysticks), joystickArea.center.y);
-        Vector2 rightJoystickStick = rightJoystickCenter;
         
-        // draw joystick pads
-        Handles.color = Color.green;
-        Handles.DrawSolidDisc(leftJoystickCenter, Vector3.forward, joystickRadius);
-        Handles.DrawSolidDisc(rightJoystickCenter, Vector3.forward, joystickRadius);
-
-        // check mouse clicked in which joystick pad
-        if (e.type == EventType.MouseDown)
-        {
-            if (Vector2.Distance(mousePos, leftJoystickCenter) < joystickRadius)
-            {
-                inLeftJoystick = true;
-                inRightJoystick = false;
-            }
-            if (Vector2.Distance(mousePos, rightJoystickCenter) < joystickRadius)
-            {
-                inLeftJoystick = false;
-                inRightJoystick = true;
-            }
-        }
-        
-        // moving joystick stick
-        if (mouseDrag && inLeftJoystick)// add mouse click
+        // moving joystick stick if in left joystick
+        if (mouseDrag && inLeftJoystick)
         {
             // distance normal for radius from center
             float normalizeValue = joystickRadius / Vector2.Distance(mousePos, leftJoystickCenter);
@@ -214,7 +227,8 @@ public class ControllerEmulation : EditorWindow
             emulator.moveLeftJoystick(move.x, -move.y);
         }
 
-        if (mouseDrag && inRightJoystick)// add mouse click
+        // moving joystick stick if in right joystick
+        if (mouseDrag && inRightJoystick)
         {
             // distance normal for radius from center
             float normalizeValue = joystickRadius / Vector2.Distance(mousePos, rightJoystickCenter);

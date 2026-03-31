@@ -182,12 +182,14 @@ public class GamepadEmulator
         rightStickValues = Vector2.zero;
     }
 
-    // emulates empty state of gamepad controller
+    // simulate empty state of gamepad controller
     public void clear()
     {
-        InputSystem.QueueStateEvent(emulator, new GamepadState
-        {
-        });
+        buttonsPressed = 0;
+        leftStickValues = Vector2.zero;
+        rightStickValues = Vector2.zero;
+        leftTriggerValue = 0f;
+        rightTriggerValue = 0f;
     }
     
     // emulates state of gamepad controller
