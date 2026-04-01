@@ -98,6 +98,7 @@ public class ControllerGUI : EditorWindow
             "RB-button", "LB-button",
             "LT-button", "RT-button",
             "up-pad", "down-pad", "left-pad", "right-pad",
+            "xbox-button", "menu-button", "view-button", "share-button",
             "advanced"
         });
 
@@ -186,10 +187,10 @@ public class ControllerGUI : EditorWindow
             components.SetRightJoystick(Vector2.zero);
         });
 
-        LoadImage("xbox-button", "xbox-symbol.png");
-        LoadImage("menu-button", "menu-symbol.png");
-        LoadImage("view-button", "view-symbol.png");
-        LoadImage("share-button", "share-symbol.png");
+        LoadImage("xbox-button-image", "xbox-symbol.png");
+        LoadImage("menu-button-image", "menu-symbol.png");
+        LoadImage("view-button-image", "view-symbol.png");
+        LoadImage("share-button-image", "share-symbol.png");
     }
 
     void LoadImage(string targetElement, string imageName)
@@ -240,11 +241,13 @@ public class ControllerGUI : EditorWindow
             button.RegisterCallback<PointerDownEvent>(evt =>
             {
                 Debug.Log($"{name}: DOWN");
+                button.AddToClassList("ButtonPressed"); // This is here until we fix class adding.
                 SetButtonState(name, true);
             });
             button.RegisterCallback<PointerUpEvent>(evt =>
             {
                 Debug.Log($"{name}: UP");
+                button.RemoveFromClassList("ButtonPressed"); // This is here until we fix class removing.
                 SetButtonState(name, false);
             });
         }

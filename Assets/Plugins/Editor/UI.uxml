@@ -50,17 +50,17 @@
 		<ui:VisualElement  class="box-border" style="width: 53px; height: 130px;">
 			<!--Insert System buttons here-->
 			<ui:VisualElement class="horizontal-group">
-				<ui:VisualElement class="button horiz xbox">
-					<ui:Image name="xbox-button" />
+				<ui:VisualElement name="xbox-button" class="button horiz xbox">
+					<ui:Image name="xbox-button-image" class="icon"/>
 				</ui:VisualElement>
-				<ui:VisualElement class="button horiz menu">
-					<ui:Image name="menu-button" />
+				<ui:VisualElement name="menu-button" class="button horiz menu">
+					<ui:Image name="menu-button-image" class="icon"/>
 				</ui:VisualElement>
-				<ui:VisualElement class="button horiz">
-					<ui:Image name="view-button" />
+				<ui:VisualElement name="view-button" class="button horiz view">
+					<ui:Image name="view-button-image" class="icon"/>
 				</ui:VisualElement>
-				<ui:VisualElement class="button horiz">
-					<ui:Image name="share-button" />
+				<ui:VisualElement name="share-button" class="button horiz share">
+					<ui:Image name="share-button-image" class="icon"/>
 				</ui:VisualElement>
 			</ui:VisualElement>
 		</ui:VisualElement>
