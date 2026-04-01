@@ -154,6 +154,14 @@
     border-radius: 8px;
 }
 
+#LT-button {
+    border-top-left-radius:50%;
+}
+
+#RT-button {
+    border-top-right-radius:50%;
+}
+
 
 /* Base style for the D-pad rectangles 
     height: 100px;
@@ -237,7 +245,7 @@
 
 .joystick {
     border-radius:50%;
-    background-color: #232323;
+    background-color: #282828;
 
     height:80%;
     width:80%;
