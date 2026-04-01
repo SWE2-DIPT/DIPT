@@ -25,6 +25,8 @@ public class ControllerGUI : EditorWindow
     private static ControllerManager manager;
     private static ControllerComponents components;
 
+    private static KeyMapper emulator;
+
     VisualElement R_Trigger, L_Trigger;
     Label R_trigger_value, L_trigger_value;
 
@@ -35,7 +37,7 @@ public class ControllerGUI : EditorWindow
         manager = new ControllerManager();
         components = new ControllerComponents();
 
-        
+        emulator = new KeyMapper(components);
     }
 
     [MenuItem("Tools/DIPT/InputVisualizer")]
@@ -56,6 +58,8 @@ public class ControllerGUI : EditorWindow
         components.GetJoystickActivity();
         components.GetTriggerActivity();
         components.GetButtonActivity();
+
+        emulator.UpdateKeyboardEmulation();
 
         UpdateGuiButtons();
         UpdateGuiAnalogs();
