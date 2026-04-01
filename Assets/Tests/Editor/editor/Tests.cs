@@ -74,6 +74,7 @@ public class Tests
     public void WindowClosing()
     {
         ControllerGUI window = EditorWindow.GetWindow<ControllerGUI>();
+        
         window.Close();
         Assert.IsTrue(window == null, "Window should be null.");
     }
@@ -82,6 +83,7 @@ public class Tests
     public void WindowNull()
     {
         ControllerGUI window = EditorWindow.GetWindow<ControllerGUI>();
+
         window.Close();
         window = null;
         Assert.IsNull(window, "Window should be null.");
