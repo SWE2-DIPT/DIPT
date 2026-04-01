@@ -17,6 +17,7 @@ using UnityEngine.InputSystem;
 using static UnityEngine.Rendering.DebugUI;
 using System.Reflection;
 using System.Linq.Expressions;
+using Unity.VisualScripting;
 
 
 /// <summary>
@@ -101,7 +102,7 @@ public class ControllerGUI : EditorWindow
             "LT-button", "RT-button",
             "up-pad", "down-pad", "left-pad", "right-pad",
             "xbox-button", "menu-button", "view-button", "share-button",
-            "left-joystick_button", "right-joystick_button",
+            "left-joystick-button", "right-joystick-button",
             "advanced"
         });
 
@@ -310,6 +311,12 @@ public class ControllerGUI : EditorWindow
             case "right-pad":
                 components.SetDpadRight(pressed);
                 break;
+            case "right-joystick-button":
+                components.SetRightJoysickButton(pressed);
+                break;
+            case "left-joystick-button":
+                components.SetLeftJoysickButton(pressed);
+                break;
         }
     }
 
@@ -354,8 +361,6 @@ public class ControllerGUI : EditorWindow
         components.GetComponentState(components.GetDpadDown(), buttons["down-pad"], "dpad-pressed");
         components.GetComponentState(components.GetDpadRight(), buttons["right-pad"], "dpad-pressed");
         components.GetComponentState(components.GetDpadLeft(), buttons["left-pad"], "dpad-pressed");
-
-
     }
 
     public void UpdateGuiAnalogs()
@@ -395,7 +400,7 @@ public class ControllerGUI : EditorWindow
         R_joystick_value_Y.style.fontSize = 20f;
         R_joystick_value_X.text = $"X:  {rightInput.x:F2}";
         R_joystick_value_Y.text = $"Y:  {rightInput.y:F2}";
-            
+
     }
     void UpdateStick(VisualElement stick, Vector2 input, float radius)
     {
