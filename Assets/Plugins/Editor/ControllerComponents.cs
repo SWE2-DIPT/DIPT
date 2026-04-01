@@ -62,6 +62,14 @@ public class ControllerComponents
             );
             prevLeftJoystick = leftJoystick;
         }
+
+        if (Vector2.Distance(rightJoystick, prevRightJoystick) > joystickThreshold)
+        {
+            ControllerDebugLogger.LogMovement(
+                $"Right Joystick moved to X:{rightJoystick.x:F2} | Y:{rightJoystick.y:F2}"
+            );
+            prevRightJoystick = rightJoystick;
+        }
     }
 
     public void GetTriggerActivity()
