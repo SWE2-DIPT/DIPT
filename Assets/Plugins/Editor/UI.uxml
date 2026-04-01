@@ -50,6 +50,7 @@
 			<!--Insert System buttons here-->
 			<ui:VisualElement class="horizontal-group">
 				<ui:VisualElement class="button horiz xbox">
+					<ui:Image name="xbox-button" />
 				</ui:VisualElement>
 				<ui:VisualElement class="button horiz">
 				</ui:VisualElement>

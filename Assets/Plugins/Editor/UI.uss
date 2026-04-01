@@ -251,7 +251,7 @@
 }
 
 .button.horiz {
-    background-color:white;
+    background-color:#1F1F1F;
     width:25px;
     height:25px;
     margin:1px;
@@ -260,4 +260,9 @@
 .button.horiz.xbox {
     width:35px;
     height:35px;
+}
+
+.xbox Image {
+    width: 100%;
+    height: 100%;
 }

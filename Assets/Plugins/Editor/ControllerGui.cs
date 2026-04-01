@@ -183,6 +183,19 @@ public class ControllerGUI : EditorWindow
             draggingRight = false;
             components.SetRightJoystick(Vector2.zero);
         });
+
+        var xboxImage = rootVisualElement.Q<Image>("xbox-button");
+
+        var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(
+            "Assets/Plugins/Editor/images/xbox-symbol.png"
+        );
+
+        if (texture == null)
+        {
+            Debug.LogError("Image failed to load!");
+        }
+
+        xboxImage.image = texture;
     }
 
     /// <summary>
@@ -357,21 +370,21 @@ public class ControllerGUI : EditorWindow
         );
     }
 
-Vector2 GetNormalizedInput(PointerMoveEvent evt, VisualElement zone, Vector2 offset)
-{
-    Vector2 world = evt.position;
-    Vector2 localPos = zone.WorldToLocal(world);
+    Vector2 GetNormalizedInput(PointerMoveEvent evt, VisualElement zone, Vector2 offset)
+    {
+        Vector2 world = evt.position;
+        Vector2 localPos = zone.WorldToLocal(world);
 
-    Vector2 center = zone.layout.size / 2f;
-    Vector2 delta = (localPos - center) + offset;
+        Vector2 center = zone.layout.size / 2f;
+        Vector2 delta = (localPos - center) + offset;
 
-    float radius = zone.layout.width / 2f;
+        float radius = zone.layout.width / 2f;
 
-    Vector2 normalized = delta / radius;
+        Vector2 normalized = delta / radius;
 
-    normalized = Vector2.ClampMagnitude(normalized, 1f);
-    normalized.y *= -1;
+        normalized = Vector2.ClampMagnitude(normalized, 1f);
+        normalized.y *= -1;
 
-    return normalized;
-}
+        return normalized;
+    }
 }
