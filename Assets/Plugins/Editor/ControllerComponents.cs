@@ -225,6 +225,16 @@ public class ControllerComponents
         return dpadLeft;
     }
 
+    public Vector2 GetLeftJoystick()
+    {
+        return leftJoystick;
+    }
+
+    public Vector2 GetRightJoystick()
+    {
+        return rightJoystick;
+    }
+
     public void SetBottomFaceButton(bool value)
     {
         bottomFaceButton = value;
@@ -272,5 +282,14 @@ public class ControllerComponents
     public void SetDpadRight(bool value)
     {
         dpadRight = value;
+    }
+    public void SetLeftJoystick(Vector2 value)
+    {
+        leftJoystick = value;
+    }
+
+    public void SetRightJoystick(Vector2 value)
+    {
+        rightJoystick = value;
     }
 }

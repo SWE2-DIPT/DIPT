@@ -1,5 +1,5 @@
 /*******************************************************
-* Script:      TestPlugin.cs
+* Script:      ControllerGUI.cs
 * Author(s):   Nicholas Johnson (Add yourselves to this!)
 * 
 * Description:
@@ -29,6 +29,14 @@ public class ControllerGUI : EditorWindow
     Label R_trigger_value, L_trigger_value;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
+    VisualElement leftStick, rightStick;
+
+    bool draggingLeft = false;
+    bool draggingRight = false;
+
+    VisualElement leftZone, rightZone;
+    Vector2 leftClickOffset;
+    Vector2 rightClickOffset;
     
     private void OnEnable()
     {
@@ -57,6 +65,7 @@ public class ControllerGUI : EditorWindow
 
         UpdateGuiButtons();
         UpdateGuiAnalogs();
+        UpdateGuiJoysticks();
         // Debug.Log("Ticking");
     }
 
@@ -92,6 +101,68 @@ public class ControllerGUI : EditorWindow
 
         R_trigger_value = rootVisualElement.Q<Label>("RT-trigger-value-label");
         L_trigger_value = rootVisualElement.Q<Label>("LT-trigger-value-label");
+
+        leftStick = rootVisualElement.Q<VisualElement>("left-joystick").Q(className: "joystick");
+        rightStick = rootVisualElement.Q<VisualElement>("right-joystick").Q(className: "joystick");
+
+        leftZone = rootVisualElement.Q<VisualElement>("left-joystick").Q(className: "joystick-zone");
+        rightZone = rootVisualElement.Q<VisualElement>("right-joystick").Q(className: "joystick-zone");
+
+        // LEFT JOYSTICK
+        leftZone.RegisterCallback<PointerDownEvent>(evt =>
+        {
+            draggingLeft = true;
+
+            Vector2 center = leftZone.layout.size / 2f;
+            Vector2 mousePos = evt.localPosition;
+
+            Vector2 stickPos = new Vector2(
+                leftStick.resolvedStyle.translate.x,
+                leftStick.resolvedStyle.translate.y
+            );
+
+            leftClickOffset = stickPos - (mousePos - center);
+        });
+        leftZone.RegisterCallback<PointerUpEvent>(evt =>
+        {
+            draggingLeft = false;
+            components.SetLeftJoystick(Vector2.zero); // snap back
+        });
+        leftZone.RegisterCallback<PointerMoveEvent>(evt =>
+        {
+            if (!draggingLeft) return;
+
+            Vector2 input = GetNormalizedInput(evt, leftZone, leftClickOffset);
+            components.SetLeftJoystick(input);
+        });
+
+        // RIGHT JOYSTICK
+        rightZone.RegisterCallback<PointerDownEvent>(evt =>
+        {
+            draggingRight = true;
+
+            Vector2 center = rightZone.layout.size / 2f;
+            Vector2 mousePos = evt.localPosition;
+
+            Vector2 stickPos = new Vector2(
+                rightStick.resolvedStyle.translate.x,
+                rightStick.resolvedStyle.translate.y
+            );
+
+            rightClickOffset = stickPos - (mousePos - center);
+        });
+        rightZone.RegisterCallback<PointerUpEvent>(evt =>
+        {
+            draggingRight = false;
+            components.SetRightJoystick(Vector2.zero);
+        });
+        rightZone.RegisterCallback<PointerMoveEvent>(evt =>
+        {
+            if (!draggingRight) return;
+
+            Vector2 input = GetNormalizedInput(evt, rightZone, rightClickOffset);
+            components.SetRightJoystick(input);
+        });
     }
 
     /// <summary>
@@ -238,5 +309,48 @@ public class ControllerGUI : EditorWindow
         //buttons["LT-button"].style.height = Length.Percent(LT * 100);
         L_trigger_value.style.fontSize = 20f;
         L_trigger_value.text = $"{LT:F2}";
+    }
+
+    public void UpdateGuiJoysticks()
+    {
+        Vector2 leftInput = components.GetLeftJoystick();
+        Vector2 rightInput = components.GetRightJoystick();
+
+        UpdateStick(leftStick, leftInput, 40f);
+        UpdateStick(rightStick, rightInput, 40f);
+    }
+    void UpdateStick(VisualElement stick, Vector2 input, float radius)
+    {
+        if (stick == null) return;
+
+        if (input.magnitude < 0.1f)
+            input = Vector2.zero;
+
+        input = Vector2.ClampMagnitude(input, 1f);
+
+        float x = input.x;
+        float y = -input.y;
+
+        stick.style.translate = new Translate(
+            x * radius,
+            y * radius
+        );
+    }
+
+    Vector2 GetNormalizedInput(PointerMoveEvent evt, VisualElement zone, Vector2 offset)
+    {
+        Vector2 center = zone.layout.size / 2f;
+        Vector2 localPos = evt.localPosition;
+
+        Vector2 delta = (localPos - center) + offset;
+
+        float radius = zone.layout.width / 2f;
+
+        Vector2 normalized = delta / radius;
+
+        normalized = Vector2.ClampMagnitude(normalized, 1f);
+        normalized.y *= -1;
+
+        return normalized;
     }
 }
