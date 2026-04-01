@@ -236,8 +236,8 @@
     border-radius:50%;
     background-color:#1F1F1F;
 
-    height:70%;
-    width:70%;
+    height:80%;
+    width:80%;
 }
 
 .horizontal-group {
@@ -251,7 +251,7 @@
 }
 
 .button.horiz {
-    background-color:white;
+    background-color:#1F1F1F;
     width:25px;
     height:25px;
     margin:1px;
@@ -261,3 +261,23 @@
     width:35px;
     height:35px;
 }
+
+.xbox.ButtonPressed {
+    background-color:lime;
+}
+
+.menu.ButtonPressed {
+    background-color:white;
+}
+.view.ButtonPressed {
+    background-color:white;
+}
+.share.ButtonPressed {
+    background-color:white;
+}
+
+Image {
+    width: 100%;
+    height: 100%;
+}
+
