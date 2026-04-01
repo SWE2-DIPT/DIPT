@@ -136,6 +136,16 @@
     border-radius: 8px;
 }
 
+#LB-button {
+    border-top-left-radius:40%;
+    border-bottom-right-radius:40%;
+}
+
+#RB-button {
+    border-top-right-radius:40%;
+    border-bottom-left-radius:40%;
+}
+
 .trigger-button { 
     /*THIS CLASS IS EXACTLY THE SAME AS THE bumper-button class
     I made a seperate class so that later on, we can edit this  to make
@@ -161,7 +171,6 @@
 #RT-button {
     border-top-right-radius:50%;
 }
-
 
 /* Base style for the D-pad rectangles 
     height: 100px;
