@@ -43,6 +43,7 @@
 		<ui:VisualElement name="left-joystick" class="box-border" style="width: 130px; height: 130px;">
 			<!--Insert Joystick 1 here-->
 			<ui:VisualElement class="joystick-zone">
+				<ui:VisualElement class="joystick-stick"/>
 				<ui:VisualElement class="joystick"/>
 			</ui:VisualElement>
 		</ui:VisualElement>
@@ -52,11 +53,14 @@
 				<ui:VisualElement class="button horiz xbox">
 					<ui:Image name="xbox-button" />
 				</ui:VisualElement>
-				<ui:VisualElement class="button horiz">
+				<ui:VisualElement class="button horiz menu">
+					<ui:Image name="menu-button" />
 				</ui:VisualElement>
 				<ui:VisualElement class="button horiz">
+					<ui:Image name="view-button" />
 				</ui:VisualElement>
 				<ui:VisualElement class="button horiz">
+					<ui:Image name="share-button" />
 				</ui:VisualElement>
 			</ui:VisualElement>
 		</ui:VisualElement>
@@ -87,6 +91,7 @@
 		<ui:VisualElement name="right-joystick" class="box-border" style="width: 130px; height: 130px;">
 			<!--Insert Joystick 2 here-->
 			<ui:VisualElement class="joystick-zone">
+				<ui:VisualElement class="joystick-stick"/>
 				<ui:VisualElement class="joystick"/>
 			</ui:VisualElement>
 		</ui:VisualElement>

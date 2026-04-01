@@ -15,6 +15,8 @@ using UnityEngine.UIElements;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using static UnityEngine.Rendering.DebugUI;
+using System.Reflection;
+using System.Linq.Expressions;
 
 
 /// <summary>
@@ -184,18 +186,23 @@ public class ControllerGUI : EditorWindow
             components.SetRightJoystick(Vector2.zero);
         });
 
-        var xboxImage = rootVisualElement.Q<Image>("xbox-button");
+        LoadImage("xbox-button", "xbox-symbol.png");
+        LoadImage("menu-button", "menu-symbol.png");
+        LoadImage("view-button", "view-symbol.png");
+        LoadImage("share-button", "share-symbol.png");
+    }
 
-        var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(
-            "Assets/Plugins/Editor/images/xbox-symbol.png"
-        );
+    void LoadImage(string targetElement, string imageName)
+    {
+        var imageElement = rootVisualElement.Q<Image>(targetElement);
 
+        var texture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Plugins/Editor/images/{imageName}");
+                
         if (texture == null)
         {
-            Debug.LogError("Image failed to load!");
+            Debug.LogError($"Image {imageName} failed to load!");
         }
-
-        xboxImage.image = texture;
+        imageElement.image = texture;
     }
 
     /// <summary>
@@ -368,6 +375,14 @@ public class ControllerGUI : EditorWindow
             x * radius,
             y * radius
         );
+        // Realistic Squishing (stretch goal)
+        /*
+        float maxSquish = 0.2f;
+        float squishX = 1f - Mathf.Abs(input.x) * maxSquish;
+        float squishY = 1f - Mathf.Abs(input.y) * maxSquish;
+
+        stick.style.scale = new Scale(new Vector3(squishX, squishY, 1f));
+        */
     }
 
     Vector2 GetNormalizedInput(PointerMoveEvent evt, VisualElement zone, Vector2 offset)

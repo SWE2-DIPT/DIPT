@@ -236,8 +236,8 @@
     border-radius:50%;
     background-color:#1F1F1F;
 
-    height:70%;
-    width:70%;
+    height:80%;
+    width:80%;
 }
 
 .horizontal-group {
@@ -262,7 +262,8 @@
     height:35px;
 }
 
-.xbox Image {
+Image {
     width: 100%;
     height: 100%;
 }
+
