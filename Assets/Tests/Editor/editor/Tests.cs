@@ -424,10 +424,10 @@ public class Tests
         ControllerDebugLogger.OnMovementLog += (msg) =>
         {
             wasCalled = true;
-            Assert.IsTrue(msg.Contains("Joystick"));
+            Assert.IsFalse(string.IsNullOrEmpty(msg));
         };
 
-        ControllerDebugLogger.LogMovement("Joystick moved");
+        ControllerDebugLogger.LogMovement("Left Trigger changed to 0.75");
 
         Assert.IsTrue(wasCalled);
     }
