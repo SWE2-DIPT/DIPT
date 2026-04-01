@@ -7,9 +7,14 @@
 *    in Unity.
 *******************************************************/
 
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+
+[assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
+
+
 
 enum buttons { BottomFace, TopFace, RightFace, LeftFace, RightBumper, LeftBumper, dpadUp };
 public class ControllerComponents
@@ -124,7 +129,7 @@ public class ControllerComponents
         CheckButtonState("Right Joystick Press", rightJoystickButton, ref prevRightJoystickButton);
     }
 
-    private void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
+    internal void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
     {
         if (currentState && !previousState)
         {
