@@ -226,18 +226,23 @@
     border-radius:50%;
     background-color:#3b3b3b;
 
-    height:90%;
-    width:90%;
+    height:70%;
+    width:70%;
     justify-content: center;
     align-items: center;
+
+    border-width: 5px;
+    border-color: black;
 }
 
 .joystick {
     border-radius:50%;
-    background-color: #2E2D2D;
+    background-color: #232323;
 
     height:80%;
     width:80%;
+    border-width: 10px;
+    border-color: #111111;
 }
 
 .horizontal-group {
