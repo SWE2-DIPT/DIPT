@@ -240,6 +240,17 @@ public class ControllerComponents
         return rightJoystick;
     }
 
+    public bool GetLeftJoystickButton()
+    {
+        return leftJoystickButton;
+    }
+
+    public bool GetRightJoystickButton()
+    {
+        return rightJoystickButton;
+    }
+
+
     public void SetBottomFaceButton(bool value)
     {
         bottomFaceButton = value;

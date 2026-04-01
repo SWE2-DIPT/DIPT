@@ -113,7 +113,7 @@
 }
 
 .trigger-row {
-    height: 140px;
+    height: 160px;
     background-color:#3b3b3b;
 
     width: 100%;
@@ -239,6 +239,29 @@
     height:80%;
     width:80%;
 }
+
+.joystick-button {
+    border-radius:50%;
+    background-color:#1F1F1F;
+
+    height:80%;
+    width:80%;
+}
+
+.joystick-button-pressed {
+    border-radius:50%;
+    background-color:white;
+
+    height:80%;
+    width:80%;
+}
+
+.button-label {
+    -unity-text-align: middle-center;
+    width: 100%;
+    height: 100%;
+}
+
 
 .horizontal-group {
     background-color:#3b3b3b;
