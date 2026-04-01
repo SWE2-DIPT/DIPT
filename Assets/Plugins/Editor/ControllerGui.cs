@@ -324,7 +324,7 @@ public class ControllerGUI : EditorWindow
     private Color color_hex (string hex)
     {
         Color color;
-        ColorUtility.TryParseHtmlString(hex, out color);
+        UnityEngine.ColorUtility.TryParseHtmlString(hex, out color);
         return color;
     }
 
