@@ -380,6 +380,88 @@ public class Tests
         emulator.dispose();
     }
 
+    // Test for creating a button pressed log
+    [Test]
+    public void LogPressedCreated()
+    {
+        bool wasCalled = false;
+
+        ControllerDebugLogger.OnPressedLog += (msg) =>
+        {
+            wasCalled = true;
+            Assert.IsTrue(msg.Contains("pressed"));
+        };
+
+        ControllerDebugLogger.LogPressed("Test Button pressed");
+
+        Assert.IsTrue(wasCalled);
+    }
+
+    
+    // Test for creating a button released log
+    [Test]
+    public void LogReleasedCreated()
+    {
+        bool wasCalled = false;
+
+        ControllerDebugLogger.OnReleasedLog += (msg) =>
+        {
+            wasCalled = true;
+            Assert.IsTrue(msg.Contains("released"));
+        };
+
+        ControllerDebugLogger.LogReleased("Test Button released");
+
+        Assert.IsTrue(wasCalled);
+    }
+
+    // Test for creating a movement log
+    [Test]
+    public void LogMovementCreated()
+    {
+        bool wasCalled = false;
+
+        ControllerDebugLogger.OnMovementLog += (msg) =>
+        {
+            wasCalled = true;
+            Assert.IsTrue(msg.Contains("Joystick"));
+        };
+
+        ControllerDebugLogger.LogMovement("Joystick moved");
+
+        Assert.IsTrue(wasCalled);
+    }
+
+    // Test for holding a button down does not create more than one log
+    [Test]
+    public void LogPressedReleasedStateChecker()
+    {
+        var components = new ControllerComponents();
+        int pressedCount = 0;
+        int releasedCount = 0;
+        bool prevState = false;
+
+        ControllerDebugLogger.OnPressedLog += (msg) =>
+        {
+            pressedCount++;
+        };
+
+        ControllerDebugLogger.OnReleasedLog += (msg) =>
+        {
+            releasedCount++;
+        };
+
+        // Simulate press
+        components.CheckButtonState("Test Button", true, ref prevState);
+        // Simulate hold
+        components.CheckButtonState("Test Button", true, ref prevState);
+        components.CheckButtonState("Test Button", true, ref prevState);
+        // Simulate release
+        components.CheckButtonState("Test Button", false, ref prevState);
+
+        Assert.AreEqual(1, pressedCount);
+        Assert.AreEqual(1, releasedCount);
+    }
 
     // Some more things we should test.
     // 1.) Test that UI elements are created
