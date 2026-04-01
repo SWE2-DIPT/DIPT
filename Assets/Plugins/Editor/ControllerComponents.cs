@@ -155,7 +155,8 @@ public class ControllerComponents
     {
         if (element == null)
             return;
-        if(buttonPressed)
+
+        if (buttonPressed)
         {
             element.AddToClassList(state);
         }
@@ -248,6 +249,17 @@ public class ControllerComponents
         return rightJoystick;
     }
 
+    public bool GetLeftJoystickButton()
+    {
+        return leftJoystickButton;
+    }
+
+    public bool GetRightJoystickButton()
+    {
+        return rightJoystickButton;
+    }
+
+
     public void SetBottomFaceButton(bool value)
     {
         bottomFaceButton = value;
@@ -304,5 +316,15 @@ public class ControllerComponents
     public void SetRightJoystick(Vector2 value)
     {
         rightJoystick = value;
+    }
+
+    public void SetRightJoysickButton(bool value)
+    {
+        rightJoystickButton = value;
+    }
+
+    public void SetLeftJoysickButton(bool value)
+    {
+        leftJoystickButton = value;
     }
 }
