@@ -113,6 +113,8 @@ public class ControllerGUI : EditorWindow
         {
             draggingLeft = true;
 
+            leftZone.CapturePointer(evt.pointerId);
+
             Vector2 center = leftZone.layout.size / 2f;
             Vector2 mousePos = evt.localPosition;
 
@@ -126,7 +128,10 @@ public class ControllerGUI : EditorWindow
         leftZone.RegisterCallback<PointerUpEvent>(evt =>
         {
             draggingLeft = false;
-            components.SetLeftJoystick(Vector2.zero); // snap back
+
+            leftZone.ReleasePointer(evt.pointerId);
+
+            components.SetLeftJoystick(Vector2.zero);
         });
         leftZone.RegisterCallback<PointerMoveEvent>(evt =>
         {
@@ -135,11 +140,18 @@ public class ControllerGUI : EditorWindow
             Vector2 input = GetNormalizedInput(evt, leftZone, leftClickOffset);
             components.SetLeftJoystick(input);
         });
+        leftZone.RegisterCallback<PointerCaptureOutEvent>(evt =>
+        {
+            draggingLeft = false;
+            components.SetLeftJoystick(Vector2.zero);
+        });
 
         // RIGHT JOYSTICK
         rightZone.RegisterCallback<PointerDownEvent>(evt =>
         {
             draggingRight = true;
+
+            rightZone.CapturePointer(evt.pointerId);
 
             Vector2 center = rightZone.layout.size / 2f;
             Vector2 mousePos = evt.localPosition;
@@ -154,6 +166,9 @@ public class ControllerGUI : EditorWindow
         rightZone.RegisterCallback<PointerUpEvent>(evt =>
         {
             draggingRight = false;
+
+            rightZone.ReleasePointer(evt.pointerId);
+
             components.SetRightJoystick(Vector2.zero);
         });
         rightZone.RegisterCallback<PointerMoveEvent>(evt =>
@@ -162,6 +177,11 @@ public class ControllerGUI : EditorWindow
 
             Vector2 input = GetNormalizedInput(evt, rightZone, rightClickOffset);
             components.SetRightJoystick(input);
+        });
+        rightZone.RegisterCallback<PointerCaptureOutEvent>(evt =>
+        {
+            draggingRight = false;
+            components.SetRightJoystick(Vector2.zero);
         });
     }
 
@@ -337,20 +357,21 @@ public class ControllerGUI : EditorWindow
         );
     }
 
-    Vector2 GetNormalizedInput(PointerMoveEvent evt, VisualElement zone, Vector2 offset)
-    {
-        Vector2 center = zone.layout.size / 2f;
-        Vector2 localPos = evt.localPosition;
+Vector2 GetNormalizedInput(PointerMoveEvent evt, VisualElement zone, Vector2 offset)
+{
+    Vector2 world = evt.position;
+    Vector2 localPos = zone.WorldToLocal(world);
 
-        Vector2 delta = (localPos - center) + offset;
+    Vector2 center = zone.layout.size / 2f;
+    Vector2 delta = (localPos - center) + offset;
 
-        float radius = zone.layout.width / 2f;
+    float radius = zone.layout.width / 2f;
 
-        Vector2 normalized = delta / radius;
+    Vector2 normalized = delta / radius;
 
-        normalized = Vector2.ClampMagnitude(normalized, 1f);
-        normalized.y *= -1;
+    normalized = Vector2.ClampMagnitude(normalized, 1f);
+    normalized.y *= -1;
 
-        return normalized;
-    }
+    return normalized;
+}
 }
