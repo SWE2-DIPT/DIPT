@@ -113,7 +113,7 @@
 }
 
 .trigger-row {
-    height: 160px;
+    height: 140px;
     background-color:#3b3b3b;
 
     width: 100%;
@@ -136,6 +136,16 @@
     border-radius: 8px;
 }
 
+#LB-button {
+    border-top-left-radius:40%;
+    border-bottom-right-radius:40%;
+}
+
+#RB-button {
+    border-top-right-radius:40%;
+    border-bottom-left-radius:40%;
+}
+
 .trigger-button { 
     /*THIS CLASS IS EXACTLY THE SAME AS THE bumper-button class
     I made a seperate class so that later on, we can edit this  to make
@@ -154,6 +164,13 @@
     border-radius: 8px;
 }
 
+#LT-button {
+    border-top-left-radius:50%;
+}
+
+#RT-button {
+    border-top-right-radius:50%;
+}
 
 /* Base style for the D-pad rectangles 
     height: 100px;
@@ -207,13 +224,15 @@
 
 #advanced {
     height:50px; 
-    width:200px;
+    width:53px;
 
     padding: 0px;
     margin: 0px;
     border-width: 0px;
     font-size: 20px;
     border-radius: 10px;
+
+    margin-top:85px;
 
     background-color:#1F1F1F;
 }
@@ -226,42 +245,24 @@
     border-radius:50%;
     background-color:#3b3b3b;
 
-    height:90%;
-    width:90%;
+    height:70%;
+    width:70%;
     justify-content: center;
     align-items: center;
+
+    border-width: 5px;
+    border-color: black;
 }
 
 .joystick {
     border-radius:50%;
-    background-color:#1F1F1F;
+    background-color: #282828;
 
     height:80%;
     width:80%;
+    border-width: 10px;
+    border-color: #111111;
 }
-
-.joystick-button {
-    border-radius:50%;
-    background-color:#1F1F1F;
-
-    height:80%;
-    width:80%;
-}
-
-.joystick-button-pressed {
-    border-radius:50%;
-    background-color:white;
-
-    height:80%;
-    width:80%;
-}
-
-.button-label {
-    -unity-text-align: middle-center;
-    width: 100%;
-    height: 100%;
-}
-
 
 .horizontal-group {
     background-color:#3b3b3b;

@@ -254,12 +254,24 @@ public class ControllerGUI : EditorWindow
                 Debug.Log($"{name}: DOWN");
                 button.AddToClassList("ButtonPressed"); // This is here until we fix class adding.
                 SetButtonState(name, true);
+
+                var image = button.Q<Image>();
+                if (image != null && image.name != "xbox-button-image")
+                {
+                    image.tintColor = Color.black;
+                }
             });
             button.RegisterCallback<PointerUpEvent>(evt =>
             {
                 Debug.Log($"{name}: UP");
                 button.RemoveFromClassList("ButtonPressed"); // This is here until we fix class removing.
                 SetButtonState(name, false);
+
+                var image = button.Q<Image>();
+                if (image != null && image.name != "xbox-button-image")
+                {
+                    image.tintColor = Color.white;
+                }
             });
         }
     }

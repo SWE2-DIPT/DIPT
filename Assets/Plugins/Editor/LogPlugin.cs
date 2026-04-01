@@ -31,7 +31,7 @@ public class LogPlugin : EditorWindow
     }
 
     private Vector2 scrollPos;
-    private InputState activeState = InputState.All;
+    private InputState activeState;
     private readonly List<LogEntry> allLogs = new List<LogEntry>();
     private ControllerComponents controllerReader;
     private bool isPolling = true;
@@ -44,6 +44,7 @@ public class LogPlugin : EditorWindow
 
     private void OnEnable()
     {
+        activeState = InputState.All;
         controllerReader = new ControllerComponents();
 
         ControllerDebugLogger.OnPressedLog += HandlePressedLog;
@@ -276,7 +277,30 @@ public class LogPlugin : EditorWindow
 
     private void SaveLogsToFile()
     {
+        string path = EditorUtility.SaveFilePanel("Save Controller Logs", "", "ControllerLogs.txt", "txt");
 
-        return;
+        if (string.IsNullOrEmpty(path))
+        {
+            return;
+        }
+        try
+        {
+            using (System.IO.StreamWriter writer = new System.IO.StreamWriter(path))
+            {
+                for (int i = 0; i < allLogs.Count; i++)
+                {
+                    if (activeState == InputState.All || allLogs[i].state == activeState)
+                    {
+                        writer.WriteLine($"[{allLogs[i].state}] {allLogs[i].message}");
+                    }
+                }
+            }
+
+            Debug.Log("Logs saved to: " + path);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Failed to save logs: " + e.Message);
+        }
     }
 }
