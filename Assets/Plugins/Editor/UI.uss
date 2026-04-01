@@ -234,7 +234,7 @@
 
 .joystick {
     border-radius:50%;
-    background-color:#1F1F1F;
+    background-color: #2E2D2D;
 
     height:80%;
     width:80%;
