@@ -99,6 +99,7 @@ public class ControllerGUI : EditorWindow
             "LT-button", "RT-button",
             "up-pad", "down-pad", "left-pad", "right-pad",
             "xbox-button", "menu-button", "view-button", "share-button",
+            "L_joystick_button", "R_joystick_button",
             "advanced"
         });
 
@@ -331,6 +332,7 @@ public class ControllerGUI : EditorWindow
         components.GetComponentState(components.GetDpadDown(), buttons["down-pad"], "dpad-pressed");
         components.GetComponentState(components.GetDpadRight(), buttons["right-pad"], "dpad-pressed");
         components.GetComponentState(components.GetDpadLeft(), buttons["left-pad"], "dpad-pressed");
+
     }
 
     public void UpdateGuiAnalogs()
