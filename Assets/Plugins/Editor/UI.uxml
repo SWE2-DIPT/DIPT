@@ -88,6 +88,9 @@
 			<ui:VisualElement name="down-pad" class="dpad-btn down-pad button" />
 			<ui:VisualElement name="left-pad" class="dpad-btn left-pad button" />
 		</ui:VisualElement>
+		<ui:VisualElement text="advanced" name="advanced">
+			<ui:Label text="..." class="button-label"/>
+		</ui:VisualElement>
 		<ui:VisualElement name="right-joystick" class="box-border" style="width: 130px; height: 130px;">
 			<!--Insert Joystick 2 here-->
 			<ui:VisualElement class="joystick-zone">
@@ -96,7 +99,5 @@
 			</ui:VisualElement>
 		</ui:VisualElement>
 	</ui:VisualElement>
-	<ui:VisualElement text="advanced" name="advanced">
-		<ui:Label text="Advanced" class="button-label"/>
-	</ui:VisualElement>
+
 </ui:UXML>
