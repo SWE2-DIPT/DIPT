@@ -10,38 +10,33 @@ using UnityEngine.UIElements;
 
 public class Tests
 {
-    private ControllerGUI window;
-    private ControllerDetection controllerDectection;
-    private TEST_ControllerManager TEST_CM;
-    private ControllerManager controller;
-    
     [SetUp]
     public void Setup()
     {
-        controllerDectection = new ControllerDetection();
-        window = EditorWindow.GetWindow<ControllerGUI>();
-        controller = new ControllerManager();
-        TEST_CM = new TEST_ControllerManager();
+
     }
 
     [TearDown]
     public void TearDown()
     {
-        if (window != null)
-        {
-            window.Close();
-        }
+        
     }
 
     [Test]
     public void WindowCreation()
     {
+        ControllerGUI window = EditorWindow.GetWindow<ControllerGUI>();
+
         Assert.IsNotNull(window, "TestPlugin window should be created.");
+
+        window.Close();
     }
 
     [Test]
     public void ControllerCheckTrue()
     {
+        TEST_ControllerManager TEST_CM = new TEST_ControllerManager();
+
         var dummy = new DummyController()
         {
             IsConnected = true
@@ -59,6 +54,8 @@ public class Tests
     [Test]
     public void ControlelrCheckFalse()
     {
+        TEST_ControllerManager TEST_CM = new TEST_ControllerManager();
+
         var dummy = new DummyController()
         {
             IsConnected = false
@@ -76,6 +73,7 @@ public class Tests
     [Test]
     public void WindowClosing()
     {
+        ControllerGUI window = EditorWindow.GetWindow<ControllerGUI>();
         window.Close();
         Assert.IsTrue(window == null, "Window should be null.");
     }
@@ -83,6 +81,8 @@ public class Tests
     [Test]
     public void WindowNull()
     {
+        ControllerGUI window = EditorWindow.GetWindow<ControllerGUI>();
+        window.Close();
         window = null;
         Assert.IsNull(window, "Window should be null.");
     }
@@ -91,6 +91,8 @@ public class Tests
     [Test]
     public void NoController()
     {
+        ControllerDetection controllerDectection = new ControllerDetection();
+
         string controllerType = controllerDectection.FindControllerType(null);
         Assert.AreEqual("No Gamepads Detected", controllerType);
     }
@@ -99,6 +101,8 @@ public class Tests
     [Test]
     public void AController()
     {
+        ControllerDetection controllerDectection = new ControllerDetection();
+
         Gamepad virtualDevice = InputSystem.AddDevice<Gamepad>();
         string controllerType = controllerDectection.FindCurrentController();
         Assert.AreEqual("Gamepad", controllerType);
