@@ -85,13 +85,14 @@ public class ControllerGUI : EditorWindow
     /// </remarks>
     /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
     /// <param name="ussPath">Path from Project directory to .uss file</param>
-    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/uss/")
+    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/UI.uss")
     {
         // Load in the UXML and USS:
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
+        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ussPath);
         
         rootVisualElement.Clear();
-        LoadUSS(ussPath);
+        rootVisualElement.styleSheets.Add(styleSheet);
         visualTree.CloneTree(rootVisualElement);
 
         // Initialize Buttons with functions:
