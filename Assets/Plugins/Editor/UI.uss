@@ -1,10 +1,12 @@
-.Controls-Row {
+/*Transfered*/
+.Controls-Row { 
     flex-direction: row;      /* Puts them side-by-side */
     justify-content: space-between;
     width: 100%;
     margin-bottom: 10px;      /* Adds space before the bumpers start */
 }
 
+/*Transfered*/
 .box-border {
     border-width: 5px;
     border-color: #1F1F1F;
@@ -18,6 +20,7 @@
     align-items: center;
 }
 
+/*Transfered*/
 .diamond-group {
     padding:0px;
 
@@ -28,7 +31,7 @@
 
     background-color:#3b3b3b;
 }
-
+/*Transfered*/
 .button {
     height:33%; 
     width:33%;
@@ -41,61 +44,62 @@
 
     background-color:#1F1F1F;
 }
-
+/*Transfered*/
 .button-label {
     -unity-text-align: middle-center;
     width: 100%;
     height: 100%;
 }
-
+/*Transfered*/
 .button.ButtonPressed {
     background-color: white;
 }
 
+/*Transfered*/
 .top {
     margin-top: 5px;
     top: 0%;
     left: 33%;
 }
-
+/*Transfered*/
 .right {
     top: 33%;
     right: 0%;
     margin-right: 5px;
 }
-
+/*Transfered*/
 .bottom {
     margin-bottom:5px;
     bottom: 0%;
     left: 33%;
 }
-
+/*Transfered*/
 .left {
     top: 33%;
     left: 0%;
     margin-left: 5px;
 }
-
+/*TRANSFERED*/
 #Y-button {
     color:#FFCC00; /* This is yellow, the default yellow looks stupid */
     position: absolute;
 }
-
+/*TRANSFERED*/
 #B-button {
     color:#D83B01;
     position: absolute;
 }
-
+/*TRANSFERED*/
 #A-button {
     color:#107C10;
     position: absolute;
 }
-
+/*TRANSFERED*/
 #X-button {
     color:#0078D4;
     position: absolute;
 }
-
+/*TRANSFERED*/
 .Bumper-Row {
     width: 100%;
     height: 100px;
@@ -111,14 +115,14 @@
     padding-left: 20px;
     padding-right: 20px;
 }
-
+/*TRANSFERED*/
 .trigger-row {
     height: 140px;
     background-color:#3b3b3b;
 
     width: 100%;
 }
-
+/*TRANSFERED*/
 .bumper-button {
     width: 100px;
     height: 70px;
@@ -127,7 +131,7 @@
     border-radius: 8px;
     font-size: 300%;
 }
-
+/*TRANSFERED*/
 .bumper-button-pressed {
     width: 100px;
     height: 70px;
@@ -135,17 +139,17 @@
     background-color: white;
     border-radius: 8px;
 }
-
+/*TRANSFERED*/
 #LB-button {
     border-top-left-radius:40%;
     border-bottom-right-radius:40%;
 }
-
+/*TRANSFERED*/
 #RB-button {
     border-top-right-radius:40%;
     border-bottom-left-radius:40%;
 }
-
+/*TRANSFERED*/
 .trigger-button { 
     /*THIS CLASS IS EXACTLY THE SAME AS THE bumper-button class
     I made a seperate class so that later on, we can edit this  to make
@@ -156,6 +160,7 @@
     background-color:#1F1F1F;
     border-radius: 8px;
 }
+/*TRANSFERED*/
 .trigger-fill-container {
     width: 100px;
     height: 70px;
@@ -163,11 +168,11 @@
     background-color: white;
     border-radius: 8px;
 }
-
+/*TRANSFERED*/
 #LT-button {
     border-top-left-radius:50%;
 }
-
+/*TRANSFERED*/
 #RT-button {
     border-top-right-radius:50%;
 }
@@ -176,7 +181,7 @@
     height: 100px;
     position: relative;
 }*/
-
+/*TRANSFERED*/
 .trigger-fill {
     width: 100px;
     height: 0px;
@@ -186,7 +191,7 @@
     border-radius: 8px;
     position: absolute;
 }
-
+/*TRANSFERED*/
 .dpad-btn {
     position: absolute;
     background-color: #333;
@@ -194,20 +199,20 @@
     width: 30px;
     height: 50px;
 }
-
+/*TRANSFERED*/
 /* Vertical Rectangles (Up/Down) */
 .up-pad {
     rotate: 0deg;
     translate: 0 -35px; /* Moves it up from the center */
     border-radius: 5px 5px 15px 15px;
 }
-
+/*TRANSFERED*/
 .down-pad {
     rotate: 0deg;
     translate: 0 35px;  /* Moves it down from the center */
     border-radius: 15px 15px 5px 5px;
 }
-
+/*TRANSFERED*/
 /* Horizontal Rectangles (Left/Right) */
 .left-pad {
     /* We swap width/height logic by rotating a vertical rectangle */
@@ -215,13 +220,13 @@
     translate: -35px 0; /* Moves it left from the center */
     border-radius: 15px 15px 5px 5px;
 }
-
+/*TRANSFERED*/
 .right-pad {
     rotate: 90deg;
     translate: 35px 0;  /* Moves it right from the center */
     border-radius: 5px 5px 15px 15px;
 }
-
+/*TRANSFERED*/
 #advanced {
     height:50px; 
     width:53px;
@@ -236,11 +241,11 @@
 
     background-color:#1F1F1F;
 }
-
+/*TRANSFERED*/
 .dpad-btn.DPadPressed {
     background-color: white;
 }
-
+/*TRANSFERED*/
 .joystick-zone {
     border-radius:50%;
     background-color:#3b3b3b;
@@ -253,7 +258,7 @@
     border-width: 5px;
     border-color: black;
 }
-
+/*TRANSFERED*/
 .joystick {
     border-radius:50%;
     background-color: #282828;
@@ -263,7 +268,7 @@
     border-width: 10px;
     border-color: #111111;
 }
-
+/*TRANSFERED*/
 .horizontal-group {
     background-color:#3b3b3b;
     width:100%;
@@ -273,33 +278,36 @@
     justify-content: center;
     align-items: center;
 }
-
+/*TRANSFERED*/
 .button.horiz {
     background-color:#1F1F1F;
     width:25px;
     height:25px;
     margin:1px;
 }
-
+/*TRANSFERED*/
 .button.horiz.xbox {
     width:35px;
     height:35px;
 }
-
+/*TRANSFERED*/
 .xbox.ButtonPressed {
     background-color:lime;
 }
-
+/*TRANSFERED*/
 .menu.ButtonPressed {
     background-color:white;
 }
+/*TRANSFERED*/
 .view.ButtonPressed {
     background-color:white;
 }
+/*TRANSFERED*/
 .share.ButtonPressed {
     background-color:white;
 }
 
+/*TRANSFERED*/
 Image {
     width: 100%;
     height: 100%;

@@ -1,0 +1,30 @@
+/*******************************************************
+* Style Sheet:      Joysticks.uss
+* Author(s):   Nick Johnson (Add yourselves to this!)
+* 
+* Description:
+*    Style sheet for the joysticks.
+*******************************************************/
+
+.joystick-zone {
+    border-radius:50%;
+    background-color:#3b3b3b;
+
+    height:70%;
+    width:70%;
+    justify-content: center;
+    align-items: center;
+
+    border-width: 5px;
+    border-color: black;
+}
+
+.joystick {
+    border-radius:50%;
+    background-color: #282828;
+
+    height:80%;
+    width:80%;
+    border-width: 10px;
+    border-color: #111111;
+}
