@@ -218,6 +218,23 @@ public class ControllerGUI : EditorWindow
         imageElement.image = texture;
     }
 
+    void LoadUSS(string ussPath)
+    {
+        string folderPath = System.IO.Path.GetDirectoryName(ussPath);
+        string[] styleSheets = AssetDatabase.FindAssets("t:StyleSheet", new[] { folderPath });
+
+        foreach (string styleSheet in styleSheets)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(styleSheet);
+            StyleSheet sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(path);
+
+            if (sheet != null)
+            {
+                rootVisualElement.styleSheets.Add(sheet);
+            }
+        }
+    }
+
     /// <summary>
     /// Finds all buttons listed in <paramref name="buttonNames"/> and assigns them
     /// their functionalities.
