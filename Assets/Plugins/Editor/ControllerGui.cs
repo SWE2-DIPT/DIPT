@@ -85,14 +85,13 @@ public class ControllerGUI : EditorWindow
     /// </remarks>
     /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
     /// <param name="ussPath">Path from Project directory to .uss file</param>
-    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/UI.uss")
+    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/uss/")
     {
         // Load in the UXML and USS:
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ussPath);
         
         rootVisualElement.Clear();
-        rootVisualElement.styleSheets.Add(styleSheet);
+        LoadUSS(ussPath);
         visualTree.CloneTree(rootVisualElement);
 
         // Initialize Buttons with functions:
@@ -223,9 +222,10 @@ public class ControllerGUI : EditorWindow
         string folderPath = System.IO.Path.GetDirectoryName(ussPath);
         string[] styleSheets = AssetDatabase.FindAssets("t:StyleSheet", new[] { folderPath });
 
-        foreach (string styleSheet in styleSheets)
+        // Note: GUID is just a stylesheet asset.
+        foreach (string guid in styleSheets)
         {
-            string path = AssetDatabase.GUIDToAssetPath(styleSheet);
+            string path = AssetDatabase.GUIDToAssetPath(guid);
             StyleSheet sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(path);
 
             if (sheet != null)
