@@ -1,0 +1,28 @@
+/* Default */
+
+.box-border {
+    /* (This is the default unit for groups, and defines the exact width and height of them.) */
+    /* (When instantiating, please specify width and height in UXML manually) */
+    border-width: 5px; 
+    border-color: #1F1F1F;
+    border-radius: 10px;
+
+    margin:5px;
+
+    background-color:#1F1F1F;
+
+    justify-content: center;
+    align-items: center;
+}
+
+/* Groups */
+.diamond-group {
+    padding:0px;
+
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+
+    background-color:#3b3b3b;
+}
