@@ -218,24 +218,6 @@ public class ControllerGUI : EditorWindow
         imageElement.image = texture;
     }
 
-    void LoadUSS(string ussPath)
-    {
-        string folderPath = System.IO.Path.GetDirectoryName(ussPath);
-        string[] styleSheets = AssetDatabase.FindAssets("t:StyleSheet", new[] { folderPath });
-
-        // Note: GUID is just a stylesheet asset.
-        foreach (string guid in styleSheets)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            StyleSheet sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(path);
-
-            if (sheet != null)
-            {
-                rootVisualElement.styleSheets.Add(sheet);
-            }
-        }
-    }
-
     /// <summary>
     /// Finds all buttons listed in <paramref name="buttonNames"/> and assigns them
     /// their functionalities.
@@ -437,8 +419,6 @@ public class ControllerGUI : EditorWindow
             y * radius
         );
 
-        if (input.x > 0.0f)
-            stick.style.color = Color.green;
         // Realistic Squishing (stretch goal)
         /*
         float maxSquish = 0.2f;
