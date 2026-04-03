@@ -17,7 +17,7 @@ using UnityEngine.InputSystem;
 using static UnityEngine.Rendering.DebugUI;
 using System.Reflection;
 using System.Linq.Expressions;
-
+using Unity.VisualScripting;
 
 /// <summary>
 /// An example plugin.
@@ -31,6 +31,8 @@ public class ControllerGUI : EditorWindow
 
     VisualElement R_Trigger, L_Trigger;
     Label R_trigger_value, L_trigger_value;
+    Label R_joystick_value_X, R_joystick_value_Y;
+    Label L_joystick_value_X, L_joystick_value_Y;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     VisualElement leftStick, rightStick;
@@ -54,7 +56,7 @@ public class ControllerGUI : EditorWindow
     public static void ShowWindow()
     {
         var window = GetWindow<ControllerGUI>();
-        window.titleContent = new GUIContent("DIPT");
+        window.titleContent = new GUIContent("Xbox");
         window.Show();
     }
 
@@ -88,14 +90,13 @@ public class ControllerGUI : EditorWindow
     /// </remarks>
     /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
     /// <param name="ussPath">Path from Project directory to .uss file</param>
-    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/UI.uss")
+    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml")
     {
         // Load in the UXML and USS:
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ussPath);
         
         rootVisualElement.Clear();
-        rootVisualElement.styleSheets.Add(styleSheet);
+        LoadUSS();
         visualTree.CloneTree(rootVisualElement);
 
         // Initialize Buttons with functions:
@@ -105,6 +106,7 @@ public class ControllerGUI : EditorWindow
             "LT-button", "RT-button",
             "up-pad", "down-pad", "left-pad", "right-pad",
             "xbox-button", "menu-button", "view-button", "share-button",
+            "left-joystick-button", "right-joystick-button",
             "advanced"
         });
 
@@ -113,6 +115,12 @@ public class ControllerGUI : EditorWindow
 
         leftStick = rootVisualElement.Q<VisualElement>("left-joystick").Q(className: "joystick");
         rightStick = rootVisualElement.Q<VisualElement>("right-joystick").Q(className: "joystick");
+
+        R_joystick_value_X = rootVisualElement.Q<Label>("right-joystick-value_X");
+        R_joystick_value_Y = rootVisualElement.Q<Label>("right-joystick-value_Y");
+        
+        L_joystick_value_X = rootVisualElement.Q<Label>("left-joystick-value_X");
+        L_joystick_value_Y = rootVisualElement.Q<Label>("left-joystick-value_Y");
 
         leftZone = rootVisualElement.Q<VisualElement>("left-joystick").Q(className: "joystick-zone");
         rightZone = rootVisualElement.Q<VisualElement>("right-joystick").Q(className: "joystick-zone");
@@ -171,6 +179,8 @@ public class ControllerGUI : EditorWindow
             );
 
             rightClickOffset = stickPos - (mousePos - center);
+
+            
         });
         rightZone.RegisterCallback<PointerUpEvent>(evt =>
         {
@@ -197,6 +207,26 @@ public class ControllerGUI : EditorWindow
         LoadImage("menu-button-image", "menu-symbol.png");
         LoadImage("view-button-image", "view-symbol.png");
         LoadImage("share-button-image", "share-symbol.png");
+    }
+
+    void LoadUSS(string path = "Assets/Plugins/Editor/uss")
+    {
+        LoadStyle(path, "Style.uss");
+        LoadStyle(path, "Groups.uss");
+        LoadStyle(path, "Buttons.uss");
+        LoadStyle(path, "Joysticks.uss");
+    }
+    void LoadStyle(string path, string name)
+    {
+        string fullPath = System.IO.Path.Combine(path, name);
+
+        var sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(fullPath);
+        if (sheet == null)
+        {
+            Debug.LogError($"Could not load {name}");
+            return;
+        }
+        rootVisualElement.styleSheets.Add(sheet);
     }
 
     void LoadImage(string targetElement, string imageName)
@@ -305,6 +335,12 @@ public class ControllerGUI : EditorWindow
             case "right-pad":
                 components.SetDpadRight(pressed);
                 break;
+            case "right-joystick-button":
+                components.SetRightJoysickButton(pressed);
+                break;
+            case "left-joystick-button":
+                components.SetLeftJoysickButton(pressed);
+                break;
         }
     }
 
@@ -312,7 +348,7 @@ public class ControllerGUI : EditorWindow
     private Color color_hex (string hex)
     {
         Color color;
-        ColorUtility.TryParseHtmlString(hex, out color);
+        UnityEngine.ColorUtility.TryParseHtmlString(hex, out color);
         return color;
     }
 
@@ -364,14 +400,13 @@ public class ControllerGUI : EditorWindow
 
         //buttons["RT-button"].style.height = Length.Percent(RT * 100);
         R_trigger_value.style.fontSize = 20f;
-        R_trigger_value.text = $"{RT:F2}";
+        R_trigger_value.text = $"VAL:   {RT:F2}";
         
 
         //buttons["LT-button"].style.height = Length.Percent(LT * 100);
         L_trigger_value.style.fontSize = 20f;
-        L_trigger_value.text = $"{LT:F2}";
+        L_trigger_value.text = $"VAL:   {LT:F2}";
     }
-
     public void UpdateGuiJoysticks()
     {
         Vector2 leftInput = components.GetLeftJoystick();
@@ -379,6 +414,17 @@ public class ControllerGUI : EditorWindow
 
         UpdateStick(leftStick, leftInput, 40f);
         UpdateStick(rightStick, rightInput, 40f);
+
+        L_joystick_value_X.style.fontSize = 20f;
+        L_joystick_value_Y.style.fontSize = 20f;
+        L_joystick_value_X.text = $"X:  {leftInput.x:F2}";
+        L_joystick_value_Y.text = $"Y:  {leftInput.y:F2}";
+
+        R_joystick_value_X.style.fontSize = 20f;
+        R_joystick_value_Y.style.fontSize = 20f;
+        R_joystick_value_X.text = $"X:  {rightInput.x:F2}";
+        R_joystick_value_Y.text = $"Y:  {rightInput.y:F2}";
+
     }
     void UpdateStick(VisualElement stick, Vector2 input, float radius)
     {
@@ -396,6 +442,7 @@ public class ControllerGUI : EditorWindow
             x * radius,
             y * radius
         );
+
         // Realistic Squishing (stretch goal)
         /*
         float maxSquish = 0.2f;

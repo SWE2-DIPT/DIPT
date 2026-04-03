@@ -87,6 +87,11 @@ public class GamepadEmulator
         buttonsPressed |= 1u << button;
     }
 
+    // simulate press all buttons
+    public void pressAllButtons(){
+        buttonsPressed = (1u << 14) - 1;
+    }
+
     // simulate release on button
     // param: int of button
     public void releaseButton(int button){

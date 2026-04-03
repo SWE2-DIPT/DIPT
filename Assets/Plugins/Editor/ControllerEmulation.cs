@@ -62,6 +62,11 @@ public class ControllerEmulation : EditorWindow
     {
         emulator.releaseAllButtons();
         
+        if (GUILayout.RepeatButton("Press All Buttons"))
+            {
+                emulator.pressAllButtons();
+            }
+
         // create a button for each controller button input
         foreach (var button in buttonNames)
         {
