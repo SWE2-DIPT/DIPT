@@ -19,7 +19,6 @@ using System.Reflection;
 using System.Linq.Expressions;
 using Unity.VisualScripting;
 
-
 /// <summary>
 /// An example plugin.
 /// </summary>
@@ -53,7 +52,7 @@ public class ControllerGUI : EditorWindow
     public static void ShowWindow()
     {
         var window = GetWindow<ControllerGUI>();
-        window.titleContent = new GUIContent("DIPT");
+        window.titleContent = new GUIContent("Xbox");
         window.Show();
     }
 
@@ -85,14 +84,13 @@ public class ControllerGUI : EditorWindow
     /// </remarks>
     /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
     /// <param name="ussPath">Path from Project directory to .uss file</param>
-    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml", string ussPath = "Assets/Plugins/Editor/UI.uss")
+    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml")
     {
         // Load in the UXML and USS:
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(ussPath);
         
         rootVisualElement.Clear();
-        rootVisualElement.styleSheets.Add(styleSheet);
+        LoadUSS();
         visualTree.CloneTree(rootVisualElement);
 
         // Initialize Buttons with functions:
@@ -203,6 +201,26 @@ public class ControllerGUI : EditorWindow
         LoadImage("menu-button-image", "menu-symbol.png");
         LoadImage("view-button-image", "view-symbol.png");
         LoadImage("share-button-image", "share-symbol.png");
+    }
+
+    void LoadUSS(string path = "Assets/Plugins/Editor/uss")
+    {
+        LoadStyle(path, "Style.uss");
+        LoadStyle(path, "Groups.uss");
+        LoadStyle(path, "Buttons.uss");
+        LoadStyle(path, "Joysticks.uss");
+    }
+    void LoadStyle(string path, string name)
+    {
+        string fullPath = System.IO.Path.Combine(path, name);
+
+        var sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(fullPath);
+        if (sheet == null)
+        {
+            Debug.LogError($"Could not load {name}");
+            return;
+        }
+        rootVisualElement.styleSheets.Add(sheet);
     }
 
     void LoadImage(string targetElement, string imageName)
