@@ -1,5 +1,5 @@
 /*******************************************************
-* Script:      TestPlugin.cs
+* Script:      ControllerGUI.cs
 * Author(s):   Nicholas Johnson (Add yourselves to this!)
 * 
 * Description:
@@ -15,6 +15,8 @@ using UnityEngine.UIElements;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using static UnityEngine.Rendering.DebugUI;
+using System.Reflection;
+using System.Linq.Expressions;
 
 
 /// <summary>
@@ -31,13 +33,21 @@ public class ControllerGUI : EditorWindow
     Label R_trigger_value, L_trigger_value;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
+    VisualElement leftStick, rightStick;
+
+    bool draggingLeft = false;
+    bool draggingRight = false;
+
+    VisualElement leftZone, rightZone;
+    Vector2 leftClickOffset;
+    Vector2 rightClickOffset;
     
     private void OnEnable()
     {
         manager = new ControllerManager();
         components = new ControllerComponents();
 
-        emulator = new KeyMapper(components);
+        emulator = new KeyMapper(components); /* KeyMapper.cs */
     }
 
     [MenuItem("Tools/DIPT/InputVisualizer")]
@@ -63,6 +73,7 @@ public class ControllerGUI : EditorWindow
 
         UpdateGuiButtons();
         UpdateGuiAnalogs();
+        UpdateGuiJoysticks();
         // Debug.Log("Ticking");
     }
 
@@ -93,11 +104,112 @@ public class ControllerGUI : EditorWindow
             "RB-button", "LB-button",
             "LT-button", "RT-button",
             "up-pad", "down-pad", "left-pad", "right-pad",
+            "xbox-button", "menu-button", "view-button", "share-button",
             "advanced"
         });
 
         R_trigger_value = rootVisualElement.Q<Label>("RT-trigger-value-label");
         L_trigger_value = rootVisualElement.Q<Label>("LT-trigger-value-label");
+
+        leftStick = rootVisualElement.Q<VisualElement>("left-joystick").Q(className: "joystick");
+        rightStick = rootVisualElement.Q<VisualElement>("right-joystick").Q(className: "joystick");
+
+        leftZone = rootVisualElement.Q<VisualElement>("left-joystick").Q(className: "joystick-zone");
+        rightZone = rootVisualElement.Q<VisualElement>("right-joystick").Q(className: "joystick-zone");
+
+        // LEFT JOYSTICK
+        leftZone.RegisterCallback<PointerDownEvent>(evt =>
+        {
+            draggingLeft = true;
+
+            leftZone.CapturePointer(evt.pointerId);
+
+            Vector2 center = leftZone.layout.size / 2f;
+            Vector2 mousePos = evt.localPosition;
+
+            Vector2 stickPos = new Vector2(
+                leftStick.resolvedStyle.translate.x,
+                leftStick.resolvedStyle.translate.y
+            );
+
+            leftClickOffset = stickPos - (mousePos - center);
+        });
+        leftZone.RegisterCallback<PointerUpEvent>(evt =>
+        {
+            draggingLeft = false;
+
+            leftZone.ReleasePointer(evt.pointerId);
+
+            components.SetLeftJoystick(Vector2.zero);
+        });
+        leftZone.RegisterCallback<PointerMoveEvent>(evt =>
+        {
+            if (!draggingLeft) return;
+
+            Vector2 input = GetNormalizedInput(evt, leftZone, leftClickOffset);
+            components.SetLeftJoystick(input);
+        });
+        leftZone.RegisterCallback<PointerCaptureOutEvent>(evt =>
+        {
+            draggingLeft = false;
+            components.SetLeftJoystick(Vector2.zero);
+        });
+
+        // RIGHT JOYSTICK
+        rightZone.RegisterCallback<PointerDownEvent>(evt =>
+        {
+            draggingRight = true;
+
+            rightZone.CapturePointer(evt.pointerId);
+
+            Vector2 center = rightZone.layout.size / 2f;
+            Vector2 mousePos = evt.localPosition;
+
+            Vector2 stickPos = new Vector2(
+                rightStick.resolvedStyle.translate.x,
+                rightStick.resolvedStyle.translate.y
+            );
+
+            rightClickOffset = stickPos - (mousePos - center);
+        });
+        rightZone.RegisterCallback<PointerUpEvent>(evt =>
+        {
+            draggingRight = false;
+
+            rightZone.ReleasePointer(evt.pointerId);
+
+            components.SetRightJoystick(Vector2.zero);
+        });
+        rightZone.RegisterCallback<PointerMoveEvent>(evt =>
+        {
+            if (!draggingRight) return;
+
+            Vector2 input = GetNormalizedInput(evt, rightZone, rightClickOffset);
+            components.SetRightJoystick(input);
+        });
+        rightZone.RegisterCallback<PointerCaptureOutEvent>(evt =>
+        {
+            draggingRight = false;
+            components.SetRightJoystick(Vector2.zero);
+        });
+
+        LoadImage("xbox-button-image", "xbox-symbol.png");
+        LoadImage("menu-button-image", "menu-symbol.png");
+        LoadImage("view-button-image", "view-symbol.png");
+        LoadImage("share-button-image", "share-symbol.png");
+    }
+
+    void LoadImage(string targetElement, string imageName)
+    {
+        var imageElement = rootVisualElement.Q<Image>(targetElement);
+
+        var texture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Plugins/Editor/images/{imageName}");
+                
+        if (texture == null)
+        {
+            Debug.LogError($"Image {imageName} failed to load!");
+        }
+        imageElement.image = texture;
     }
 
     /// <summary>
@@ -135,12 +247,26 @@ public class ControllerGUI : EditorWindow
             button.RegisterCallback<PointerDownEvent>(evt =>
             {
                 Debug.Log($"{name}: DOWN");
+                button.AddToClassList("ButtonPressed"); // This is here until we fix class adding.
                 SetButtonState(name, true);
+
+                var image = button.Q<Image>();
+                if (image != null && image.name != "xbox-button-image")
+                {
+                    image.tintColor = Color.black;
+                }
             });
             button.RegisterCallback<PointerUpEvent>(evt =>
             {
                 Debug.Log($"{name}: UP");
+                button.RemoveFromClassList("ButtonPressed"); // This is here until we fix class removing.
                 SetButtonState(name, false);
+
+                var image = button.Q<Image>();
+                if (image != null && image.name != "xbox-button-image")
+                {
+                    image.tintColor = Color.white;
+                }
             });
         }
     }
@@ -244,5 +370,57 @@ public class ControllerGUI : EditorWindow
         //buttons["LT-button"].style.height = Length.Percent(LT * 100);
         L_trigger_value.style.fontSize = 20f;
         L_trigger_value.text = $"{LT:F2}";
+    }
+
+    public void UpdateGuiJoysticks()
+    {
+        Vector2 leftInput = components.GetLeftJoystick();
+        Vector2 rightInput = components.GetRightJoystick();
+
+        UpdateStick(leftStick, leftInput, 40f);
+        UpdateStick(rightStick, rightInput, 40f);
+    }
+    void UpdateStick(VisualElement stick, Vector2 input, float radius)
+    {
+        if (stick == null) return;
+
+        if (input.magnitude < 0.1f)
+            input = Vector2.zero;
+
+        input = Vector2.ClampMagnitude(input, 1f);
+
+        float x = input.x;
+        float y = -input.y;
+
+        stick.style.translate = new Translate(
+            x * radius,
+            y * radius
+        );
+        // Realistic Squishing (stretch goal)
+        /*
+        float maxSquish = 0.2f;
+        float squishX = 1f - Mathf.Abs(input.x) * maxSquish;
+        float squishY = 1f - Mathf.Abs(input.y) * maxSquish;
+
+        stick.style.scale = new Scale(new Vector3(squishX, squishY, 1f));
+        */
+    }
+
+    Vector2 GetNormalizedInput(PointerMoveEvent evt, VisualElement zone, Vector2 offset)
+    {
+        Vector2 world = evt.position;
+        Vector2 localPos = zone.WorldToLocal(world);
+
+        Vector2 center = zone.layout.size / 2f;
+        Vector2 delta = (localPos - center) + offset;
+
+        float radius = zone.layout.width / 2f;
+
+        Vector2 normalized = delta / radius;
+
+        normalized = Vector2.ClampMagnitude(normalized, 1f);
+        normalized.y *= -1;
+
+        return normalized;
     }
 }

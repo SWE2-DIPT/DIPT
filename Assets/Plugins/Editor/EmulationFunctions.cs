@@ -205,4 +205,10 @@ public class GamepadEmulator
             rightStick = rightStickValues
         });
     }
+
+    // get gamepad emulator
+    public Gamepad getGamepad()
+    {
+        return emulator;
+    }
 }

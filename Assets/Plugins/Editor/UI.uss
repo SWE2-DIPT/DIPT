@@ -125,6 +125,7 @@
     color: white;
     background-color:#1F1F1F;
     border-radius: 8px;
+    font-size: 300%;
 }
 
 .bumper-button-pressed {
@@ -219,5 +220,69 @@
 
 .dpad-btn.DPadPressed {
     background-color: white;
+}
+
+.joystick-zone {
+    border-radius:50%;
+    background-color:#3b3b3b;
+
+    height:70%;
+    width:70%;
+    justify-content: center;
+    align-items: center;
+
+    border-width: 5px;
+    border-color: black;
+}
+
+.joystick {
+    border-radius:50%;
+    background-color: #232323;
+
+    height:80%;
+    width:80%;
+    border-width: 10px;
+    border-color: #111111;
+}
+
+.horizontal-group {
+    background-color:#3b3b3b;
+    width:100%;
+    height:100%;
+    border-radius: 8px;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.button.horiz {
+    background-color:#1F1F1F;
+    width:25px;
+    height:25px;
+    margin:1px;
+}
+
+.button.horiz.xbox {
+    width:35px;
+    height:35px;
+}
+
+.xbox.ButtonPressed {
+    background-color:lime;
+}
+
+.menu.ButtonPressed {
+    background-color:white;
+}
+.view.ButtonPressed {
+    background-color:white;
+}
+.share.ButtonPressed {
+    background-color:white;
+}
+
+Image {
+    width: 100%;
+    height: 100%;
 }
 

@@ -1,15 +1,20 @@
 /*******************************************************
-* Script:      LogPlugin.cs
-* Author(s):   Nick Stearns, Jarrett Williams(Add yourselves to this!)
+* Script:      ControllerComponents.cs
+* Author(s):   Nick Stearns, Jarrett Williams (Add yourselves to this!)
 * 
 * Description:
 *    A example plugin meant to showcase how to create plugins
 *    in Unity.
 *******************************************************/
 
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+
+[assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
+
+
 
 enum buttons { BottomFace, TopFace, RightFace, LeftFace, RightBumper, LeftBumper, dpadUp };
 public class ControllerComponents
@@ -124,7 +129,7 @@ public class ControllerComponents
         CheckButtonState("Right Joystick Press", rightJoystickButton, ref prevRightJoystickButton);
     }
 
-    private void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
+    internal void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
     {
         if (currentState && !previousState)
         {
@@ -225,6 +230,16 @@ public class ControllerComponents
         return dpadLeft;
     }
 
+    public Vector2 GetLeftJoystick()
+    {
+        return leftJoystick;
+    }
+
+    public Vector2 GetRightJoystick()
+    {
+        return rightJoystick;
+    }
+
     public void SetBottomFaceButton(bool value)
     {
         bottomFaceButton = value;
@@ -272,5 +287,14 @@ public class ControllerComponents
     public void SetDpadRight(bool value)
     {
         dpadRight = value;
+    }
+    public void SetLeftJoystick(Vector2 value)
+    {
+        leftJoystick = value;
+    }
+
+    public void SetRightJoystick(Vector2 value)
+    {
+        rightJoystick = value;
     }
 }

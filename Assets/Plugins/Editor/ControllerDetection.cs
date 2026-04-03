@@ -18,16 +18,25 @@ using Unity.Collections;
 
 public class ControllerDetection
 {
-    public string controllerType = "";
-    
-    public void FindControllerType()
+    // returns name of most recently used controller
+    public string FindCurrentController()
     {
         var gamepad = Gamepad.current;
         if (gamepad == null)
         {
-            controllerType = "No Gamepads Detected";
-            return;
+            return "No Gamepads Detected";
         }
-        controllerType = gamepad.layout;
+        return gamepad.layout;
+    }
+
+    // returns name of controller in parameter
+    public string FindControllerType(Gamepad controller)
+    {
+        var gamepad = controller;
+        if (gamepad == null)
+        {
+            return "No Gamepads Detected";
+        }
+        return gamepad.layout;
     }
 }
