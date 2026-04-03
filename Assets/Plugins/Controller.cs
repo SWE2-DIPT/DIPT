@@ -40,10 +40,6 @@ struct Button
 {
     bool pressed;
 
-    public Button()
-    {
-        pressed = false;
-    }
     /* Function on pressed */
 }
 
@@ -52,11 +48,6 @@ struct Joystick
     bool pressed;
     Vector2 value;
 
-    public Joystick()
-    {
-        pressed = false;
-        value = new Vector2(0.0, 0.0);
-    }
     /* Function on move */
 }
 
@@ -64,9 +55,5 @@ struct Trigger
 {
     float pressure;
 
-    public Trigger()
-    {
-        pressure = 0.0f;
-    }
     /* Function on pressed */
 }
