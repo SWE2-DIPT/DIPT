@@ -15,37 +15,58 @@ enum joystickType { Left, Right }
 
 public static class Controller
 {
-    static Dictionary<buttonType, bool> buttons = new();
-    static Dictionary<triggerType, float> triggers = new();
-    static Dictionary<joystickType, Vector2> joysticks = new();
+    static Dictionary<buttonType, bool> Buttons {get; set;} = new();
+    static Dictionary<triggerType, float> Triggers {get; set;} = new();
+    static Dictionary<joystickType, Vector2> Joysticks {get; set;} = new();
 
     static Controller()  // Constructor
     {
         foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
         {
-            buttons[button] = false;
+            Buttons[button] = false;
         }
         foreach (triggerType trigger in System.Enum.GetValues(typeof(triggerType)))
         {
-            triggers[trigger] = 0.0f;
+            Triggers[trigger] = 0.0f;
         }
         foreach (joystickType joystick in System.Enum.GetValues(typeof(joystickType)))
         {
-            joysticks[joystick] = new Vector2(0.0f, 0.0f);
+            Joysticks[joystick] = new Vector2(0.0f, 0.0f);
         }
     }
 }
 
-/*
-public struct Joysticks
+struct Button
 {
-    public Vector2 Left;
-    public Vector2 Right;
+    bool pressed;
+
+    public Button()
+    {
+        pressed = false;
+    }
+    /* Function on pressed */
 }
 
-public struct Triggers
+struct Joystick
 {
-    public float Left;
-    public struct Right;
+    bool pressed;
+    Vector2 value;
+
+    public Joystick()
+    {
+        pressed = false;
+        value = new Vector2(0.0, 0.0);
+    }
+    /* Function on move */
 }
-*/
+
+struct Trigger
+{
+    float pressure;
+
+    public Trigger()
+    {
+        pressure = 0.0f;
+    }
+    /* Function on pressed */
+}
