@@ -35,6 +35,7 @@ public class ControllerGUI : EditorWindow
     Label L_joystick_value_X, L_joystick_value_Y;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
+    Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
     VisualElement leftStick, rightStick;
 
     bool draggingLeft = false;
@@ -71,7 +72,7 @@ public class ControllerGUI : EditorWindow
         components.GetTriggerActivity();
         components.GetButtonActivity();
 
-        emulator.UpdateKeyboardEmulation();
+        // emulator.UpdateKeyboardEmulation();
 
         UpdateGuiButtons();
         UpdateGuiAnalogs();
@@ -98,7 +99,6 @@ public class ControllerGUI : EditorWindow
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
         
         rootVisualElement.Clear();
-        LoadUSS();
         visualTree.CloneTree(rootVisualElement);
 
         // Initialize Buttons with functions:
@@ -210,7 +210,7 @@ public class ControllerGUI : EditorWindow
         LoadImage("view-button-image", "view-symbol.png");
         LoadImage("share-button-image", "share-symbol.png");
     }
-
+/*
     void LoadUSS(string path = "Assets/Plugins/Editor/uss")
     {
         LoadStyle(path, "Style.uss");
@@ -230,6 +230,7 @@ public class ControllerGUI : EditorWindow
         }
         rootVisualElement.styleSheets.Add(sheet);
     }
+*/
 
     void LoadImage(string targetElement, string imageName)
     {
@@ -316,6 +317,7 @@ public class ControllerGUI : EditorWindow
                 continue;
             }
             
+            joysticks[name] = joystick;
         }
     }
 
