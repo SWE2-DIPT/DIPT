@@ -36,24 +36,24 @@ public static class Controller
     }
 }
 
-struct Button
+class Button
 {
-    bool pressed;
+    public bool pressed;
 
     /* Function on pressed */
 }
 
-struct Joystick
+class Joystick
 {
-    bool pressed;
+    public bool pressed;
     Vector2 value;
 
     /* Function on move */
 }
 
-struct Trigger
+class Trigger
 {
-    float pressure;
+    public float pressure;
 
     /* Function on pressed */
 }

@@ -79,6 +79,8 @@ public class ControllerGUI : EditorWindow
         // Debug.Log("Ticking");
     }
 
+    //~LOAD~GUI~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     /// <summary>
     /// Loads the .uxml at <paramref name="uxmlPath"/> and 
     /// the .uss at <paramref name="ussPath"/> and applies them 
@@ -301,6 +303,22 @@ public class ControllerGUI : EditorWindow
         }
     }
 
+    void InitializeJoystick(string[] joystickNames)
+    {
+        foreach (string name in joystickNames)
+        {
+            var joystick = rootVisualElement.Q<VisualElement>(name).Q(className: "joystick");
+
+            // Skip unimplemented names:
+            if (joystick == null)
+            {
+                Debug.LogWarning($"Joystick '{name}' not found in UXML!");
+                continue;
+            }
+            
+        }
+    }
+
     void SetButtonState(string name, bool pressed)
     {
         switch (name)
@@ -343,6 +361,8 @@ public class ControllerGUI : EditorWindow
                 break;
         }
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     //getter for colors
     private Color color_hex (string hex)
