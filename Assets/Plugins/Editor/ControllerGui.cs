@@ -148,18 +148,7 @@ public class ControllerGUI : EditorWindow
             if (label != null)
                 label.text = $"VAL: {value:F2}";
         }
-        /*
-        components.GetJoystickActivity();
-        components.GetTriggerActivity();
-        components.GetButtonActivity();
-
         // emulator.UpdateKeyboardEmulation();
-
-        UpdateGuiButtons();
-        UpdateGuiAnalogs();
-        UpdateGuiJoysticks();
-        */
-        // Debug.Log("Ticking");
     }
 
     //~LOAD~GUI~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -408,70 +397,6 @@ public class ControllerGUI : EditorWindow
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    //getter for colors
-    private Color color_hex (string hex)
-    {
-        Color color;
-        UnityEngine.ColorUtility.TryParseHtmlString(hex, out color);
-        return color;
-    }
-
-    private void UpdateGuiButtons()
-    {
-       
-        components.GetComponentState(components.GetLeftBumper(), buttons["LB-button"], "bumper-button-pressed");
-        components.GetComponentState(components.GetRightBumper(), buttons["RB-button"], "bumper-button-pressed");
-
-        components.GetComponentState(components.GetDpadUp(), buttons["up-pad"], "DPadPressed");
-        components.GetComponentState(components.GetDpadDown(), buttons["down-pad"], "DPadPressed");
-        components.GetComponentState(components.GetDpadLeft(), buttons["left-pad"], "DPadPressed");
-        components.GetComponentState(components.GetDpadRight(), buttons["right-pad"], "DPadPressed");
-        //Y
-        components.GetButtonState(components.GetUpFaceButton(), buttons["Y-button"], 
-                                                               color_hex("#FFCC00"), color_hex("#1F1F1F"), 
-                                                               color_hex("#1F1F1F"), color_hex("#FFCC00"));
-        //A
-        components.GetButtonState(components.GetBottomFaceButton(), buttons["A-button"],
-                                                               color_hex("#107C10"), color_hex("#1F1F1F"),
-                                                               color_hex("#1F1F1F"), color_hex("#107C10"));
-        //B
-        components.GetButtonState(components.GetRightFaceButton(), buttons["B-button"],
-                                                               color_hex("#D83B01"), color_hex("#1F1F1F"),
-                                                               color_hex("#1F1F1F"), color_hex("#D83B01"));
-
-        //X
-        components.GetButtonState(components.GetLeftFaceButton(), buttons["X-button"],
-                                                               color_hex("#0078D4"), color_hex("#1F1F1F"),
-                                                               color_hex("#1F1F1F"), color_hex("#0078D4"));
-
-
-        components.GetComponentState(components.GetDpadUp(), buttons["up-pad"], "dpad-pressed");
-        components.GetComponentState(components.GetDpadDown(), buttons["down-pad"], "dpad-pressed");
-        components.GetComponentState(components.GetDpadRight(), buttons["right-pad"], "dpad-pressed");
-        components.GetComponentState(components.GetDpadLeft(), buttons["left-pad"], "dpad-pressed");
-    }
-
-    public void UpdateGuiAnalogs()
-    {   
-        
-        float RT = components.GetRightTrigger();
-        float LT = components.GetLeftTrigger();
-        // These two lines set the trigger width to 0 until pressed. I will fix this later.
-        if (R_Trigger != null)
-            R_Trigger.style.height = new Length(RT * 100, LengthUnit.Percent);
-        if (L_Trigger != null)
-            L_Trigger.style.height = new Length(LT * 100, LengthUnit.Percent);
-
-        //buttons["RT-button"].style.height = Length.Percent(RT * 100);
-        R_trigger_value.style.fontSize = 20f;
-        R_trigger_value.text = $"VAL:   {RT:F2}";
-        
-
-        //buttons["LT-button"].style.height = Length.Percent(LT * 100);
-        L_trigger_value.style.fontSize = 20f;
-        L_trigger_value.text = $"VAL:   {LT:F2}";
-    }
 
     void UpdateStick(VisualElement stick, Vector2 input, float radius)
     {
