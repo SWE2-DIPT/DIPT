@@ -13,14 +13,15 @@
 	<ui:VisualElement class="box-border">
 		<ui:VisualElement class="Bumper-Row trigger-row">
 			<ui:VisualElement name="LT-button" class="trigger-button button">
-				<ui:Label text="LT" class="button-label"/>
-				<ui:Label name="LT-trigger-value-label" />
 				<ui:VisualElement name="LT-fill" class="trigger-fill" />
+				<ui:Label name="LT-trigger-value-label" />
+				<ui:Label text="LT" class="button-label"/>
+				
 			</ui:VisualElement>
 			<ui:VisualElement name="RT-button" class="trigger-button button">
-				<ui:Label text="RT" class="button-label"/>
-				<ui:Label name="RT-trigger-value-label" />
 				<ui:VisualElement name="RT-fill" class="trigger-fill" />
+				<ui:Label name="RT-trigger-value-label" />
+				<ui:Label text="RT" class="button-label"/>
 			</ui:VisualElement>
 		</ui:VisualElement>
 	</ui:VisualElement>

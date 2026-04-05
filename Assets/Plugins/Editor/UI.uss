@@ -175,14 +175,18 @@
     border-bottom-left-radius:40%;
 }
 /*TRANSFERED*/
-.trigger-button { 
-    /*THIS CLASS IS EXACTLY THE SAME AS THE bumper-button class
-    I made a seperate class so that later on, we can edit this  to make
-    the button a better shape resembling a trigger */
+
+
+
+/*TRANSFERED*/
+.trigger-button {
     width: 100px;
     height: 100px;
-    color: white;
-    background-color:#1F1F1F;
+
+    position: relative;
+    overflow: hidden;
+
+    background-color: #1F1F1F;
     border-radius: 8px;
 }
 /*TRANSFERED*/
@@ -193,6 +197,19 @@
     background-color: white;
     border-radius: 8px;
 }
+
+.trigger-fill {
+    position: absolute;
+
+    width: 100%;
+    height: 0%;
+
+    bottom: 0;
+    left: 0;
+
+    background-color: white;
+}
+
 /*TRANSFERED*/
 #LT-button {
     border-top-left-radius:50%;
