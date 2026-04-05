@@ -84,9 +84,22 @@
     color:#FFCC00; /* This is yellow, the default yellow looks stupid */
     position: absolute;
 }
+
+#Y-button.ButtonPressed {
+    background-color:#FFCC00;
+    color:#1F1F1F;
+    position: absolute;
+}
+
 /*TRANSFERED*/
 #B-button {
     color:#D83B01;
+    position: absolute;
+}
+
+#B-button.ButtonPressed {
+    background-color:#D83B01;
+    color:#1F1F1F;
     position: absolute;
 }
 /*TRANSFERED*/
@@ -94,9 +107,21 @@
     color:#107C10;
     position: absolute;
 }
+
+#A-button.ButtonPressed {
+    background-color:#107C10;
+    color:#1F1F1F;
+    position: absolute;
+}
 /*TRANSFERED*/
 #X-button {
     color:#0078D4;
+    position: absolute;
+}
+
+#X-button.ButtonPressed {
+    background-color:#0078D4;
+    color:#1F1F1F;
     position: absolute;
 }
 /*TRANSFERED*/
@@ -132,7 +157,7 @@
     font-size: 300%;
 }
 /*TRANSFERED*/
-.bumper-button-pressed {
+.bumper-button.ButtonPressed {
     width: 100px;
     height: 70px;
     color: #333;

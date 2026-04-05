@@ -15,9 +15,9 @@ public enum joystickType { Left, Right }
 
 public static class XboxController
 {
-    public static Dictionary<buttonType, Button> Buttons {get; private set;} = new();
-    public static Dictionary<triggerType, Trigger> Triggers {get; private set;} = new();
-    public static Dictionary<joystickType, Joystick> Joysticks {get; private set;} = new();
+    private static Dictionary<buttonType, Button> Buttons = new();
+    private static Dictionary<triggerType, Trigger> Triggers = new();
+    private static Dictionary<joystickType, Joystick> Joysticks = new();
 
     static XboxController()  // Constructor
     {
@@ -33,6 +33,41 @@ public static class XboxController
         {
             Joysticks[joystick] = new Joystick();
         }
+    }
+    //~GETTERS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    public static Button GetButton(buttonType type)
+    {
+        return Buttons[type];
+    }
+
+    public static Trigger GetTrigger(triggerType type)
+    {
+        return Triggers[type];
+    }
+
+    public static Joystick GetJoystick(joystickType type)
+    {
+        return Joysticks[type];
+    }
+    //~SETTERS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    public static void SetButton(buttonType type, bool pressed)
+    {
+        Buttons[type].SetPressed(pressed);
+    }
+
+    public static void SetTrigger(triggerType type, float value)
+    {
+        Triggers[type].SetPressure(value);
+    }
+
+    public static void SetJoystick(joystickType type, Vector2 value)
+    {
+        Joysticks[type].SetValue(value);
+    }
+
+    public static void SetJoystickPressed(joystickType type, bool pressed)
+    {
+        Joysticks[type].SetPressed(pressed);
     }
 }
 

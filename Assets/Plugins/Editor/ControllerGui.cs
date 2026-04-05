@@ -31,19 +31,45 @@ public class ControllerGUI : EditorWindow
 
     VisualElement R_Trigger, L_Trigger;
     Label R_trigger_value, L_trigger_value;
-    Label R_joystick_value_X, R_joystick_value_Y;
-    Label L_joystick_value_X, L_joystick_value_Y;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
-    VisualElement leftStick, rightStick;
+    Dictionary<string, VisualElement> triggers = new Dictionary<string, VisualElement>();
 
-    bool draggingLeft = false;
-    bool draggingRight = false;
+    Dictionary<string, buttonType> visElToButton = new()
+    {
+        { "A-button", buttonType.A },
+        { "B-button", buttonType.B },
+        { "X-button", buttonType.X },
+        { "Y-button", buttonType.Y },
 
-    VisualElement leftZone, rightZone;
-    Vector2 leftClickOffset;
-    Vector2 rightClickOffset;
+        { "RB-button", buttonType.RBumper },
+        { "LB-button", buttonType.LBumper },
+
+        { "up-pad", buttonType.Up },
+        { "down-pad", buttonType.Down },
+        { "left-pad", buttonType.Left },
+        { "right-pad", buttonType.Right },
+
+        { "xbox-button", buttonType.Xbox },
+        { "menu-button", buttonType.Menu },
+        { "view-button", buttonType.View },
+        { "share-button", buttonType.Share },
+
+        { "advanced", buttonType.Advanced }
+    };
+
+    Dictionary<string, joystickType> visElToJoystick = new()
+    {
+        { "left-joystick", joystickType.Left },
+        { "right-joystick", joystickType.Right }
+    };
+
+    Dictionary<string, triggerType> visElToTrigger = new()
+    {
+        { "LT-button", triggerType.Left },
+        { "RT-button", triggerType.Right }
+    };
     
     private void OnEnable()
     {
@@ -68,6 +94,61 @@ public class ControllerGUI : EditorWindow
 
     void Update()
     {
+        foreach (var pair in visElToButton)
+        {
+            string elementName = pair.Key;
+            buttonType button = pair.Value;
+
+            bool isPressed = XboxController.GetButton(button).pressed;
+            if (!buttons.TryGetValue(elementName, out VisualElement element))
+                continue;
+            if (isPressed)
+                element.AddToClassList("ButtonPressed");
+            else
+                element.RemoveFromClassList("ButtonPressed");
+        }
+        foreach (var pair in visElToJoystick)
+        {
+            string name = pair.Key;
+            joystickType type = pair.Value;
+
+            var joystickRoot = joysticks[name];
+            if (joystickRoot == null) continue;
+
+            var stick = joystickRoot.Q<VisualElement>(className: "joystick");
+            var labelX = joystickRoot.Q<Label>($"{name}-value_X");
+            var labelY = joystickRoot.Q<Label>($"{name}-value_Y");
+
+            Vector2 input = XboxController.GetJoystick(type).position;
+
+            UpdateStick(stick, input, 40f);
+
+            if (labelX != null) labelX.text = $"X: {input.x:F2}";
+            if (labelY != null) labelY.text = $"Y: {input.y:F2}";
+        }
+
+        foreach (var pair in visElToTrigger)
+        {
+            string name = pair.Key;
+            triggerType type = pair.Value;
+
+            if (!triggers.TryGetValue(name, out var triggerRoot))
+                continue;
+
+            var fill = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-fill");
+            var label = triggerRoot.Q<Label>($"{name.Split('-')[0]}-trigger-value-label");
+
+            float value = XboxController.GetTrigger(type).pressure;
+
+            // Update fill
+            if (fill != null)
+                fill.style.height = new Length(value * 100, LengthUnit.Percent);
+
+            // Update label
+            if (label != null)
+                label.text = $"VAL: {value:F2}";
+        }
+        /*
         components.GetJoystickActivity();
         components.GetTriggerActivity();
         components.GetButtonActivity();
@@ -77,6 +158,7 @@ public class ControllerGUI : EditorWindow
         UpdateGuiButtons();
         UpdateGuiAnalogs();
         UpdateGuiJoysticks();
+        */
         // Debug.Log("Ticking");
     }
 
@@ -102,135 +184,15 @@ public class ControllerGUI : EditorWindow
         visualTree.CloneTree(rootVisualElement);
 
         // Initialize Buttons with functions:
-        InitializeButtons(new string[] {
-            "A-button", "Y-button", "B-button", "X-button",
-            "RB-button", "LB-button",
-            "LT-button", "RT-button",
-            "up-pad", "down-pad", "left-pad", "right-pad",
-            "xbox-button", "menu-button", "view-button", "share-button",
-            "left-joystick-button", "right-joystick-button",
-            "advanced"
-        });
-
-        R_trigger_value = rootVisualElement.Q<Label>("RT-trigger-value-label");
-        L_trigger_value = rootVisualElement.Q<Label>("LT-trigger-value-label");
-
-        leftStick = rootVisualElement.Q<VisualElement>("left-joystick").Q(className: "joystick");
-        rightStick = rootVisualElement.Q<VisualElement>("right-joystick").Q(className: "joystick");
-
-        R_joystick_value_X = rootVisualElement.Q<Label>("right-joystick-value_X");
-        R_joystick_value_Y = rootVisualElement.Q<Label>("right-joystick-value_Y");
-        
-        L_joystick_value_X = rootVisualElement.Q<Label>("left-joystick-value_X");
-        L_joystick_value_Y = rootVisualElement.Q<Label>("left-joystick-value_Y");
-
-        leftZone = rootVisualElement.Q<VisualElement>("left-joystick").Q(className: "joystick-zone");
-        rightZone = rootVisualElement.Q<VisualElement>("right-joystick").Q(className: "joystick-zone");
-
-        // LEFT JOYSTICK
-        leftZone.RegisterCallback<PointerDownEvent>(evt =>
-        {
-            draggingLeft = true;
-
-            leftZone.CapturePointer(evt.pointerId);
-
-            Vector2 center = leftZone.layout.size / 2f;
-            Vector2 mousePos = evt.localPosition;
-
-            Vector2 stickPos = new Vector2(
-                leftStick.resolvedStyle.translate.x,
-                leftStick.resolvedStyle.translate.y
-            );
-
-            leftClickOffset = stickPos - (mousePos - center);
-        });
-        leftZone.RegisterCallback<PointerUpEvent>(evt =>
-        {
-            draggingLeft = false;
-
-            leftZone.ReleasePointer(evt.pointerId);
-
-            components.SetLeftJoystick(Vector2.zero);
-        });
-        leftZone.RegisterCallback<PointerMoveEvent>(evt =>
-        {
-            if (!draggingLeft) return;
-
-            Vector2 input = GetNormalizedInput(evt, leftZone, leftClickOffset);
-            components.SetLeftJoystick(input);
-        });
-        leftZone.RegisterCallback<PointerCaptureOutEvent>(evt =>
-        {
-            draggingLeft = false;
-            components.SetLeftJoystick(Vector2.zero);
-        });
-
-        // RIGHT JOYSTICK
-        rightZone.RegisterCallback<PointerDownEvent>(evt =>
-        {
-            draggingRight = true;
-
-            rightZone.CapturePointer(evt.pointerId);
-
-            Vector2 center = rightZone.layout.size / 2f;
-            Vector2 mousePos = evt.localPosition;
-
-            Vector2 stickPos = new Vector2(
-                rightStick.resolvedStyle.translate.x,
-                rightStick.resolvedStyle.translate.y
-            );
-
-            rightClickOffset = stickPos - (mousePos - center);
-
-            
-        });
-        rightZone.RegisterCallback<PointerUpEvent>(evt =>
-        {
-            draggingRight = false;
-
-            rightZone.ReleasePointer(evt.pointerId);
-
-            components.SetRightJoystick(Vector2.zero);
-        });
-        rightZone.RegisterCallback<PointerMoveEvent>(evt =>
-        {
-            if (!draggingRight) return;
-
-            Vector2 input = GetNormalizedInput(evt, rightZone, rightClickOffset);
-            components.SetRightJoystick(input);
-        });
-        rightZone.RegisterCallback<PointerCaptureOutEvent>(evt =>
-        {
-            draggingRight = false;
-            components.SetRightJoystick(Vector2.zero);
-        });
+        InitializeButtons(visElToButton.Keys);
+        InitializeJoysticks(visElToJoystick.Keys);
+        InitializeTriggers(visElToTrigger.Keys);
 
         LoadImage("xbox-button-image", "xbox-symbol.png");
         LoadImage("menu-button-image", "menu-symbol.png");
         LoadImage("view-button-image", "view-symbol.png");
         LoadImage("share-button-image", "share-symbol.png");
     }
-/*
-    void LoadUSS(string path = "Assets/Plugins/Editor/uss")
-    {
-        LoadStyle(path, "Style.uss");
-        LoadStyle(path, "Groups.uss");
-        LoadStyle(path, "Buttons.uss");
-        LoadStyle(path, "Joysticks.uss");
-    }
-    void LoadStyle(string path, string name)
-    {
-        string fullPath = System.IO.Path.Combine(path, name);
-
-        var sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(fullPath);
-        if (sheet == null)
-        {
-            Debug.LogError($"Could not load {name}");
-            return;
-        }
-        rootVisualElement.styleSheets.Add(sheet);
-    }
-*/
 
     void LoadImage(string targetElement, string imageName)
     {
@@ -260,7 +222,7 @@ public class ControllerGUI : EditorWindow
     /// </c>
     /// </remarks>
     /// <param name="buttonNames">Array of names for the buttons you want queried</param>
-    void InitializeButtons(string[] buttonNames)
+    void InitializeButtons(IEnumerable<string> buttonNames)
     {
         foreach (string name in buttonNames)
         {
@@ -280,89 +242,170 @@ public class ControllerGUI : EditorWindow
             button.RegisterCallback<PointerDownEvent>(evt =>
             {
                 Debug.Log($"{name}: DOWN");
-                button.AddToClassList("ButtonPressed"); // This is here until we fix class adding.
-                SetButtonState(name, true);
 
+                // Set this button's pressed state to true.
+                if (visElToButton.TryGetValue(name, out var type))
+                    XboxController.SetButton(type, true);
+
+                // Special logic for buttons with images
                 var image = button.Q<Image>();
-                if (image != null && image.name != "xbox-button-image")
-                {
+                // If image exists and is not the Xbox button then invert it when pressed.
+                bool isInvertable = image != null && image.name != "xbox-button-image";
+                if (isInvertable)
                     image.tintColor = Color.black;
-                }
             });
             button.RegisterCallback<PointerUpEvent>(evt =>
             {
                 Debug.Log($"{name}: UP");
-                button.RemoveFromClassList("ButtonPressed"); // This is here until we fix class removing.
-                SetButtonState(name, false);
 
+                // Set this button's pressed state to false.
+                if (visElToButton.TryGetValue(name, out var type))
+                    XboxController.SetButton(type, false);
+
+                // Special logic for buttons with images
                 var image = button.Q<Image>();
-                if (image != null && image.name != "xbox-button-image")
-                {
+                // If image exists and is not the Xbox button then invert it when released.
+                bool isInvertable = image != null && image.name != "xbox-button-image";
+                if (isInvertable)
                     image.tintColor = Color.white;
-                }
             });
         }
     }
 
-    void InitializeJoystick(string[] joystickNames)
+    void InitializeJoysticks(IEnumerable<string> joystickNames)
     {
         foreach (string name in joystickNames)
         {
-            var joystick = rootVisualElement.Q<VisualElement>(name).Q(className: "joystick");
+            var joystickRoot = rootVisualElement.Q<VisualElement>(name);
+            if (joystickRoot == null)
+            {
+                Debug.LogWarning($"Joystick {name} not found!");
+                continue;
+            }
+
+            joysticks[name] = joystickRoot;
+
+            var stick = joystickRoot.Q<VisualElement>(className: "joystick");
+            var zone = joystickRoot.Q<VisualElement>(className: "joystick-zone");
+
+            var labelX = joystickRoot.Q<Label>($"{name}-value_X");
+            var labelY = joystickRoot.Q<Label>($"{name}-value_Y");
+
+            bool dragging = false;
+            Vector2 clickOffset = Vector2.zero;
+
+            // Look up joystick type from dictionary
+            if (!visElToJoystick.TryGetValue(name, out joystickType type))
+            {
+                Debug.LogWarning($"Joystick name '{name}' not mapped to a joystickType!");
+                continue;
+            }
+
+            zone.RegisterCallback<PointerDownEvent>(evt =>
+            {
+                dragging = true;
+                zone.CapturePointer(evt.pointerId);
+
+                Vector2 center = zone.layout.size / 2f;
+                Vector2 mousePos = evt.localPosition;
+
+                Vector2 stickPos = new Vector2(
+                    stick.resolvedStyle.translate.x,
+                    stick.resolvedStyle.translate.y
+                );
+
+                clickOffset = stickPos - (mousePos - center);
+            });
+
+            zone.RegisterCallback<PointerMoveEvent>(evt =>
+            {
+                if (!dragging) return;
+
+                Vector2 input = GetNormalizedInput(evt, zone, clickOffset);
+
+                // Set joystick value in XboxController
+                XboxController.SetJoystick(type, input);
+            });
+
+            zone.RegisterCallback<PointerUpEvent>(evt =>
+            {
+                dragging = false;
+                zone.ReleasePointer(evt.pointerId);
+
+                XboxController.SetJoystick(type, Vector2.zero);
+            });
+
+            zone.RegisterCallback<PointerCaptureOutEvent>(evt =>
+            {
+                dragging = false;
+
+                XboxController.SetJoystick(type, Vector2.zero);
+            });
+        }
+    }
+
+    void InitializeTriggers(IEnumerable<string> triggerNames)
+    {
+        foreach (string name in triggerNames)
+        {
+            // Query each name in buttonNames:
+            var trigger = rootVisualElement.Q<VisualElement>(name);
 
             // Skip unimplemented names:
-            if (joystick == null)
+            if (trigger == null)
             {
-                Debug.LogWarning($"Joystick '{name}' not found in UXML!");
+                Debug.LogWarning($"Trigger '{name}' not found in UXML!");
                 continue;
             }
             
-            joysticks[name] = joystick;
+            // Put into dictionary (hash table);
+            triggers[name] = trigger;
+            // Assign pressed events:
+            bool dragging = false;
+
+            trigger.RegisterCallback<PointerDownEvent>(evt =>
+            {
+                Debug.Log($"{name}: DOWN");
+
+                dragging = true;
+                trigger.CapturePointer(evt.pointerId);
+            });
+
+            trigger.RegisterCallback<PointerMoveEvent>(evt =>
+            {
+                if (!dragging) return;
+
+                float height = trigger.layout.height;
+                float y = evt.localPosition.y;
+
+                // Invert so bottom = 0, top = 1
+                float normalized = 1f - Mathf.Clamp01(y / height);
+
+                if (visElToTrigger.TryGetValue(name, out var type))
+                    XboxController.SetTrigger(type, normalized);
+            });
+
+            trigger.RegisterCallback<PointerUpEvent>(evt =>
+            {
+                Debug.Log($"{name}: UP");
+
+                dragging = false;
+                trigger.ReleasePointer(evt.pointerId);
+
+                if (visElToTrigger.TryGetValue(name, out var type))
+                    XboxController.SetTrigger(type, 0f);
+            });
+
+            trigger.RegisterCallback<PointerCaptureOutEvent>(evt =>
+            {
+                dragging = false;
+
+                if (visElToTrigger.TryGetValue(name, out var type))
+                    XboxController.SetTrigger(type, 0f);
+            });
         }
     }
 
-    void SetButtonState(string name, bool pressed)
-    {
-        switch (name)
-        {
-            case "A-button":
-                components.SetBottomFaceButton(pressed);
-                break;
-            case "Y-button":
-                components.SetTopFaceButton(pressed);
-                break;
-            case "B-button":
-                components.SetRightFaceButton(pressed);
-                break;
-            case "X-button":
-                components.SetLeftFaceButton(pressed);
-                break;
-            case "RB-button":
-                components.SetRightBumper(pressed);
-                break;
-            case "LB-button":
-                components.SetLeftBumper(pressed);
-                break;
-            case "up-pad":
-                components.SetDpadUp(pressed);
-                break;
-            case "down-pad":
-                components.SetDpadDown(pressed);
-                break;
-            case "left-pad":
-                components.SetDpadLeft(pressed);
-                break;
-            case "right-pad":
-                components.SetDpadRight(pressed);
-                break;
-            case "right-joystick-button":
-                components.SetRightJoysickButton(pressed);
-                break;
-            case "left-joystick-button":
-                components.SetLeftJoysickButton(pressed);
-                break;
-        }
-    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -429,25 +472,7 @@ public class ControllerGUI : EditorWindow
         L_trigger_value.style.fontSize = 20f;
         L_trigger_value.text = $"VAL:   {LT:F2}";
     }
-    public void UpdateGuiJoysticks()
-    {
-        Vector2 leftInput = components.GetLeftJoystick();
-        Vector2 rightInput = components.GetRightJoystick();
 
-        UpdateStick(leftStick, leftInput, 40f);
-        UpdateStick(rightStick, rightInput, 40f);
-
-        L_joystick_value_X.style.fontSize = 20f;
-        L_joystick_value_Y.style.fontSize = 20f;
-        L_joystick_value_X.text = $"X:  {leftInput.x:F2}";
-        L_joystick_value_Y.text = $"Y:  {leftInput.y:F2}";
-
-        R_joystick_value_X.style.fontSize = 20f;
-        R_joystick_value_Y.style.fontSize = 20f;
-        R_joystick_value_X.text = $"X:  {rightInput.x:F2}";
-        R_joystick_value_Y.text = $"Y:  {rightInput.y:F2}";
-
-    }
     void UpdateStick(VisualElement stick, Vector2 input, float radius)
     {
         if (stick == null) return;
