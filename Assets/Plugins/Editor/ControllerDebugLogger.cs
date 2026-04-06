@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public static class ControllerDebugLogger
 {
@@ -6,14 +7,28 @@ public static class ControllerDebugLogger
     public static event Action<string> OnReleasedLog;
     public static event Action<string> OnMovementLog;
 
-    public static void LogPressed(string message)
+    private static readonly Dictionary<string, DateTime> pressTimes = new Dictionary<string, DateTime>();
+
+    public static void LogPressed(string buttonName)
     {
-        OnPressedLog?.Invoke(FormatMessage(message));
+        pressTimes[buttonName] = DateTime.Now;
+        OnPressedLog?.Invoke(
+            FormatMessage($"{buttonName} pressed")
+        );
     }
 
-    public static void LogReleased(string message)
+    public static void LogReleased(string buttonName)
     {
-        OnReleasedLog?.Invoke(FormatMessage(message));
+        string finalMessage = $"{buttonName} released";
+        if (pressTimes.TryGetValue(buttonName, out DateTime pressTime))
+        {
+            TimeSpan heldTime = DateTime.Now - pressTime;
+            finalMessage = $"{buttonName} released (held for {heldTime.TotalSeconds:F2}s)";
+            pressTimes.Remove(buttonName);
+        }
+        OnReleasedLog?.Invoke(
+            FormatMessage(finalMessage)
+        );
     }
 
     public static void LogMovement(string message)

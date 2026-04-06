@@ -162,11 +162,13 @@ public class ControllerComponents
     {
         if (currentState && !previousState)
         {
-            ControllerDebugLogger.LogPressed($"{buttonName} pressed");
+            // Use same base name
+            ControllerDebugLogger.LogPressed(buttonName);
         }
         else if (!currentState && previousState)
         {
-            ControllerDebugLogger.LogReleased($"{buttonName} released");
+            // Same base name again
+            ControllerDebugLogger.LogReleased(buttonName);
         }
 
         previousState = currentState;
