@@ -29,10 +29,6 @@ public class ControllerGUI : EditorWindow
 
     private static KeyMapper emulator;
 
-    VisualElement RT_Trigger, LT_Trigger;
-    Label RT_Label, LT_Label;
-    Label R_trigger_value, L_trigger_value;
-
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> triggers = new Dictionary<string, VisualElement>();
