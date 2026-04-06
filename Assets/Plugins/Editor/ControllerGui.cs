@@ -29,7 +29,8 @@ public class ControllerGUI : EditorWindow
 
     private static KeyMapper emulator;
 
-    VisualElement R_Trigger, L_Trigger;
+    VisualElement RT_Trigger, LT_Trigger;
+    Label RT_Label, LT_Label;
     Label R_trigger_value, L_trigger_value;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
@@ -70,7 +71,7 @@ public class ControllerGUI : EditorWindow
         { "LT-button", triggerType.Left },
         { "RT-button", triggerType.Right }
     };
-    
+
     private void OnEnable()
     {
         manager = new ControllerManager();
@@ -107,6 +108,7 @@ public class ControllerGUI : EditorWindow
             else
                 element.RemoveFromClassList("ButtonPressed");
         }
+
         foreach (var pair in visElToJoystick)
         {
             string name = pair.Key;
@@ -123,8 +125,16 @@ public class ControllerGUI : EditorWindow
 
             UpdateStick(stick, input, 40f);
 
-            if (labelX != null) labelX.text = $"X: {input.x:F2}";
-            if (labelY != null) labelY.text = $"Y: {input.y:F2}";
+            if (labelX != null)
+            {
+                labelX.style.fontSize = 20f;
+                labelX.text = $"X: {input.x:F2}";
+            }
+            if (labelY != null)
+            {
+                labelY.style.fontSize = 20f;
+                labelY.text = $"Y: {input.y:F2}";
+            }
         }
 
         foreach (var pair in visElToTrigger)
@@ -136,7 +146,8 @@ public class ControllerGUI : EditorWindow
                 continue;
 
             var fill = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-fill");
-            var label = triggerRoot.Q<Label>($"{name.Split('-')[0]}-trigger-value-label");
+            var triggerLabel = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-label");
+            var label = triggerRoot.parent.Q<Label>($"{name.Split('-')[0]}-trigger-value-label");
 
             float value = XboxController.GetTrigger(type).pressure;
 
@@ -144,9 +155,18 @@ public class ControllerGUI : EditorWindow
             if (fill != null)
                 fill.style.height = new Length(value * 100, LengthUnit.Percent);
 
+            if(triggerLabel != null)
+            {
+                var triggerLabelColor = Color.Lerp(color_hex("#FFFFFF"), color_hex("#1F1F1F"), value);
+                triggerLabel.style.color = new StyleColor(triggerLabelColor);
+            }
+
             // Update label
             if (label != null)
+            {
+                label.style.fontSize = 20f;
                 label.text = $"VAL: {value:F2}";
+            }
         }
         // emulator.UpdateKeyboardEmulation();
     }
@@ -391,12 +411,19 @@ public class ControllerGUI : EditorWindow
 
                 if (visElToTrigger.TryGetValue(name, out var type))
                     XboxController.SetTrigger(type, 0f);
+                    
             });
         }
     }
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    private Color color_hex(string hex)
+    {
+        Color color;
+        UnityEngine.ColorUtility.TryParseHtmlString(hex, out color);
+        return color;
+    }
 
     void UpdateStick(VisualElement stick, Vector2 input, float radius)
     {

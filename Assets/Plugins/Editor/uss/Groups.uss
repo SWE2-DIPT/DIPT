@@ -77,7 +77,6 @@
 .trigger-row {
     height: 140px;
     background-color:#3b3b3b;
-
     width: 100%;
 }
 

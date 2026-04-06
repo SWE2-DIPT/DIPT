@@ -12,16 +12,21 @@
 	<!--TRIGGERS-->
 	<ui:VisualElement class="box-border">
 		<ui:VisualElement class="Bumper-Row trigger-row">
-			<ui:VisualElement name="LT-button" class="trigger-button button">
-				<ui:VisualElement name="LT-fill" class="trigger-fill" />
-				<ui:Label name="LT-trigger-value-label" />
-				<ui:Label text="LT" class="button-label"/>
-				
+			<!--LEFT TRIGGERS-->
+			<ui:VisualElement class="Trigger-Wrapper">
+					<ui:VisualElement name="LT-button" class="trigger-button button">
+						<ui:VisualElement name="LT-fill" class="trigger-fill"/>
+						<ui:Label name="LT-label" text="LT" class="button-label"/>
+					</ui:VisualElement>
+					<ui:Label name="LT-trigger-value-label"/>
 			</ui:VisualElement>
-			<ui:VisualElement name="RT-button" class="trigger-button button">
-				<ui:VisualElement name="RT-fill" class="trigger-fill" />
-				<ui:Label name="RT-trigger-value-label" />
-				<ui:Label text="RT" class="button-label"/>
+			<!--RIGHT TRIGGERS-->
+			<ui:VisualElement class="Trigger-Wrapper">
+					<ui:VisualElement name="RT-button" class="trigger-button button">
+						<ui:VisualElement name="RT-fill" class="trigger-fill"/>
+						<ui:Label name="RT-label" text="RT" class="button-label"/>
+					</ui:VisualElement>
+					<ui:Label name="RT-trigger-value-label"/>
 			</ui:VisualElement>
 		</ui:VisualElement>
 	</ui:VisualElement>
@@ -29,11 +34,13 @@
 	<!--BUMPERS-->
 	<ui:VisualElement class="box-border">
 		<ui:VisualElement class="Bumper-Row">
+			<!--RIGHT BUMPERS-->
 			<ui:VisualElement name="LB-button" class="bumper-button">
-				<ui:Label text="LB" class="button-label"/>
+				<ui:Label text="LB" name="LB-label" class="button-label"/>
 			</ui:VisualElement>
+			<!--RIGHT BUMPERS-->
 			<ui:VisualElement name="RB-button" class="bumper-button">
-				<ui:Label text="RB" class="button-label"/>
+				<ui:Label text="RB" name="RB-label" class="button-label"/>
 			</ui:VisualElement>
 		</ui:VisualElement>
 	</ui:VisualElement>
@@ -86,8 +93,8 @@
 					</ui:VisualElement>
 			</ui:VisualElement>
 		</ui:VisualElement>
-
 	</ui:VisualElement>
+
 	<!--LOWER-CONTROL-ROW-->
 	<ui:VisualElement class="Controls-Row">
 		<!--DPAD-->
@@ -113,7 +120,6 @@
 				<ui:Label name="right-joystick-value_X"/>
 				<ui:Label name="right-joystick-value_Y"/>
 		</ui:VisualElement>
-
 	</ui:VisualElement>
 	
 </ui:UXML>

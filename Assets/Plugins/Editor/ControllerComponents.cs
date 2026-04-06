@@ -10,15 +10,16 @@
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.DualShock;
 using UnityEngine.UIElements;
 
 [assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
 
-
-
 enum buttons { BottomFace, TopFace, RightFace, LeftFace, RightBumper, LeftBumper, dpadUp };
 public class ControllerComponents
 {
+    private ControllerManager manager;
+
     // Joysticks
     private Vector2 rightJoystick, leftJoystick;
     // Triggers
@@ -32,6 +33,10 @@ public class ControllerComponents
 
     // D-Pad
     private bool dpadUp, dpadDown, dpadLeft, dpadRight;
+
+    //-for playstation-//
+    private bool touchpad;
+    private float touchpad_val;
 
     //Prev bool states
     private bool prevBottomFaceButton, prevLeftFaceButton, prevRightFaceButton, prevTopFaceButton;
@@ -137,6 +142,22 @@ public class ControllerComponents
         CheckButtonState("Right Joystick Press", rightJoystickButton, ref prevRightJoystickButton);
     }
 
+    public void GetTouchpadActivity()
+    {
+        var gamepad = Gamepad.current;
+        if(gamepad is DualShockGamepad)
+        {
+            touchpad = DualShockGamepad.current.touchpadButton.isPressed;
+            
+            if(touchpad)
+                Debug.Log("touchpad pressed");
+        }
+        else
+        {
+            Debug.Log("this isnt a dualshockcontroller");
+        }
+    }
+
     internal void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
     {
         if (currentState && !previousState)
@@ -180,8 +201,6 @@ public class ControllerComponents
             element.style.backgroundColor = idle_backColor;
         }
     }
-
-
     public float GetRightTrigger()
     {
         return rightTrigger;
