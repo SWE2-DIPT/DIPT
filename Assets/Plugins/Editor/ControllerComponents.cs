@@ -7,6 +7,7 @@
 *    in Unity.
 *******************************************************/
 
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -140,6 +141,8 @@ public class ControllerComponents
         CheckButtonState("Select Button", select, ref prevSelect);
         CheckButtonState("Left Joystick Press", leftJoystickButton, ref prevLeftJoystickButton);
         CheckButtonState("Right Joystick Press", rightJoystickButton, ref prevRightJoystickButton);
+
+        
     }
 
     public void GetTouchpadActivity()
@@ -174,35 +177,6 @@ public class ControllerComponents
         previousState = currentState;
     }
 
-    public void GetComponentState(bool buttonPressed, VisualElement element, string state)
-    {
-        if (element == null)
-            return;
-
-        if (buttonPressed)
-        {
-            element.AddToClassList(state);
-        }
-        else
-        {
-            element.RemoveFromClassList(state);
-        }
-    }
-
-    public void GetButtonState(bool buttonPressed, VisualElement element, StyleColor idle_color, StyleColor idle_backColor, 
-                                                                        StyleColor pressed_color, StyleColor pressed_backColor)
-    {
-        if (buttonPressed)
-        {
-            element.style.color = pressed_color;
-            element.style.backgroundColor = pressed_backColor; 
-        }
-        else
-        {
-            element.style.color = idle_color;
-            element.style.backgroundColor = idle_backColor;
-        }
-    }
     public float GetRightTrigger()
     {
         return rightTrigger;

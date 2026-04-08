@@ -1,4 +1,4 @@
-/*******************************************************
+﻿/*******************************************************
 * Script:      ControllerGUI.cs
 * Author(s):   Nicholas Johnson (Add yourselves to this!)
 * 
@@ -56,6 +56,7 @@ public class ControllerGUI : EditorWindow
         { "advanced", buttonType.Advanced }
     };
 
+
     Dictionary<string, joystickType> visElToJoystick = new()
     {
         { "left-joystick", joystickType.Left },
@@ -67,6 +68,7 @@ public class ControllerGUI : EditorWindow
         { "LT-button", triggerType.Left },
         { "RT-button", triggerType.Right }
     };
+
 
     private void OnEnable()
     {
@@ -91,6 +93,9 @@ public class ControllerGUI : EditorWindow
 
     void Update()
     {
+
+        ControllerUpdate();
+
         foreach (var pair in visElToButton)
         {
             string elementName = pair.Key;
@@ -99,6 +104,7 @@ public class ControllerGUI : EditorWindow
             bool isPressed = XboxController.GetButton(button).pressed;
             if (!buttons.TryGetValue(elementName, out VisualElement element))
                 continue;
+
             if (isPressed)
                 element.AddToClassList("ButtonPressed");
             else
@@ -151,7 +157,7 @@ public class ControllerGUI : EditorWindow
             if (fill != null)
                 fill.style.height = new Length(value * 100, LengthUnit.Percent);
 
-            if(triggerLabel != null)
+            if (triggerLabel != null)
             {
                 var triggerLabelColor = Color.Lerp(color_hex("#FFFFFF"), color_hex("#1F1F1F"), value);
                 triggerLabel.style.color = new StyleColor(triggerLabelColor);
@@ -164,6 +170,7 @@ public class ControllerGUI : EditorWindow
                 label.text = $"VAL: {value:F2}";
             }
         }
+
         // emulator.UpdateKeyboardEmulation();
     }
 
@@ -187,6 +194,7 @@ public class ControllerGUI : EditorWindow
         
         rootVisualElement.Clear();
         visualTree.CloneTree(rootVisualElement);
+
 
         // Initialize Buttons with functions:
         InitializeButtons(visElToButton.Keys);
@@ -227,6 +235,8 @@ public class ControllerGUI : EditorWindow
     /// </c>
     /// </remarks>
     /// <param name="buttonNames">Array of names for the buttons you want queried</param>
+    /// 
+
     void InitializeButtons(IEnumerable<string> buttonNames)
     {
         foreach (string name in buttonNames)
@@ -240,7 +250,7 @@ public class ControllerGUI : EditorWindow
                 Debug.LogWarning($"Button '{name}' not found in UXML!");
                 continue;
             }
-            
+
             // Put into dictionary (hash table);
             buttons[name] = button;
             // Assign pressed events:
@@ -279,6 +289,7 @@ public class ControllerGUI : EditorWindow
 
     void InitializeJoysticks(IEnumerable<string> joystickNames)
     {
+
         foreach (string name in joystickNames)
         {
             var joystickRoot = rootVisualElement.Q<VisualElement>(name);
@@ -412,6 +423,34 @@ public class ControllerGUI : EditorWindow
         }
     }
 
+    public void ControllerUpdate()
+    {
+        var gamepad = Gamepad.current;
+        if (gamepad == null)
+            return;
+
+        XboxController.SetButton(buttonType.A, gamepad.buttonSouth.isPressed);
+        XboxController.SetButton(buttonType.B, gamepad.buttonEast.isPressed);
+        XboxController.SetButton(buttonType.X, gamepad.buttonWest.isPressed);
+        XboxController.SetButton(buttonType.Y, gamepad.buttonNorth.isPressed);
+
+        XboxController.SetButton(buttonType.Down, gamepad.dpad.down.isPressed);
+        XboxController.SetButton(buttonType.Right, gamepad.dpad.right.isPressed);
+        XboxController.SetButton(buttonType.Left, gamepad.dpad.left.isPressed);
+        XboxController.SetButton(buttonType.Up, gamepad.dpad.up.isPressed);
+
+        XboxController.SetButton(buttonType.RBumper, gamepad.rightShoulder.isPressed);
+        XboxController.SetButton(buttonType.LBumper, gamepad.leftShoulder.isPressed);
+
+        XboxController.SetButton(buttonType.Menu, gamepad.selectButton.isPressed);
+        XboxController.SetButton(buttonType.View, gamepad.startButton.isPressed);
+
+        XboxController.SetTrigger(triggerType.Left, gamepad.leftTrigger.ReadValue());
+        XboxController.SetTrigger(triggerType.Right, gamepad.rightTrigger.ReadValue());
+
+        XboxController.SetJoystick(joystickType.Right, gamepad.rightStick.ReadValue());
+        XboxController.SetJoystick(joystickType.Left, gamepad.leftStick.ReadValue());
+    }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     private Color color_hex(string hex)
