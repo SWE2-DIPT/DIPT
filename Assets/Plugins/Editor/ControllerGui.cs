@@ -27,7 +27,7 @@ public class ControllerGUI : EditorWindow
     private static ControllerManager manager;
     private static ControllerComponents components;
 
-    private static KeyMapper emulator;
+    private static KeyMapper Keyboardemulator;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
@@ -75,7 +75,7 @@ public class ControllerGUI : EditorWindow
         manager = new ControllerManager();
         components = new ControllerComponents();
 
-        emulator = new KeyMapper(components); /* KeyMapper.cs */
+        Keyboardemulator = new KeyMapper(); /* KeyMapper.cs */
     }
 
     [MenuItem("Tools/DIPT/InputVisualizer")]
@@ -171,7 +171,8 @@ public class ControllerGUI : EditorWindow
             }
         }
 
-        // emulator.UpdateKeyboardEmulation();
+        Keyboardemulator.UpdateKeyboardEmulation();
+
     }
 
     //~LOAD~GUI~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

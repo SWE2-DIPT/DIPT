@@ -6,31 +6,31 @@
 *    Style sheet for the joysticks.
 *******************************************************/
 
-.joystick-zone {  /* The zone in which the joystick can move */
+.joystick-zone { /* The zone in which the joystick can move */
     /* Dimensions */
-    height:70%;
-    width:70%;
+    height: 70%;
+    width: 70%;
 
     /* Border */
-    border-radius:50%;
+    border-radius: 50%;
     border-width: 5px;
     
-`   /* Alignment */
+    /* Alignment */
     justify-content: center;
     align-items: center;
 
     /* Color */
-    background-color:#3b3b3b;
+    background-color: #3b3b3b;
     border-color: black;
 }
 
-.joystick {  /* The joystick itself */
+.joystick { /* The joystick itself */
     /* Dimensions */
-    height:80%;
-    width:80%;
+    height: 80%;
+    width: 80%;
 
     /* Border */
-    border-radius:50%;
+    border-radius: 50%;
     border-width: 10px;
 
     /* Color */
