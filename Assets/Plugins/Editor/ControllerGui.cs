@@ -19,6 +19,8 @@ using System.Reflection;
 using System.Linq.Expressions;
 using Unity.VisualScripting;
 
+
+
 /// <summary>
 /// An example plugin.
 /// </summary>
@@ -26,7 +28,7 @@ public class ControllerGUI : EditorWindow
 {
     private static ControllerManager manager;
     private static ControllerComponents components;
-
+    private GamepadEmulator emulator;
     private static KeyMapper Keyboardemulator;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
@@ -75,6 +77,7 @@ public class ControllerGUI : EditorWindow
     {
         manager = new ControllerManager();
         components = new ControllerComponents();
+        emulator = new GamepadEmulator();
 
         Keyboardemulator = new KeyMapper(); /* KeyMapper.cs */
 
@@ -84,6 +87,7 @@ public class ControllerGUI : EditorWindow
     private void OnDisable()
     {
         EditorApplication.update -= physicalControlellerUpdate;
+        emulator.dispose();
     }
 
     [MenuItem("Tools/DIPT/InputVisualizer")]
@@ -109,7 +113,7 @@ public class ControllerGUI : EditorWindow
 
     
         
-        Keyboardemulator.UpdateKeyboardEmulation();
+        // Keyboardemulator.UpdateKeyboardEmulation();
 
     }
 
@@ -178,6 +182,7 @@ public class ControllerGUI : EditorWindow
 
     void InitializeButtons(IEnumerable<string> buttonNames)
     {
+
         foreach (string name in buttonNames)
         {
             // Query each name in buttonNames:
@@ -196,6 +201,72 @@ public class ControllerGUI : EditorWindow
             button.RegisterCallback<PointerDownEvent>(evt =>
             {
                 Debug.Log($"{name}: DOWN");
+                //HELL
+                string ButtonName = name;
+                switch (ButtonName)
+                    {
+                        case "A-button":
+                            ButtonName = "A";
+                            break;
+
+                        case "B-button":
+                            ButtonName = "B";
+                            break;
+
+                        case "X-button":
+                            ButtonName = "X";
+                            break;
+
+                        case "Y-button":
+                            ButtonName = "Y";
+                            break;
+
+                        case "RB-button":
+                            ButtonName = "RightShoulder";
+                            break;
+
+                        case "LB-button":
+                            ButtonName = "LeftShoulder";
+                            break;
+
+                        case "up-pad":
+                            ButtonName = "DpadUp";
+                            break;
+
+                        case "down-pad":
+                            ButtonName = "DpadDown";
+                            break;
+
+                        case "left-pad":
+                            ButtonName = "DpadLeft";
+                            break;
+
+                        case "right-pad":
+                            ButtonName = "DpadRight";
+                            break;
+
+                        // case "xbox-button":
+                        //     ButtonName = "Xbox";
+                        //     break;
+
+                        case "menu-button":
+                            ButtonName = "Start";
+                            break;
+
+                        case "view-button":
+                            ButtonName = "Select";
+                            break;
+
+                        // case "share-button":
+                        //     ButtonName = "Share";
+                        //     break;
+
+                        // case "advanced":
+                        //     ButtonName = "Advanced";
+                        //     break;
+                    }
+                Debug.Log("HE");
+                emulator.pressButton(ButtonName);
 
                 // Set this button's pressed state to true.
                 if (visElToButton.TryGetValue(name, out var type))
@@ -210,7 +281,8 @@ public class ControllerGUI : EditorWindow
             });
             button.RegisterCallback<PointerUpEvent>(evt =>
             {
-                Debug.Log($"{name}: UP");
+                emulator.clear();
+                // Debug.Log($"{name}: UP");
 
                 // Set this button's pressed state to false.
                 if (visElToButton.TryGetValue(name, out var type))
@@ -224,6 +296,8 @@ public class ControllerGUI : EditorWindow
                     image.tintColor = Color.white;
             });
         }
+        
+
     }
 
     void InitializeJoysticks(IEnumerable<string> joystickNames)
@@ -412,7 +486,9 @@ public class ControllerGUI : EditorWindow
                 continue;
 
             if (pressed)
+            {
                 element.AddToClassList("ButtonPressed");
+            }
             else
                 element.RemoveFromClassList("ButtonPressed");
 
@@ -482,7 +558,7 @@ public class ControllerGUI : EditorWindow
 
             XboxController.SetJoystick(type, input);
         }
-
+        emulator.emulate();
         UnityEngine.InputSystem.InputSystem.Update();
     }
 
