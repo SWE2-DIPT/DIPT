@@ -367,7 +367,7 @@ public class ControllerGUI : EditorWindow
         var gamepad = Gamepad.current;
         if(gamepad == null)
         {
-            Debug.Log("no suitable gamepad");
+            // Debug.Log("no suitable gamepad");
             return;
         }
         
