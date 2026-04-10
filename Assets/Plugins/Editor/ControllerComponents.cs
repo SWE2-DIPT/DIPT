@@ -141,10 +141,7 @@ public class ControllerComponents
         CheckButtonState("Select Button", select, ref prevSelect);
         CheckButtonState("Left Joystick Press", leftJoystickButton, ref prevLeftJoystickButton);
         CheckButtonState("Right Joystick Press", rightJoystickButton, ref prevRightJoystickButton);
-
-        
     }
-
     public void GetTouchpadActivity()
     {
         var gamepad = Gamepad.current;

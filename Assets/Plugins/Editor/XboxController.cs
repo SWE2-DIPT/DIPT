@@ -9,12 +9,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum buttonType { Y, B, A, X, Up, Down, Left, Right, LBumper, RBumper, Xbox, Menu, View, Share, Advanced }
+public enum buttonType { Y, B, A, X, Up, Down, Left, Right, LBumper, RBumper, RStick, LStick, Xbox, Menu, View, Share, Advanced }
 public enum triggerType { Left, Right }
 public enum joystickType { Left, Right }
 
 public static class XboxController
 {
+
     private static Dictionary<buttonType, Button> Buttons = new();
     private static Dictionary<triggerType, Trigger> Triggers = new();
     private static Dictionary<joystickType, Joystick> Joysticks = new();

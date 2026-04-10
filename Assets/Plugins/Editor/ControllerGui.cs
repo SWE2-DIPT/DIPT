@@ -57,11 +57,13 @@ public class ControllerGUI : EditorWindow
     };
 
 
+
     Dictionary<string, joystickType> visElToJoystick = new()
     {
         { "left-joystick", joystickType.Left },
         { "right-joystick", joystickType.Right }
     };
+
 
     Dictionary<string, triggerType> visElToTrigger = new()
     {
@@ -69,13 +71,19 @@ public class ControllerGUI : EditorWindow
         { "RT-button", triggerType.Right }
     };
 
-
     private void OnEnable()
     {
         manager = new ControllerManager();
         components = new ControllerComponents();
 
         Keyboardemulator = new KeyMapper(); /* KeyMapper.cs */
+
+        EditorApplication.update += physicalControlellerUpdate;
+    }
+
+    private void OnDisable()
+    {
+        EditorApplication.update -= physicalControlellerUpdate;
     }
 
     [MenuItem("Tools/DIPT/InputVisualizer")]
@@ -94,83 +102,13 @@ public class ControllerGUI : EditorWindow
     void Update()
     {
 
-        ControllerUpdate();
+        if(Application.isPlaying)
+            physicalControlellerUpdate();
 
-        foreach (var pair in visElToButton)
-        {
-            string elementName = pair.Key;
-            buttonType button = pair.Value;
+        emulatedControllerUpdate();
 
-            bool isPressed = XboxController.GetButton(button).pressed;
-            if (!buttons.TryGetValue(elementName, out VisualElement element))
-                continue;
-
-            if (isPressed)
-                element.AddToClassList("ButtonPressed");
-            else
-                element.RemoveFromClassList("ButtonPressed");
-        }
-
-        foreach (var pair in visElToJoystick)
-        {
-            string name = pair.Key;
-            joystickType type = pair.Value;
-
-            var joystickRoot = joysticks[name];
-            if (joystickRoot == null) continue;
-
-            var stick = joystickRoot.Q<VisualElement>(className: "joystick");
-            var labelX = joystickRoot.Q<Label>($"{name}-value_X");
-            var labelY = joystickRoot.Q<Label>($"{name}-value_Y");
-
-            Vector2 input = XboxController.GetJoystick(type).position;
-
-            UpdateStick(stick, input, 40f);
-
-            if (labelX != null)
-            {
-                labelX.style.fontSize = 20f;
-                labelX.text = $"X: {input.x:F2}";
-            }
-            if (labelY != null)
-            {
-                labelY.style.fontSize = 20f;
-                labelY.text = $"Y: {input.y:F2}";
-            }
-        }
-
-        foreach (var pair in visElToTrigger)
-        {
-            string name = pair.Key;
-            triggerType type = pair.Value;
-
-            if (!triggers.TryGetValue(name, out var triggerRoot))
-                continue;
-
-            var fill = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-fill");
-            var triggerLabel = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-label");
-            var label = triggerRoot.parent.Q<Label>($"{name.Split('-')[0]}-trigger-value-label");
-
-            float value = XboxController.GetTrigger(type).pressure;
-
-            // Update fill
-            if (fill != null)
-                fill.style.height = new Length(value * 100, LengthUnit.Percent);
-
-            if (triggerLabel != null)
-            {
-                var triggerLabelColor = Color.Lerp(color_hex("#FFFFFF"), color_hex("#1F1F1F"), value);
-                triggerLabel.style.color = new StyleColor(triggerLabelColor);
-            }
-
-            // Update label
-            if (label != null)
-            {
-                label.style.fontSize = 20f;
-                label.text = $"VAL: {value:F2}";
-            }
-        }
-
+    
+        
         Keyboardemulator.UpdateKeyboardEmulation();
 
     }
@@ -424,33 +362,202 @@ public class ControllerGUI : EditorWindow
         }
     }
 
-    public void ControllerUpdate()
+    public void physicalControlellerUpdate()
     {
         var gamepad = Gamepad.current;
-        if (gamepad == null)
+        if(gamepad == null)
+        {
+            Debug.Log("no suitable gamepad");
             return;
+        }
+        
+        Dictionary<string, (buttonType, bool)> physElToButton = new()
+        {
+            { "A-button", (buttonType.A, gamepad.buttonSouth.isPressed)},
+            { "B-button", (buttonType.B, gamepad.buttonEast.isPressed)},
+            { "X-button", (buttonType.X, gamepad.buttonWest.isPressed)},
+            { "Y-button", (buttonType.Y, gamepad.buttonNorth.isPressed)},
 
-        XboxController.SetButton(buttonType.A, gamepad.buttonSouth.isPressed);
-        XboxController.SetButton(buttonType.B, gamepad.buttonEast.isPressed);
-        XboxController.SetButton(buttonType.X, gamepad.buttonWest.isPressed);
-        XboxController.SetButton(buttonType.Y, gamepad.buttonNorth.isPressed);
+            { "RB-button", (buttonType.RBumper, gamepad.rightShoulder.isPressed)},
+            { "LB-button", (buttonType.LBumper, gamepad.leftShoulder.isPressed)},
 
-        XboxController.SetButton(buttonType.Down, gamepad.dpad.down.isPressed);
-        XboxController.SetButton(buttonType.Right, gamepad.dpad.right.isPressed);
-        XboxController.SetButton(buttonType.Left, gamepad.dpad.left.isPressed);
-        XboxController.SetButton(buttonType.Up, gamepad.dpad.up.isPressed);
+            { "up-pad", (buttonType.Up, gamepad.dpad.up.isPressed)},
+            { "down-pad",(buttonType.Down, gamepad.dpad.down.isPressed)},
+            { "left-pad",(buttonType.Left, gamepad.dpad.left.isPressed)},
+            { "right-pad",(buttonType.Right, gamepad.dpad.right.isPressed)},
 
-        XboxController.SetButton(buttonType.RBumper, gamepad.rightShoulder.isPressed);
-        XboxController.SetButton(buttonType.LBumper, gamepad.leftShoulder.isPressed);
+            { "left-joystick-button", (buttonType.LStick, gamepad.leftStickButton.isPressed)},
+            { "right-joystick-button", (buttonType.RStick, gamepad.rightStickButton.isPressed)}
+        };
 
-        XboxController.SetButton(buttonType.Menu, gamepad.selectButton.isPressed);
-        XboxController.SetButton(buttonType.View, gamepad.startButton.isPressed);
+        Dictionary<string, (joystickType, Vector2)> physElToJoystick = new()
+        {
+            {"left-joystick", (joystickType.Left, gamepad.leftStick.ReadValue())},
+            {"right-joystick", (joystickType.Right, gamepad.rightStick.ReadValue())},
+        };
 
-        XboxController.SetTrigger(triggerType.Left, gamepad.leftTrigger.ReadValue());
-        XboxController.SetTrigger(triggerType.Right, gamepad.rightTrigger.ReadValue());
+        Dictionary<string, (triggerType, float)> physElToTrigger = new()
+        {
+            {"RT-button", (triggerType.Right,  gamepad.rightTrigger.ReadValue())},
+            {"LT-button", (triggerType.Left,  gamepad.leftTrigger.ReadValue())},
+        };
 
-        XboxController.SetJoystick(joystickType.Right, gamepad.rightStick.ReadValue());
-        XboxController.SetJoystick(joystickType.Left, gamepad.leftStick.ReadValue());
+        foreach (var tuple in physElToButton)
+        {
+            string elementName = tuple.Key;
+            buttonType button = tuple.Value.Item1;
+            bool pressed = tuple.Value.Item2;
+
+            if (!buttons.TryGetValue(elementName, out VisualElement element))
+                continue;
+
+            if (pressed)
+                element.AddToClassList("ButtonPressed");
+            else
+                element.RemoveFromClassList("ButtonPressed");
+
+            XboxController.SetButton(button, pressed);
+        }
+
+        foreach (var tuple in physElToTrigger)
+        {
+            string name = tuple.Key;
+            triggerType type = tuple.Value.Item1;
+            float value = tuple.Value.Item2;
+
+            if (!triggers.TryGetValue(name, out var triggerRoot))
+                continue;
+
+            var fill = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-fill");
+            var triggerLabel = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-label");
+            var label = triggerRoot.parent.Q<Label>($"{name.Split('-')[0]}-trigger-value-label");
+
+
+            // Update fill
+            if (fill != null)
+                fill.style.height = new Length(value * 100, LengthUnit.Percent);
+
+            if (triggerLabel != null)
+            {
+                var triggerLabelColor = Color.Lerp(color_hex("#FFFFFF"), color_hex("#1F1F1F"), value);
+                triggerLabel.style.color = new StyleColor(triggerLabelColor);
+            }
+
+            // Update label
+            if (label != null)
+            {
+                label.style.fontSize = 20f;
+                label.text = $"VAL: {value:F2}";
+            }
+
+            XboxController.SetTrigger(type, value);
+        }
+
+        foreach (var tuple in physElToJoystick)
+        {
+            string name = tuple.Key;
+            joystickType type = tuple.Value.Item1;
+
+            var joystickRoot = joysticks[name];
+            if (joystickRoot == null) continue;
+
+            var stick = joystickRoot.Q<VisualElement>(className: "joystick");
+            var labelX = joystickRoot.Q<Label>($"{name}-value_X");
+            var labelY = joystickRoot.Q<Label>($"{name}-value_Y");
+
+            Vector2 input = tuple.Value.Item2;
+
+            UpdateStick(stick, input, 40f);
+
+            if (labelX != null)
+            {
+                labelX.style.fontSize = 20f;
+                labelX.text = $"X: {input.x:F2}";
+            }
+            if (labelY != null)
+            {
+                labelY.style.fontSize = 20f;
+                labelY.text = $"Y: {input.y:F2}";
+            }
+
+            XboxController.SetJoystick(type, input);
+        }
+
+        UnityEngine.InputSystem.InputSystem.Update();
+    }
+
+    public void emulatedControllerUpdate()
+    {
+        foreach (var pair in visElToButton)
+        {
+            string elementName = pair.Key;
+            buttonType button = pair.Value;
+
+            bool isPressed = XboxController.GetButton(button).pressed;
+            if (!buttons.TryGetValue(elementName, out VisualElement element))
+                continue;
+
+            if (isPressed)
+                element.AddToClassList("ButtonPressed");
+            else
+                element.RemoveFromClassList("ButtonPressed");
+        }
+
+        foreach (var pair in visElToJoystick)
+        {
+            string name = pair.Key;
+            joystickType type = pair.Value;
+
+            var joystickRoot = joysticks[name];
+            if (joystickRoot == null) continue;
+
+            var stick = joystickRoot.Q<VisualElement>(className: "joystick");
+
+            var labelXValue = joystickRoot.Q<Label>($"{name}-value_X");
+            var labelYValue = joystickRoot.Q<Label>($"{name}-value_Y");
+
+            Vector2 input = XboxController.GetJoystick(type).position;
+
+            UpdateStick(stick, input, 40f);
+            
+            if(labelXValue != null)
+            {
+                labelXValue.text = input.x.ToString("F2");
+                labelYValue.text = input.y.ToString("F2");
+            }
+        }
+
+        foreach (var pair in visElToTrigger)
+        {
+            string name = pair.Key;
+            triggerType type = pair.Value;
+
+            if (!triggers.TryGetValue(name, out var triggerRoot))
+                continue;
+
+            var fill = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-fill");
+            var triggerLabel = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-label");
+            var label = triggerRoot.parent.Q<Label>($"{name.Split('-')[0]}-trigger-value-label");
+
+            float value = XboxController.GetTrigger(type).pressure;
+
+            // Update fill
+            if (fill != null)
+                fill.style.height = new Length(value * 100, LengthUnit.Percent);
+
+            if (triggerLabel != null)
+            {
+                var triggerLabelColor = Color.Lerp(color_hex("#FFFFFF"), color_hex("#1F1F1F"), value);
+                triggerLabel.style.color = new StyleColor(triggerLabelColor);
+            }
+
+            // Update label
+            if (label != null)
+            {
+                label.style.fontSize = 20f;
+                label.text = $"VAL: {value:F2}";
+            }
+        }
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
