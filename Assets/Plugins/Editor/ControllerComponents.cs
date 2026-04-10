@@ -3,8 +3,8 @@
 * Author(s):   Nick Stearns, Jarrett Williams (Add yourselves to this!)
 * 
 * Description:
-*    A example plugin meant to showcase how to create plugins
-*    in Unity.
+*    Tracks controller state changes using XboxController
+*    and sends logs through ControllerDebugLogger.
 *******************************************************/
 
 using System.Collections.Generic;
@@ -12,311 +12,161 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.DualShock;
-using UnityEngine.UIElements;
 
 [assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
 
-enum buttons { BottomFace, TopFace, RightFace, LeftFace, RightBumper, LeftBumper, dpadUp };
 public class ControllerComponents
 {
-    private ControllerManager manager;
+    private readonly Dictionary<buttonType, bool> prevButtons = new();
+    private readonly Dictionary<triggerType, float> prevTriggers = new();
+    private readonly Dictionary<joystickType, Vector2> prevJoysticks = new();
+    private readonly Dictionary<joystickType, bool> prevJoystickButtons = new();
 
-    // Joysticks
-    private Vector2 rightJoystick, leftJoystick;
-    // Triggers
-    private float rightTrigger, leftTrigger;
-
-    // Buttons
-    private bool bottomFaceButton, leftFaceButton, rightFaceButton, topFaceButton;
-    private bool rightBumper, leftBumper;
-    private bool start, select;
-    private bool leftJoystickButton, rightJoystickButton;
-
-    // D-Pad
-    private bool dpadUp, dpadDown, dpadLeft, dpadRight;
-
-    //-for playstation-//
-    private bool touchpad;
-    private float touchpad_val;
-
-    //Prev bool states
-    private bool prevBottomFaceButton, prevLeftFaceButton, prevRightFaceButton, prevTopFaceButton;
-    private bool prevDpadUp, prevDpadDown, prevDpadLeft, prevDpadRight;
-    private bool prevRightBumper, prevLeftBumper;
-    private bool prevStart, prevSelect;
-    private bool prevLeftJoystickButton, prevRightJoystickButton;
-    private Vector2 prevLeftJoystick, prevRightJoystick;
-    private float prevLeftTrigger, prevRightTrigger;
+    private bool prevTouchpad;
 
     private const float joystickThreshold = 0.10f;
     private const float triggerThreshold = 0.05f;
 
-    public void GetJoystickActivity()
+    public ControllerComponents()
     {
-        var gamepad = Gamepad.current;
+        foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
+            prevButtons[button] = false;
 
-        if (gamepad == null)
-            return;
+        foreach (triggerType trigger in System.Enum.GetValues(typeof(triggerType)))
+            prevTriggers[trigger] = 0f;
 
-        leftJoystick = gamepad.leftStick.ReadValue();
-        rightJoystick = gamepad.rightStick.ReadValue();
-
-        if (Vector2.Distance(leftJoystick, prevLeftJoystick) > joystickThreshold)
+        foreach (joystickType joystick in System.Enum.GetValues(typeof(joystickType)))
         {
-            ControllerDebugLogger.LogMovement(
-                $"Left Joystick moved to X:{leftJoystick.x:F2} | Y:{leftJoystick.y:F2}"
-            );
-            prevLeftJoystick = leftJoystick;
+            prevJoysticks[joystick] = Vector2.zero;
+            prevJoystickButtons[joystick] = false;
         }
 
-        if (Vector2.Distance(rightJoystick, prevRightJoystick) > joystickThreshold)
+        prevTouchpad = false;
+    }
+
+    public void GetJoystickActivity()
+    {
+        foreach (joystickType joystick in System.Enum.GetValues(typeof(joystickType)))
         {
-            ControllerDebugLogger.LogMovement(
-                $"Right Joystick moved to X:{rightJoystick.x:F2} | Y:{rightJoystick.y:F2}"
-            );
-            prevRightJoystick = rightJoystick;
+            Vector2 currentValue = XboxController.GetJoystick(joystick).position;
+            Vector2 previousValue = prevJoysticks[joystick];
+
+            if (Vector2.Distance(currentValue, previousValue) > joystickThreshold)
+            {
+                ControllerDebugLogger.LogMovement($"{GetJoystickName(joystick)} Joystick moved to X:{currentValue.x:F2} | Y:{currentValue.y:F2}"
+                );
+                prevJoysticks[joystick] = currentValue;
+            }
+
+            bool currentPressed = XboxController.GetJoystick(joystick).pressed;
+            bool previousPressed = prevJoystickButtons[joystick];
+
+            CheckButtonState($"{GetJoystickName(joystick)} Joystick Press", currentPressed, ref previousPressed);
+
+            prevJoystickButtons[joystick] = previousPressed;
         }
     }
 
     public void GetTriggerActivity()
     {
-        var gamepad = Gamepad.current;
-
-        if (gamepad == null)
-            return;
-
-        leftTrigger = gamepad.leftTrigger.ReadValue();
-        rightTrigger = gamepad.rightTrigger.ReadValue();
-
-        if (Mathf.Abs(leftTrigger - prevLeftTrigger) > triggerThreshold)
+        foreach (triggerType trigger in System.Enum.GetValues(typeof(triggerType)))
         {
-            ControllerDebugLogger.LogMovement($"Left Trigger changed to {leftTrigger:F2}");
-            prevLeftTrigger = leftTrigger;
-        }
+            float currentValue = XboxController.GetTrigger(trigger).pressure;
+            float previousValue = prevTriggers[trigger];
 
-        if (Mathf.Abs(rightTrigger - prevRightTrigger) > triggerThreshold)
-        {
-            ControllerDebugLogger.LogMovement($"Right Trigger changed to {rightTrigger:F2}");
-            prevRightTrigger = rightTrigger;
+            if (Mathf.Abs(currentValue - previousValue) > triggerThreshold)
+            {
+                ControllerDebugLogger.LogMovement($"{GetTriggerName(trigger)} Trigger changed to {currentValue:F2}"
+                );
+                prevTriggers[trigger] = currentValue;
+            }
         }
     }
 
     public void GetButtonActivity()
     {
-        var gamepad = Gamepad.current;
+        foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
+        {
+            if (button == buttonType.LStick || button == buttonType.RStick)
+                continue;
 
-        if (gamepad == null)
-            return;
+            bool currentState = XboxController.GetButton(button).pressed;
+            bool previousState = prevButtons[button];
 
-        bottomFaceButton = gamepad.buttonSouth.isPressed;
-        leftFaceButton = gamepad.buttonWest.isPressed;
-        rightFaceButton = gamepad.buttonEast.isPressed;
-        topFaceButton = gamepad.buttonNorth.isPressed;
-        rightBumper = gamepad.rightShoulder.isPressed;
-        leftBumper = gamepad.leftShoulder.isPressed;
-
-        dpadUp = gamepad.dpad.up.isPressed;
-        dpadDown = gamepad.dpad.down.isPressed;
-        dpadLeft = gamepad.dpad.left.isPressed;
-        dpadRight = gamepad.dpad.right.isPressed;
-
-        start = gamepad.startButton.isPressed;
-        select = gamepad.selectButton.isPressed;
-
-        leftJoystickButton = gamepad.leftStickButton.isPressed;
-        rightJoystickButton = gamepad.rightStickButton.isPressed;
-
-        CheckButtonState("Bottom Face Button", bottomFaceButton, ref prevBottomFaceButton);
-        CheckButtonState("Left Face Button", leftFaceButton, ref prevLeftFaceButton);
-        CheckButtonState("Right Face Button", rightFaceButton, ref prevRightFaceButton);
-        CheckButtonState("Top Face Button", topFaceButton, ref prevTopFaceButton);
-        CheckButtonState("Right Bumper", rightBumper, ref prevRightBumper);
-        CheckButtonState("Left Bumper", leftBumper, ref prevLeftBumper);
-
-        CheckButtonState("DPad Up", dpadUp, ref prevDpadUp);
-        CheckButtonState("DPad Down", dpadDown, ref prevDpadDown);
-        CheckButtonState("DPad Left", dpadLeft, ref prevDpadLeft);
-        CheckButtonState("DPad Right", dpadRight, ref prevDpadRight);
-        CheckButtonState("Start Button", start, ref prevStart);
-        CheckButtonState("Select Button", select, ref prevSelect);
-        CheckButtonState("Left Joystick Press", leftJoystickButton, ref prevLeftJoystickButton);
-        CheckButtonState("Right Joystick Press", rightJoystickButton, ref prevRightJoystickButton);
+            CheckButtonState(GetButtonName(button), currentState, ref previousState);
+            prevButtons[button] = previousState;
+        }
     }
+
     public void GetTouchpadActivity()
     {
         var gamepad = Gamepad.current;
-        if(gamepad is DualShockGamepad)
-        {
-            touchpad = DualShockGamepad.current.touchpadButton.isPressed;
-            
-            if(touchpad)
-                Debug.Log("touchpad pressed");
-        }
-        else
-        {
-            Debug.Log("this isnt a dualshockcontroller");
-        }
+
+        if (gamepad is not DualShockGamepad dualShock)
+            return;
+
+        bool currentTouchpad = dualShock.touchpadButton.isPressed;
+
+        if (currentTouchpad && !prevTouchpad)
+            ControllerDebugLogger.LogPressed("Touchpad");
+        else if (!currentTouchpad && prevTouchpad)
+            ControllerDebugLogger.LogReleased("Touchpad");
+
+        prevTouchpad = currentTouchpad;
     }
 
     internal void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
     {
         if (currentState && !previousState)
-        {
-            // Use same base name
             ControllerDebugLogger.LogPressed(buttonName);
-        }
         else if (!currentState && previousState)
-        {
-            // Same base name again
             ControllerDebugLogger.LogReleased(buttonName);
-        }
 
         previousState = currentState;
     }
 
-    public float GetRightTrigger()
+    private string GetButtonName(buttonType button)
     {
-        return rightTrigger;
+        return button switch
+        {
+            buttonType.A => "A Button",
+            buttonType.B => "B Button",
+            buttonType.X => "X Button",
+            buttonType.Y => "Y Button",
+            buttonType.Up => "DPad Up",
+            buttonType.Down => "DPad Down",
+            buttonType.Left => "DPad Left",
+            buttonType.Right => "DPad Right",
+            buttonType.LBumper => "Left Bumper",
+            buttonType.RBumper => "Right Bumper",
+            buttonType.Xbox => "Xbox Button",
+            buttonType.Menu => "Menu Button",
+            buttonType.View => "View Button",
+            buttonType.Share => "Share Button",
+            buttonType.Advanced => "Advanced Button",
+            buttonType.LStick => "Left Joystick Press",
+            buttonType.RStick => "Right Joystick Press",
+            _ => button.ToString()
+        };
     }
 
-    public float GetLeftTrigger()
+    private string GetTriggerName(triggerType trigger)
     {
-        return leftTrigger;
+        return trigger switch
+        {
+            triggerType.Left => "Left",
+            triggerType.Right => "Right",
+            _ => trigger.ToString()
+        };
     }
 
-    public bool GetBottomFaceButton()
+    private string GetJoystickName(joystickType joystick)
     {
-        return bottomFaceButton;
-    }
-    public bool GetUpFaceButton()
-    {
-        return topFaceButton;
-    }
-    public bool GetRightFaceButton()
-    {
-        return rightFaceButton;
-    }
-    public bool GetLeftFaceButton()
-    {
-        return leftFaceButton;
-    }
-    
-    public bool GetRightBumper()
-    {
-        return rightBumper;
-    }
-
-    public bool GetLeftBumper()
-    {
-        return leftBumper;
-    }
-
-    public bool GetDpadUp()
-    {
-        return dpadUp;
-    }
-
-    public bool GetDpadDown()
-    {
-        return dpadDown;
-    }
-
-    public bool GetDpadRight()
-    {
-        return dpadRight;
-    }
-
-    public bool GetDpadLeft()
-    {
-        return dpadLeft;
-    }
-
-    public Vector2 GetLeftJoystick()
-    {
-        return leftJoystick;
-    }
-
-    public Vector2 GetRightJoystick()
-    {
-        return rightJoystick;
-    }
-
-    public bool GetLeftJoystickButton()
-    {
-        return leftJoystickButton;
-    }
-
-    public bool GetRightJoystickButton()
-    {
-        return rightJoystickButton;
-    }
-
-
-    public void SetBottomFaceButton(bool value)
-    {
-        bottomFaceButton = value;
-    }
-
-    public void SetTopFaceButton(bool value)
-    {
-        topFaceButton = value;
-    }
-
-    public void SetRightFaceButton(bool value)
-    {
-        rightFaceButton = value;
-    }
-
-    public void SetLeftFaceButton(bool value)
-    {
-        leftFaceButton = value;
-    }
-
-    public void SetRightBumper(bool value)
-    {
-        rightBumper = value;
-    }
-
-    public void SetLeftBumper(bool value)
-    {
-        leftBumper = value;
-    }
-    public void SetDpadUp(bool value)
-    {
-        dpadUp = value;
-    }
-
-    public void SetDpadDown(bool value)
-    {
-        dpadDown = value;
-    }
-
-    public void SetDpadLeft(bool value)
-    {
-        dpadLeft = value;
-    }
-
-    public void SetDpadRight(bool value)
-    {
-        dpadRight = value;
-    }
-    public void SetLeftJoystick(Vector2 value)
-    {
-        leftJoystick = value;
-    }
-
-    public void SetRightJoystick(Vector2 value)
-    {
-        rightJoystick = value;
-    }
-
-    public void SetRightJoysickButton(bool value)
-    {
-        rightJoystickButton = value;
-    }
-
-    public void SetLeftJoysickButton(bool value)
-    {
-        leftJoystickButton = value;
+        return joystick switch
+        {
+            joystickType.Left => "Left",
+            joystickType.Right => "Right",
+            _ => joystick.ToString()
+        };
     }
 }
