@@ -62,19 +62,19 @@ public class ControllerEmulation : EditorWindow
     {
         emulator.clear();
         
-        if (GUILayout.RepeatButton("Press All Buttons"))
-            {
-                emulator.pressAllButtons();
-            }
+        // if (GUILayout.RepeatButton("Press All Buttons"))
+        //     {
+        //         emulator.pressAllButtons();
+        //     }
 
-        // create a button for each controller button input
-        foreach (var button in buttonNames)
-        {
-            if (GUILayout.RepeatButton(button))
-            {
-                emulator.pressButton(button);
-            }
-        }
+        // // create a button for each controller button input
+        // foreach (var button in buttonNames)
+        // {
+        //     if (GUILayout.RepeatButton(button))
+        //     {
+        //         emulator.pressButton(button);
+        //     }
+        // }
 
         // mouse tracking for joysticks and analog
         Event e = Event.current;
