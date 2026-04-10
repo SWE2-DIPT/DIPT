@@ -8,7 +8,7 @@ using UnityEngine.InputSystem.XInput; //XInput is for xbox
 public class ControllerManager
 {
     private bool controller_connected;
-    public InputDevice current_gamepad;
+    public Gamepad current_gamepad;
 
     public bool check_gamepad()
     {
@@ -41,7 +41,7 @@ public class ControllerManager
 
     public Gamepad get_gamepad()
     {
-        return current_gamepad as Gamepad;
+        return current_gamepad;
     }
 
     public bool is_gamepad_connected()

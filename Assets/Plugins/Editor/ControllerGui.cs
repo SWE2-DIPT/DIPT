@@ -106,8 +106,8 @@ public class ControllerGUI : EditorWindow
     void Update()
     {
 
-        if(Application.isPlaying)
-            physicalControlellerUpdate();
+        
+        physicalControlellerUpdate();
 
         emulatedControllerUpdate();
 
@@ -439,42 +439,39 @@ public class ControllerGUI : EditorWindow
     public void physicalControlellerUpdate()
     {
         var gamepad = Gamepad.current;
-        if(gamepad == null)
-        {
-            // Debug.Log("no suitable gamepad");
+        if (gamepad == null)
             return;
-        }
-        
+
         Dictionary<string, (buttonType, bool)> physElToButton = new()
-        {
-            { "A-button", (buttonType.A, gamepad.buttonSouth.isPressed)},
-            { "B-button", (buttonType.B, gamepad.buttonEast.isPressed)},
-            { "X-button", (buttonType.X, gamepad.buttonWest.isPressed)},
-            { "Y-button", (buttonType.Y, gamepad.buttonNorth.isPressed)},
+            {
+                { "A-button", (buttonType.A, gamepad.buttonSouth.isPressed)},
+                { "B-button", (buttonType.B, gamepad.buttonEast.isPressed)},
+                { "X-button", (buttonType.X, gamepad.buttonWest.isPressed)},
+                { "Y-button", (buttonType.Y, gamepad.buttonNorth.isPressed)},
 
-            { "RB-button", (buttonType.RBumper, gamepad.rightShoulder.isPressed)},
-            { "LB-button", (buttonType.LBumper, gamepad.leftShoulder.isPressed)},
+                { "RB-button", (buttonType.RBumper, gamepad.rightShoulder.isPressed)},
+                { "LB-button", (buttonType.LBumper, gamepad.leftShoulder.isPressed)},
 
-            { "up-pad", (buttonType.Up, gamepad.dpad.up.isPressed)},
-            { "down-pad",(buttonType.Down, gamepad.dpad.down.isPressed)},
-            { "left-pad",(buttonType.Left, gamepad.dpad.left.isPressed)},
-            { "right-pad",(buttonType.Right, gamepad.dpad.right.isPressed)},
+                { "up-pad", (buttonType.Up, gamepad.dpad.up.isPressed)},
+                { "down-pad",(buttonType.Down, gamepad.dpad.down.isPressed)},
+                { "left-pad",(buttonType.Left, gamepad.dpad.left.isPressed)},
+                { "right-pad",(buttonType.Right, gamepad.dpad.right.isPressed)},
 
-            { "left-joystick-button", (buttonType.LStick, gamepad.leftStickButton.isPressed)},
-            { "right-joystick-button", (buttonType.RStick, gamepad.rightStickButton.isPressed)}
-        };
+                { "left-joystick-button", (buttonType.LStick, gamepad.leftStickButton.isPressed)},
+                { "right-joystick-button", (buttonType.RStick, gamepad.rightStickButton.isPressed)}
+            };
 
         Dictionary<string, (joystickType, Vector2)> physElToJoystick = new()
-        {
-            {"left-joystick", (joystickType.Left, gamepad.leftStick.ReadValue())},
-            {"right-joystick", (joystickType.Right, gamepad.rightStick.ReadValue())},
-        };
+            {
+                {"left-joystick", (joystickType.Left, gamepad.leftStick.ReadValue())},
+                {"right-joystick", (joystickType.Right, gamepad.rightStick.ReadValue())},
+            };
 
         Dictionary<string, (triggerType, float)> physElToTrigger = new()
-        {
-            {"RT-button", (triggerType.Right,  gamepad.rightTrigger.ReadValue())},
-            {"LT-button", (triggerType.Left,  gamepad.leftTrigger.ReadValue())},
-        };
+            {
+                {"RT-button", (triggerType.Right,  gamepad.rightTrigger.ReadValue())},
+                {"LT-button", (triggerType.Left,  gamepad.leftTrigger.ReadValue())},
+            };
 
         foreach (var tuple in physElToButton)
         {
@@ -538,22 +535,17 @@ public class ControllerGUI : EditorWindow
             if (joystickRoot == null) continue;
 
             var stick = joystickRoot.Q<VisualElement>(className: "joystick");
-            var labelX = joystickRoot.Q<Label>($"{name}-value_X");
-            var labelY = joystickRoot.Q<Label>($"{name}-value_Y");
+            var labelXValue = joystickRoot.Q<Label>($"{name}-value_X");
+            var labelYValue = joystickRoot.Q<Label>($"{name}-value_Y");
 
             Vector2 input = tuple.Value.Item2;
 
             UpdateStick(stick, input, 40f);
 
-            if (labelX != null)
+            if (labelXValue != null && labelYValue != null)
             {
-                labelX.style.fontSize = 20f;
-                labelX.text = $"X: {input.x:F2}";
-            }
-            if (labelY != null)
-            {
-                labelY.style.fontSize = 20f;
-                labelY.text = $"Y: {input.y:F2}";
+                labelXValue.text = input.x.ToString("F2");
+                labelYValue.text = input.y.ToString("F2");
             }
 
             XboxController.SetJoystick(type, input);
@@ -596,7 +588,7 @@ public class ControllerGUI : EditorWindow
 
             UpdateStick(stick, input, 40f);
             
-            if(labelXValue != null)
+            if(labelXValue != null && labelYValue != null)
             {
                 labelXValue.text = input.x.ToString("F2");
                 labelYValue.text = input.y.ToString("F2");
