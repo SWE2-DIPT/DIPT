@@ -60,7 +60,7 @@ public class ControllerEmulation : EditorWindow
 
     void OnGUI()
     {
-        emulator.releaseAllButtons();
+        emulator.clear();
         
         if (GUILayout.RepeatButton("Press All Buttons"))
             {
@@ -81,7 +81,11 @@ public class ControllerEmulation : EditorWindow
         Vector2 mousePos = e.mousePosition;
 
         // check mouse button is down
-        if (Mouse.current == null || !Mouse.current.leftButton.isPressed)
+        // if (Mouse.current == null || !Mouse.current.leftButton.isPressed)
+        // {
+        //     mouseDown = false;
+        // }
+        if (e.type == EventType.MouseDown && mouseDown)
         {
             mouseDown = false;
         }
