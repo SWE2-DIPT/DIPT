@@ -29,6 +29,7 @@ using System.Linq;
 public class GamepadEmulator
 {
     private Gamepad emulator;
+    private ControllerManager manager;
     
     private uint buttonsPressed = 0;
     private Vector2 leftStickValues = Vector2.zero;
@@ -38,7 +39,9 @@ public class GamepadEmulator
 
     public GamepadEmulator()
     {
+        manager = new ControllerManager();
         emulator = InputSystem.AddDevice<Gamepad>();
+
     }
 
 
@@ -69,13 +72,18 @@ public class GamepadEmulator
      /*4*/ "Y", "Triangle", "North", 
      /*5*/ "B", "Circle", "East", 
      /*6*/ "South", "A", "Cross", 
-     /*7*/ "Square", "West", "X", 
+     /*7*/ "Square", "West", "X",
      /*8*/ "LeftStick", 
      /*9*/ "RightStick", 
      /*10*/ "LeftShoulder", 
-     /*11*/ "RightShoulder", 
-     /*12*/ "Start", 
-     /*13*/ "Select"};
+     /*11*/ "RightShoulder",
+     ///*12*/ "LeftStickButton",
+     ///*13*/ "RightStickButton",
+     /*14*/ "LeftTrigger",
+     /*15*/ "RightTrigger",
+     /*16*/ "Start", 
+     /*17*/ "Select"
+    };
 
     // simulate press on button
     // param: int of button

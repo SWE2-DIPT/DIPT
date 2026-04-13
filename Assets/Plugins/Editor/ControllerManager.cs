@@ -1,51 +1,46 @@
+﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.DualShock;
-using UnityEngine.InputSystem.XInput; //XInput is for xbox
+using UnityEngine.InputSystem.XInput;
+using UnityEngine.Windows.Speech; //XInput is for xbox
+
+enum ControllerType { physical, artificial }
 
 
 public class ControllerManager
 {
-    private bool controller_connected;
-    public Gamepad current_gamepad;
+    
+    private Gamepad physicalGamepad;
+    private Gamepad artificalGamepad;
 
-    public bool check_gamepad()
+    public Gamepad GetPadType()
     {
-        foreach (var gamepad in Gamepad.all)
-        {
-            if (gamepad is DualShockGamepad)
-            {
-                current_gamepad = gamepad;
-                Debug.Log("PlayStation controller detected");
-                controller_connected = true;
-                return true;
-            }
+        physicalGamepad = null;
+        artificalGamepad = null;
 
-            if (gamepad is XInputController)
+        foreach (var pad in Gamepad.all)
+        {
+            if (pad is XInputController || pad is DualShockGamepad)
             {
-                current_gamepad = gamepad;
-                Debug.Log("Xbox controller detected");
-                controller_connected = true;
-                return true;
+                physicalGamepad = pad;
+                Debug.Log($"Physical: {pad.displayName}");
+                break;
             }
         }
 
-        current_gamepad = null;
-        controller_connected = false;
+        // fallback: anything else that exists
+        if (physicalGamepad == null)
+        {
+            foreach (var pad in Gamepad.all)
+            {
+                artificalGamepad = pad;
+                Debug.Log($"Fallback: {pad.displayName}");
+                break;
+            }
+        }
 
-        Debug.Log("No supported controllers connected");
-
-        return false;
-    }
-
-    public Gamepad get_gamepad()
-    {
-        return current_gamepad;
-    }
-
-    public bool is_gamepad_connected()
-    {
-        return controller_connected;
+        return physicalGamepad ?? artificalGamepad;
     }
 }

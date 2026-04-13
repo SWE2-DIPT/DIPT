@@ -72,7 +72,7 @@
 				</ui:VisualElement>
 			</ui:VisualElement>
 
-				<ui:VisualElement class="value rows">
+			<ui:VisualElement class="value rows">
 				<ui:VisualElement name="left-joystick-button" class="joystick-button" 
 				style="width: 40px; height: 40px; background-color: red; position: absolute; right: -75px; top: -45px;">
 					<ui:Label text="LS" class="button-label" style="font-size:30px;"/>
@@ -141,6 +141,7 @@
 					<ui:Label text="RJ" class="button-label" style="font-size: 30px;"/>
 				</ui:VisualElement>
 			</ui:VisualElement>
+
 			<ui:VisualElement style="flex-direction: column;">
 				<ui:VisualElement class= "value rows" style="flex-direction: row;">
 					<ui:Label text="X:" class="X" 
@@ -164,7 +165,5 @@
 			</ui:VisualElement>
 
 		</ui:VisualElement>
-
 	</ui:VisualElement>
-	
 </ui:UXML>
