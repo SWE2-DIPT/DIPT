@@ -111,9 +111,7 @@ public class ControllerGUI : EditorWindow
 
         emulatedControllerUpdate();
 
-    
-        
-        // Keyboardemulator.UpdateKeyboardEmulation();
+        Keyboardemulator.UpdateKeyboardEmulation();
 
     }
 
