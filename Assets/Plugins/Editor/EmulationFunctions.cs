@@ -178,7 +178,15 @@ public class GamepadEmulator
         rightTriggerValue = 0;
     }
 
-    
+    public float GetTriggers(triggerType trigger)
+    {
+       if(trigger == triggerType.Left)
+            return leftTriggerValue;
+        else if(trigger == triggerType.Right)
+            return rightTriggerValue;
+        else
+            return 0f;
+    }
 
     // simulate left joystick: normalized to 1
     // param: float of x value & float of y value
@@ -200,6 +208,16 @@ public class GamepadEmulator
     public void resetRightJoystick()
     {
         rightStickValues = Vector2.zero;
+    }
+
+    public Vector2 GetJoysticks(joystickType joystick)
+    {
+        if(joystick == joystickType.Left)
+            return leftStickValues;
+        else if(joystick == joystickType.Right)
+            return rightStickValues;
+        else
+            return Vector2.zero;
     }
 
     // simulate empty state of gamepad controller

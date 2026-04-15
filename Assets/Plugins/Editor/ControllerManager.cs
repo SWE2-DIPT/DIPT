@@ -25,6 +25,7 @@ public class ControllerManager
             if (pad is XInputController || pad is DualShockGamepad)
             {
                 physicalGamepad = pad;
+                artificalGamepad = null;
                 Debug.Log($"Physical: {pad.displayName}");
                 break;
             }
