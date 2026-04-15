@@ -30,7 +30,7 @@ public class GamepadEmulator
 {
     private Gamepad emulator;
     private ControllerManager manager;
-    
+
     private uint buttonsPressed = 0;
     private Vector2 leftStickValues = Vector2.zero;
     private Vector2 rightStickValues = Vector2.zero;
@@ -64,7 +64,7 @@ public class GamepadEmulator
 
     // refer to link below for button numbers and button numbers in comments of array validButtonStrings below
     // https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/api/UnityEngine.InputSystem.LowLevel.GamepadButton.html
-    private string[] validButtonStrings = 
+    private string[] validButtonStrings =
     {/*0*/ "DpadUp",
      /*1*/ "DpadDown", 
      /*2*/ "DpadLeft", 
@@ -79,15 +79,15 @@ public class GamepadEmulator
      /*11*/ "RightShoulder",
      ///*12*/ "LeftStickButton",
      ///*13*/ "RightStickButton",
-     /*14*/ "LeftTrigger",
-     /*15*/ "RightTrigger",
-     /*16*/ "Start", 
-     /*17*/ "Select"
+     /*12*/ "LeftTrigger",
+     /*13*/ "RightTrigger",
+     /*14*/ "Start", 
+     /*15*/ "Select"
     };
 
     // simulate press on button
     // param: int of button
-    public void pressButton(int button){
+    public void pressButton(int button) {
         if (button > 13 || button < 0)
         {
             throw new Exception("Button must be > 0 and < 13");
@@ -96,13 +96,14 @@ public class GamepadEmulator
     }
 
     // simulate press all buttons
-    public void pressAllButtons(){
+    public void pressAllButtons()
+    {
         buttonsPressed = (1u << 14) - 1;
     }
 
     // simulate release on button
     // param: int of button
-    public void releaseButton(int button){
+    public void releaseButton(int button) {
         if (button > 13 || button < 0)
         {
             throw new Exception("Button must be > 0 and < 13");
@@ -133,6 +134,11 @@ public class GamepadEmulator
             throw new Exception("Must be a valid button string");
         }
         buttonsPressed &= ~(1u << (int)Enum.Parse<GamepadButton>(button, true));
+    }
+
+    public bool getButtonState(buttonType button) 
+    {
+        return (buttonsPressed & (1u << (int)button)) != 0;
     }
 
     // release all buttons
@@ -172,6 +178,7 @@ public class GamepadEmulator
         rightTriggerValue = 0;
     }
 
+    
 
     // simulate left joystick: normalized to 1
     // param: float of x value & float of y value

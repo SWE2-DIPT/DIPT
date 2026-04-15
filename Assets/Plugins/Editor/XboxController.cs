@@ -50,6 +50,8 @@ public static class XboxController
     {
         return Joysticks[type];
     }
+
+
     //~SETTERS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static void SetButton(buttonType type, bool pressed)
     {
@@ -69,6 +71,11 @@ public static class XboxController
     public static void SetJoystickPressed(joystickType type, bool pressed)
     {
         Joysticks[type].SetPressed(pressed);
+    }
+
+    public static void SetButtonEMU(buttonType type, bool pressed)
+    {
+        Buttons[type].SetPressed(pressed);
     }
 }
 

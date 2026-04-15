@@ -122,8 +122,6 @@ public class ControllerGUI : EditorWindow
         physicalControlellerUpdate();
 
         emulatedControllerUpdate();
-
-        Repaint();
         
         Keyboardemulator.UpdateKeyboardEmulation();
 
@@ -211,12 +209,13 @@ public class ControllerGUI : EditorWindow
 
             // Put into dictionary (hash table);
             buttons[name] = button;
-            // Assign pressed events:
+            string ButtonName = name;
+            // Assign pressed events:;
             button.RegisterCallback<PointerDownEvent>(evt =>
             {
                 Debug.Log($"{name}: DOWN");
                 //HELL
-                string ButtonName = name;
+                
                 switch (ButtonName)
                     {
                         case "A-button":
@@ -304,7 +303,7 @@ public class ControllerGUI : EditorWindow
             });
             button.RegisterCallback<PointerUpEvent>(evt =>
             {
-                emulator.clear();
+                emulator.releaseButton(ButtonName);
                 // Debug.Log($"{name}: UP");
 
                 // Set this button's pressed state to false.
@@ -410,8 +409,9 @@ public class ControllerGUI : EditorWindow
 
             zone.RegisterCallback<PointerCaptureOutEvent>(evt =>
             {
-           
 
+                emulator.resetLeftJoystick();
+                emulator.resetRightJoystick();
                 dragging = false;
 
                 XboxController.SetJoystick(type, Vector2.zero);
@@ -463,7 +463,6 @@ public class ControllerGUI : EditorWindow
                 {
                     case "LT-button":
                         trigger_name = "LeftTrigger";
- 
                         emulator.pressLeftTrigger(normalized);
                         break;
 
@@ -485,9 +484,6 @@ public class ControllerGUI : EditorWindow
                 dragging = false;
                 trigger.ReleasePointer(evt.pointerId);
 
-                emulator.releaseLeftTrigger();
-                emulator.releaseRightTrigger();
-
                 if (visElToTrigger.TryGetValue(name, out var type))
                     XboxController.SetTrigger(type, 0f);
             });
@@ -499,8 +495,8 @@ public class ControllerGUI : EditorWindow
                 if (visElToTrigger.TryGetValue(name, out var type))
                     XboxController.SetTrigger(type, 0f);
 
-          
-                    
+                emulator.releaseLeftTrigger();
+                emulator.releaseRightTrigger();
             });
         }
     }
@@ -622,8 +618,6 @@ public class ControllerGUI : EditorWindow
         }
       
         UnityEngine.InputSystem.InputSystem.Update();
-
-       
     }
 
     public void emulatedControllerUpdate()
@@ -633,9 +627,8 @@ public class ControllerGUI : EditorWindow
             string elementName = pair.Key;
             buttonType button = pair.Value;
 
-           
+            bool isPressed = XboxController.GetButton(button).pressed || emulator.getButtonState(button);
 
-            bool isPressed = XboxController.GetButton(button).pressed;
             if (!buttons.TryGetValue(elementName, out VisualElement element))
                 continue;
 
@@ -703,6 +696,8 @@ public class ControllerGUI : EditorWindow
         }
 
         emulator.emulate();
+
+        Repaint();
 
     }
 
