@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum buttonType { Y, B, A, X, Up, Down, Left, Right, LBumper, RBumper, RStick, LStick, Xbox, Menu, View, Share, Advanced }
+public enum buttonType { Up, Down, Left, Right, Y, B, A, X, RStick, LStick, LBumper, RBumper, Menu, View, Share, Advanced, Xbox, }
 public enum triggerType { Left, Right }
 public enum joystickType { Left, Right }
 
