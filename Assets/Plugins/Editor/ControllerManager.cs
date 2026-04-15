@@ -36,7 +36,7 @@ public class ControllerManager
             foreach (var pad in Gamepad.all)
             {
                 artificalGamepad = pad;
-                Debug.Log($"Fallback: {pad.displayName}");
+                // Debug.Log($"Fallback: {pad.displayName}");
                 break;
             }
         }

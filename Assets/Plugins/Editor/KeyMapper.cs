@@ -33,10 +33,20 @@ public class KeyMapper : EditorWindow
     
     void OnGUI()
     {
-    
+
     }
 
-    public KeyMapper()
+    void OnEnable()
+    {
+        KeyMapperInitialize();
+    }
+
+    void OnDisable()
+    {
+        
+    }
+
+    public void KeyMapperInitialize()
     {
         // WASD for left joystick 
         // IJKL for right joystick
