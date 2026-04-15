@@ -283,7 +283,6 @@ public class ControllerGUI : EditorWindow
                 }
                 Debug.Log("HE");
                 emulator.pressButton(ButtonName);
- 
 
                 // Set this button's pressed state to true.
                 if (visElToButton.TryGetValue(name, out var type))
@@ -298,7 +297,7 @@ public class ControllerGUI : EditorWindow
             });
             button.RegisterCallback<PointerUpEvent>(evt =>
             {
-                emulator.releaseButton(ButtonName);
+                emulator.clear();
                 // Debug.Log($"{name}: UP");
 
                 // Set this button's pressed state to false.
@@ -613,6 +612,8 @@ public class ControllerGUI : EditorWindow
         }
       
         UnityEngine.InputSystem.InputSystem.Update();
+
+        emulator.emulate();
     }
 
     public void emulatedControllerUpdate()
@@ -646,7 +647,10 @@ public class ControllerGUI : EditorWindow
             var labelXValue = joystickRoot.Q<Label>($"{name}-value_X");
             var labelYValue = joystickRoot.Q<Label>($"{name}-value_Y");
 
-            Vector2 input = XboxController.GetJoystick(type).position;
+            Vector2 phys = XboxController.GetJoystick(type).position;
+            Vector2 emu = emulator.GetJoysticks(type);
+
+            Vector2 input = phys.magnitude > emu.magnitude ? phys : emu;
 
             UpdateStick(stick, input, 40f);
             
@@ -669,9 +673,8 @@ public class ControllerGUI : EditorWindow
             var triggerLabel = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-label");
             var label = triggerRoot.parent.Q<Label>($"{name.Split('-')[0]}-trigger-value-label");
 
-            float value = XboxController.GetTrigger(type).pressure;
+            float value = Mathf.Max(XboxController.GetTrigger(type).pressure, emulator.GetTriggers(type));
          
-
             // Update fill
             if (fill != null)
                 fill.style.height = new Length(value * 100, LengthUnit.Percent);
@@ -691,9 +694,6 @@ public class ControllerGUI : EditorWindow
         }
 
         emulator.emulate();
-
-        Repaint();
-
     }
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
