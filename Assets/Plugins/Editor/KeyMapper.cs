@@ -6,16 +6,35 @@
 *    Allows user to map keybinds to interact with gui.
 *******************************************************/
 using UnityEngine;
+using UnityEditor;
+using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using Unity.VisualScripting;
+using UnityEngine.InputSystem.Controls;
+using System;
+using Unity.Collections;
 using System.Collections.Generic;
+using System.Data;
 
-public class KeyMapper
+public class KeyMapper : EditorWindow
 {
     private Dictionary<UnityEngine.InputSystem.Key, buttonType> keyboardBinds = new();
     private Dictionary<UnityEngine.InputSystem.Key, triggerType> keyboardTriggers = new();
     private Dictionary<UnityEngine.InputSystem.Key, Joystick> keyboardJoysticks = new();
 
     private bool keyboardWasActive = false; // Variable to keep track if the keyboard was active in the last frame
+
+    [MenuItem("Tools/DIPT/KeyboardMapper")]
+    public static void ShowWindow()
+    {
+        GetWindow(typeof(KeyMapper));
+    }
+    
+    void OnGUI()
+    {
+    
+    }
 
     public KeyMapper()
     {
@@ -188,6 +207,11 @@ public class KeyMapper
 
         return isAnyKeyPressed || isJoystickActive;
      
+    }
+
+    void Update()
+    {
+        UpdateKeyboardEmulation();
     }
 
 }

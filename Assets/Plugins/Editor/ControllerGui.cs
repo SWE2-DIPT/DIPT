@@ -31,7 +31,6 @@ public class ControllerGUI : EditorWindow
     private static ControllerManager manager;
     private static ControllerComponents components;
     private GamepadEmulator emulator;
-    private static KeyMapper Keyboardemulator;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
@@ -85,8 +84,6 @@ public class ControllerGUI : EditorWindow
         components = new ControllerComponents();
         emulator = new GamepadEmulator();
 
-        Keyboardemulator = new KeyMapper(); /* KeyMapper.cs */
-
     ;
     
         EditorApplication.update += physicalControlellerUpdate;
@@ -122,8 +119,6 @@ public class ControllerGUI : EditorWindow
         physicalControlellerUpdate();
 
         emulatedControllerUpdate();
-        
-        Keyboardemulator.UpdateKeyboardEmulation();
 
     }
 
