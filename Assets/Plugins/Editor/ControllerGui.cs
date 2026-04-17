@@ -51,8 +51,8 @@ public class ControllerGUI : EditorWindow
         { "left-pad", buttonType.Left },
         { "right-pad", buttonType.Right },
 
-        { "left-joystick-button", buttonType.LStick },
-        { "right-joystick-button", buttonType.RStick },
+        { "left-stick", buttonType.LStick },
+        { "right-stick", buttonType.RStick },
 
         { "xbox-button", buttonType.Xbox },
         { "menu-button", buttonType.Menu },
@@ -115,10 +115,11 @@ public class ControllerGUI : EditorWindow
     void Update()
     {
 
-        
         physicalControlellerUpdate();
 
         emulatedControllerUpdate();
+
+       
 
     }
 
@@ -273,13 +274,13 @@ public class ControllerGUI : EditorWindow
                     //     ButtonName = "Advanced";
                     //     break;
 
-                        //case "left-joystick-button":
-                        //    ButtonName = "LeftStickButton";
-                        //    break;
+                    case "left-joystick-button":
+                        ButtonName = "LeftStickButton";
+                        break;
 
-                        //case "right-joystick-button":
-                        //    ButtonName = "RightStickButton";
-                        //    break;
+                    case "right-joystick-button":
+                        ButtonName = "RightStickButton";
+                        break;
                 }
                 Debug.Log("HE");
                 emulator.pressButton(ButtonName);
@@ -517,8 +518,8 @@ public class ControllerGUI : EditorWindow
             { "left-pad",(buttonType.Left, pad.dpad.left.isPressed)},
             { "right-pad",(buttonType.Right, pad.dpad.right.isPressed)},
 
-            { "left-joystick-button", (buttonType.LStick, pad.leftStickButton.isPressed)},
-            { "right-joystick-button", (buttonType.RStick, pad.rightStickButton.isPressed)}
+            { "left-stick", (buttonType.LStick, pad.leftStickButton.isPressed)},
+            { "right-stick", (buttonType.RStick, pad.rightStickButton.isPressed)}
         };
 
         Dictionary<string, (joystickType, Vector2)> physElToJoystick = new()

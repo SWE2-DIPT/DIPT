@@ -77,8 +77,6 @@ public class GamepadEmulator
      /*9*/ "RightStick", 
      /*10*/ "LeftShoulder", 
      /*11*/ "RightShoulder",
-     ///*12*/ "LeftStickButton",
-     ///*13*/ "RightStickButton",
      /*12*/ "LeftTrigger",
      /*13*/ "RightTrigger",
      /*14*/ "Start", 

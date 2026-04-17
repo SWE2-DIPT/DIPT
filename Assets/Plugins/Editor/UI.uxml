@@ -56,15 +56,15 @@
 				</ui:VisualElement>
 			</ui:VisualElement>
 			
-			<ui:VisualElement style="flex-direction: column;">
-				<ui:VisualElement class="value rows" style="flex-direction: row;">
+			<ui:VisualElement style="flex-direction: column; position: absolute">
+				<ui:VisualElement class="value-rows" style="flex-direction: row;">
 					<ui:Label text="X:" class="X" 
 					style="font-size: 20px; margin-left: -75px; width: 25px; flex-shrink: 0;"/>
 					<ui:Label name="left-joystick-value_X" 
 					style="font-size: 20px; width: 60px; unity-text-align: middle-left;"/>
 				</ui:VisualElement>
 
-				<ui:VisualElement class="value rows" style="flex-direction: row;">
+				<ui:VisualElement class="value-rows" style="flex-direction: row;">
 					<ui:Label text="Y:" class="Y" 
 					style="font-size: 20px; margin-left: -75px; width: 25px; flex-shrink: 0;"/>
 					<ui:Label name="left-joystick-value_Y" 
@@ -72,10 +72,11 @@
 				</ui:VisualElement>
 			</ui:VisualElement>
 
-			<ui:VisualElement class="value rows">
-				<ui:VisualElement name="left-joystick-button" class="joystick-button" 
-				style="width: 40px; height: 40px; background-color: red; position: absolute; right: -75px; top: -45px;">
-					<ui:Label text="LS" class="button-label" style="font-size:30px;"/>
+			<ui:VisualElement class="value-rows">
+				<ui:VisualElement class="joystick-button-box">
+					<ui:VisualElement name="left-stick" class="joystick-button">
+						<ui:Label text="LS" class="button-label"/>
+					</ui:VisualElement>
 				</ui:VisualElement>
 			</ui:VisualElement>
 		</ui:VisualElement>
@@ -142,14 +143,15 @@
 				</ui:VisualElement>
 			</ui:VisualElement>
 
-			<ui:VisualElement style="flex-direction: column;">
-				<ui:VisualElement class= "value rows" style="flex-direction: row;">
+			<ui:VisualElement style="flex-direction: column; position: absolute">
+				<ui:VisualElement class= "value-rows">
 					<ui:Label text="X:" class="X" 
 					style="font-size: 20px; margin-left: -75px; width: 25px; flex-shrink: 0;"/>
 					<ui:Label name="right-joystick-value_X" 
 					style="font-size: 20px; width: 60px; unity-text-align: middle-left;"/>
 				</ui:VisualElement>
-				<ui:VisualElement class= "value rows" style="flex-direction: row;">
+
+				<ui:VisualElement class= "value-rows">
 					<ui:Label text="Y:" class="Y" 
 					style="font-size: 20px; margin-left: -75px; width: 25px; flex-shrink: 0;"/>
 					<ui:Label name="right-joystick-value_Y" 
@@ -157,13 +159,13 @@
 				</ui:VisualElement>
 			</ui:VisualElement>
 
-			<ui:VisualElement class="value rows">
-				<ui:VisualElement name="right-joystick-button" class="joystick-button" 
-				style="width: 40px; height: 40px; background-color: red; position: absolute; right: -75px; top: -45px;">
-					<ui:Label text="RS" class="button-label" style="font-size:30px;"/>
+			<ui:VisualElement class="value-rows">
+				<ui:VisualElement class="joystick-button-box">
+					<ui:VisualElement name="right-stick" class="joystick-button">
+						<ui:Label text="RS" class="button-label"/>
+					</ui:VisualElement>
 				</ui:VisualElement>
 			</ui:VisualElement>
-
 		</ui:VisualElement>
 	</ui:VisualElement>
 </ui:UXML>

@@ -49,6 +49,7 @@
     -unity-text-align: middle-center;
     width: 100%;
     height: 100%;
+
 }
 /*Transfered*/
 .button.ButtonPressed {
@@ -83,6 +84,9 @@
 #Y-button {
     color:#FFCC00; /* This is yellow, the default yellow looks stupid */
     position: absolute;
+    border-width: 2px;
+    border-color: black;
+
 }
 
 #Y-button.ButtonPressed {
@@ -95,6 +99,8 @@
 #B-button {
     color:#D83B01;
     position: absolute;
+    border-width: 2px;
+    border-color: black;
 }
 
 #B-button.ButtonPressed {
@@ -106,6 +112,8 @@
 #A-button {
     color:#107C10;
     position: absolute;
+     border-width: 2px;
+    border-color: black;
 }
 
 #A-button.ButtonPressed {
@@ -117,6 +125,8 @@
 #X-button {
     color:#0078D4;
     position: absolute;
+     border-width: 2px;
+    border-color: black;
 }
 
 #X-button.ButtonPressed {
@@ -155,6 +165,7 @@
     background-color:#1F1F1F;
     border-radius: 8px;
     font-size: 300%;
+
 }
 /*TRANSFERED*/
 .bumper-button.ButtonPressed {
@@ -168,11 +179,15 @@
 #LB-button {
     border-top-left-radius:40%;
     border-bottom-right-radius:40%;
+     border-width: 2px;
+    border-color: black;
 }
 /*TRANSFERED*/
 #RB-button {
     border-top-right-radius:40%;
     border-bottom-left-radius:40%;
+     border-width: 2px;
+    border-color: black;
 }
 /*TRANSFERED*/
 
@@ -188,6 +203,9 @@
 
     background-color: #1F1F1F;
     border-radius: 8px;
+
+     border-width: 2px;
+    border-color: black;
 }
 /*TRANSFERED*/
 .trigger-fill-container {
@@ -247,12 +265,16 @@
     rotate: 0deg;
     translate: 0 -35px; /* Moves it up from the center */
     border-radius: 5px 5px 15px 15px;
+    border-width: 2px;
+    border-color: black;
 }
 /*TRANSFERED*/
 .down-pad {
     rotate: 0deg;
     translate: 0 35px;  /* Moves it down from the center */
     border-radius: 15px 15px 5px 5px;
+     border-width: 2px;
+    border-color: black;
 }
 /*TRANSFERED*/
 /* Horizontal Rectangles (Left/Right) */
@@ -261,12 +283,16 @@
     rotate: 90deg; 
     translate: -35px 0; /* Moves it left from the center */
     border-radius: 15px 15px 5px 5px;
+     border-width: 2px;
+    border-color: black;
 }
 /*TRANSFERED*/
 .right-pad {
     rotate: 90deg;
     translate: 35px 0;  /* Moves it right from the center */
     border-radius: 5px 5px 15px 15px;
+     border-width: 2px;
+    border-color: black;
 }
 /*TRANSFERED*/
 #advanced {
@@ -297,7 +323,7 @@
     justify-content: center;
     align-items: center;
 
-    border-width: 5px;
+    border-width: 3px;
     border-color: black;
 }
 /*TRANSFERED*/
@@ -310,6 +336,50 @@
     border-width: 10px;
     border-color: #111111;
 }
+
+.value-rows {
+    flex-direction: row;
+    top: 58px;
+}
+
+.joystick-button-box {
+    border-radius:30%;
+    background-color:#3b3b3b;
+
+    height:100%;
+    width:200%;
+
+    border-width: 2px;
+    border-color: black;
+
+    right: -55px; 
+    top: -60px;
+
+    position: relative;
+}
+
+.joystick-button {
+    width: 70%; 
+    height: 70%; 
+    color: white;
+  
+    font-size:30px;
+
+    right: -7px;
+    bottom: -7px;
+}
+
+.joystick-button.ButtonPressed {
+   width: 70%; 
+   height: 70%; 
+   color: #3b3b3b;
+  
+   font-size:30px;
+
+   right: -7px;
+   bottom: -7px;
+}
+
 /*TRANSFERED*/
 .horizontal-group {
     background-color:#3b3b3b;
