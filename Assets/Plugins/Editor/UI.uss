@@ -342,7 +342,7 @@
     top: 58px;
 }
 
-.joystick-button-box {
+.joystick-button {
     border-radius:30%;
     background-color:#3b3b3b;
 
@@ -352,32 +352,23 @@
     border-width: 2px;
     border-color: black;
 
-    right: -55px; 
+    margin-left: 85px; 
     top: -60px;
 
     position: relative;
-}
-
-.joystick-button {
-    width: 70%; 
-    height: 70%; 
     color: white;
   
     font-size:30px;
 
-    right: -7px;
+    right: -8px;
     bottom: -7px;
 }
 
 .joystick-button.ButtonPressed {
-   width: 70%; 
-   height: 70%; 
-   color: #3b3b3b;
+ 
+    background-color:white;
+    color: #3b3b3b;
   
-   font-size:30px;
-
-   right: -7px;
-   bottom: -7px;
 }
 
 /*TRANSFERED*/

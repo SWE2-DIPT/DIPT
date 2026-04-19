@@ -51,8 +51,8 @@ public class ControllerGUI : EditorWindow
         { "left-pad", buttonType.Left },
         { "right-pad", buttonType.Right },
 
-        { "left-stick", buttonType.LStick },
-        { "right-stick", buttonType.RStick },
+        { "left-stick", buttonType.LeftStick },
+        { "right-stick", buttonType.RightStick },
 
         { "xbox-button", buttonType.Xbox },
         { "menu-button", buttonType.Menu },
@@ -498,8 +498,7 @@ public class ControllerGUI : EditorWindow
 
     public void physicalControlellerUpdate()
     {
-
-        var pad = manager.GetPadType();
+        var pad = Gamepad.current;
         if (pad == null)
             return;
       
@@ -518,8 +517,8 @@ public class ControllerGUI : EditorWindow
             { "left-pad",(buttonType.Left, pad.dpad.left.isPressed)},
             { "right-pad",(buttonType.Right, pad.dpad.right.isPressed)},
 
-            { "left-stick", (buttonType.LStick, pad.leftStickButton.isPressed)},
-            { "right-stick", (buttonType.RStick, pad.rightStickButton.isPressed)}
+            { "left-stick", (buttonType.LeftStick, pad.leftStickButton.isPressed)},
+            { "right-stick", (buttonType.RightStick, pad.rightStickButton.isPressed)}
         };
 
         Dictionary<string, (joystickType, Vector2)> physElToJoystick = new()
@@ -570,6 +569,7 @@ public class ControllerGUI : EditorWindow
             // Update fill
             if (fill != null)
                 fill.style.height = new Length(value * 100, LengthUnit.Percent);
+                
 
             if (triggerLabel != null)
             {
