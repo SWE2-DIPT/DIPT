@@ -17,13 +17,23 @@ using Unity.Collections;
 using System.Collections.Generic;
 using System.Data;
 
+
+[InitializeOnLoad]
 public class KeyMapper : EditorWindow
 {
-    private Dictionary<UnityEngine.InputSystem.Key, buttonType> keyboardBinds = new();
-    private Dictionary<UnityEngine.InputSystem.Key, triggerType> keyboardTriggers = new();
-    private Dictionary<UnityEngine.InputSystem.Key, Joystick> keyboardJoysticks = new();
+    private static Dictionary<UnityEngine.InputSystem.Key, buttonType> keyboardBinds = new();
+    private static Dictionary<UnityEngine.InputSystem.Key, triggerType> keyboardTriggers = new();
+    private static Dictionary<UnityEngine.InputSystem.Key, Joystick> keyboardJoysticks = new();
 
-    private bool keyboardWasActive = false; // Variable to keep track if the keyboard was active in the last frame
+    private static bool keyboardWasActive = false; // Variable to keep track if the keyboard was active in the last frame
+    private static bool isInitialized = false;
+
+    static KeyMapper()
+    {
+        // 3. This runs AUTOMATICALLY without you doing anything
+        EnsureInitialized();
+        Debug.Log("KeyMapper Service Initialized and Ready.");
+    }
 
     [MenuItem("Tools/DIPT/KeyboardMapper")]
     public static void ShowWindow()
@@ -33,23 +43,32 @@ public class KeyMapper : EditorWindow
     
     void OnGUI()
     {
+        GUILayout.Label("Keyboard Mapping Status: ACTIVE", EditorStyles.boldLabel);
+        // Future customization UI goes here
+
+        // the GUI is just to make it customizable 
+        // base it off the way fortnite does it
+        // see if there is a way to make it savable 
 
     }
 
     void OnEnable()
     {
-        KeyMapperInitialize();
+        // KeyMapperInitialize();
     }
 
     void OnDisable()
     {
-        
+     // pretty sure just closes the window and save the information
+     // 
     }
 
-    public void KeyMapperInitialize()
+    public static void EnsureInitialized()
     {
         // WASD for left joystick 
         // IJKL for right joystick
+
+        if (isInitialized) return;
 
         // Start of buttonTypes
         keyboardBinds.Add(Key.Z, buttonType.Up);
@@ -94,13 +113,16 @@ public class KeyMapper : EditorWindow
         //End of Joysticks
         */
 
+        isInitialized = true;
+
     }
 
     
-    public void UpdateKeyboardEmulation()
+    public static void UpdateKeyboardEmulation(GamepadEmulator emulator)
     {
+        EnsureInitialized(); // saftey check
 
-        if (Keyboard.current == null) { return; }
+        if (Keyboard.current == null || emulator == null) { return; }
 
         bool isCurrentlyActive = CheckKeyboardSignal();
 
@@ -110,6 +132,9 @@ public class KeyMapper : EditorWindow
             if (keyboardWasActive) // Only goes into this block if we were touching the keyboard in the last frame
             {
                 ResetAllKeyboardStates();
+                emulator.clear(); // Stop emulating when keys are let go
+                emulator.resetLeftJoystick();
+                emulator.resetRightJoystick();
                 keyboardWasActive = false; // Ensures that next time we won't reset because it saying the last frame (now the next) we are not touching
                 // Debug.Log("Keyboard released: Final Reset performed.");
             }
@@ -121,47 +146,58 @@ public class KeyMapper : EditorWindow
         keyboardWasActive = true; // If we reach here, the keyboard is being used
 
 
+        //if (Keyboard.current.commaKey.isPressed)
+        //{
+        //    Debug.Log("KeyMapper is trying to set A-Button to TRUE");
+        //}
+
         foreach (var bind in keyboardBinds)
         {
-            // bool isDown = Keyboard.current.wKey.isPressed;
-            // bool isDown = Keyboard.current[bind.Key].isPressed;
+            bool isDown = Keyboard.current[bind.Key].isPressed;
+            XboxController.SetButton(bind.Value, isDown);
 
-            // Debug.Log("UP button has been pressed");
-            // XboxController.SetButton(bind.Value, isDown);
+            if (isDown) emulator.pressButton((int)bind.Value);
+            else emulator.releaseButton((int)bind.Value);
 
-            XboxController.SetButton(bind.Value, Keyboard.current[bind.Key].isPressed);
+            // XboxController.SetButton(bind.Value, Keyboard.current[bind.Key].isPressed);
         }
 
         foreach (var trig in keyboardTriggers)
         {
-            bool isDown = Keyboard.current[trig.Key].isPressed;
-            int press = isDown ? 1 : 0; // C# doesn't evaluate bool as 1 or 0
+            float val = Keyboard.current[trig.Key].isPressed ? 1f : 0f;
+            XboxController.SetTrigger(trig.Value, val);
+            if (trig.Value == triggerType.Left) emulator.pressLeftTrigger(val);
+            else emulator.pressRightTrigger(val);
 
-            XboxController.SetTrigger(trig.Value, press);
-            
+            //bool isDown = Keyboard.current[trig.Key].isPressed;
+            //int press = isDown ? 1 : 0; // C# doesn't evaluate bool as 1 or 0
+
+            //XboxController.SetTrigger(trig.Value, press);
+
             // if (isDown) {Debug.Log($"Trigger {trig.Key} is pressed");}
-                
+
         }
 
+
+        Vector2 leftStick = GetJoystickVector(Key.W, Key.S, Key.A, Key.D);
+        XboxController.SetJoystick(joystickType.Left, leftStick);
+        emulator.moveLeftJoystick(leftStick.x, leftStick.y);
+
+        Vector2 rightStick = GetJoystickVector(Key.I, Key.K, Key.J, Key.L);
+        XboxController.SetJoystick(joystickType.Right, rightStick);
+        emulator.moveRightJoystick(rightStick.x, rightStick.y);
+
         // Left Stick (WASD)
-        XboxController.SetJoystick(joystickType.Left, GetJoystickVector(Key.W, Key.S, Key.A, Key.D));
+        // XboxController.SetJoystick(joystickType.Left, GetJoystickVector(Key.W, Key.S, Key.A, Key.D));
 
         // Right Stick (IJKL)
-        XboxController.SetJoystick(joystickType.Right, GetJoystickVector(Key.I, Key.K, Key.J, Key.L));
+        // XboxController.SetJoystick(joystickType.Right, GetJoystickVector(Key.I, Key.K, Key.J, Key.L));
 
-        /*
-        // Process Left Stick (WASD)
-        Vector2 leftInput = GetJoystickVector(Key.W, Key.S, Key.A, Key.D);
-        XboxController.SetJoystick(joystickType.Left, leftInput);
 
-        // Process Right Stick (IJKL)
-        Vector2 rightInput = GetJoystickVector(Key.I, Key.K, Key.J, Key.L);
-        XboxController.SetJoystick(joystickType.Right, rightInput);
-        */
 
     }
 
-    private Vector2 GetJoystickVector(Key up, Key down, Key left, Key right)
+    private static Vector2 GetJoystickVector(Key up, Key down, Key left, Key right)
     {
         float x = 0;
         float y = 0;
@@ -174,7 +210,7 @@ public class KeyMapper : EditorWindow
         return Vector2.ClampMagnitude(new Vector2(x, y), 1f); // Returns a vector with a max length of 1
     }
 
-    private void ResetAllKeyboardStates() // Function to reset everything back to zero, or unpressed
+    private static void ResetAllKeyboardStates() // Function to reset everything back to zero, or unpressed
     {   // This runs only when the keyboard is not in use
 
         foreach (var bind in keyboardBinds)
@@ -187,7 +223,7 @@ public class KeyMapper : EditorWindow
         XboxController.SetJoystick(joystickType.Right, Vector2.zero);
     }
 
-    private bool CheckKeyboardSignal() // Checks if the keyboard is being touched
+    private static bool CheckKeyboardSignal() // Checks if the keyboard is being touched
     {
         if (Keyboard.current == null) return false;
 
@@ -219,9 +255,9 @@ public class KeyMapper : EditorWindow
      
     }
 
-    void Update()
+    /*public void Update()
     {
         UpdateKeyboardEmulation();
     }
-
+    */
 }
