@@ -114,6 +114,8 @@ public class ControllerGUI : EditorWindow
 
     void Update()
     {
+        KeyMapper.Update(emulator);
+
         physicalControlellerUpdate();
         emulatedControllerUpdate();
         Repaint();

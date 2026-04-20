@@ -86,9 +86,9 @@ public class GamepadEmulator
     // simulate press on button
     // param: int of button
     public void pressButton(int button) {
-        if (button > 13 || button < 0)
+        if (button > 16 || button < 0)
         {
-            throw new Exception("Button must be > 0 and < 13");
+            throw new Exception("Button must be > 0 and < 16");
         }
         buttonsPressed |= 1u << button;
     }
@@ -102,9 +102,9 @@ public class GamepadEmulator
     // simulate release on button
     // param: int of button
     public void releaseButton(int button) {
-        if (button > 13 || button < 0)
+        if (button > 16 || button < 0)
         {
-            throw new Exception("Button must be > 0 and < 13");
+            throw new Exception("Button must be > 0 and < 15");
         }
         buttonsPressed &= ~(1u << button);
     }

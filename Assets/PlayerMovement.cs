@@ -32,7 +32,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Keyboard.current != null)
         {
-            if (Keyboard.current.wKey.isPressed)
+            /*if (Keyboard.current.wKey.isPressed)
             {
                 movement.y += 1f;
             }
@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
             if (Keyboard.current.dKey.isPressed)
             {
                 movement.x += 1f;
-            }
+            }*/
         }
 
         movement = movement.normalized;
