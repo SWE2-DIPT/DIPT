@@ -73,10 +73,8 @@
 			</ui:VisualElement>
 
 			<ui:VisualElement class="value-rows">
-				<ui:VisualElement class="joystick-button-box">
-					<ui:VisualElement name="left-stick" class="joystick-button">
-						<ui:Label text="LS" class="button-label"/>
-					</ui:VisualElement>
+				<ui:VisualElement name="left-stick" class="joystick-button">
+					<ui:Label text="LS" class="button-label"/>
 				</ui:VisualElement>
 			</ui:VisualElement>
 		</ui:VisualElement>
@@ -158,14 +156,13 @@
 					style="font-size: 20px; width: 60px; unity-text-align: middle-left;"/>
 				</ui:VisualElement>
 			</ui:VisualElement>
-
+			
 			<ui:VisualElement class="value-rows">
-				<ui:VisualElement class="joystick-button-box">
-					<ui:VisualElement name="right-stick" class="joystick-button">
-						<ui:Label text="RS" class="button-label"/>
-					</ui:VisualElement>
+				<ui:VisualElement name="right-stick" class="joystick-button">
+					<ui:Label text="RS" class="button-label"/>
 				</ui:VisualElement>
 			</ui:VisualElement>
+
 		</ui:VisualElement>
 	</ui:VisualElement>
 </ui:UXML>

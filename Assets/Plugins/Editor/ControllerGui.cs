@@ -28,8 +28,8 @@ using static UnityEngine.Rendering.DebugUI;
 /// </summary>
 public class ControllerGUI : EditorWindow
 {
-    private static ControllerManager manager;
-    private static ControllerComponents components;
+    private ControllerManager manager;
+    private ControllerComponents components;
     private GamepadEmulator emulator;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
@@ -51,8 +51,8 @@ public class ControllerGUI : EditorWindow
         { "left-pad", buttonType.Left },
         { "right-pad", buttonType.Right },
 
-        { "left-stick", buttonType.LStick },
-        { "right-stick", buttonType.RStick },
+        { "left-stick", buttonType.LeftStick },
+        { "right-stick", buttonType.RightStick },
 
         { "xbox-button", buttonType.Xbox },
         { "menu-button", buttonType.Menu },
@@ -62,14 +62,11 @@ public class ControllerGUI : EditorWindow
         { "advanced", buttonType.Advanced }
     };
 
-
-
     Dictionary<string, joystickType> visElToJoystick = new()
     {
         { "left-joystick", joystickType.Left },
         { "right-joystick", joystickType.Right }
     };
-
 
     Dictionary<string, triggerType> visElToTrigger = new()
     {
@@ -79,19 +76,15 @@ public class ControllerGUI : EditorWindow
 
     private void OnEnable()
     {
- 
-        manager = new ControllerManager();
+        // manager = new ControllerManager();
         components = new ControllerComponents();
         emulator = new GamepadEmulator();
-
-        EditorApplication.update += physicalControlellerUpdate;
-       
+        // EditorApplication.update += physicalControlellerUpdate;
     }
 
     private void OnDisable()
     {
-        EditorApplication.update -= physicalControlellerUpdate;
-        
+        // EditorApplication.update -= physicalControlellerUpdate;
         emulator.dispose();
     }
 
@@ -109,13 +102,11 @@ public class ControllerGUI : EditorWindow
         LoadUXML();
     }
 
-    
     void Update()
     {
         KeyMapper.Update(emulator);
 
         physicalControlellerUpdate();
-
         emulatedControllerUpdate();
     }
 
@@ -181,9 +172,6 @@ public class ControllerGUI : EditorWindow
     /// </remarks>
     /// <param name="buttonNames">Array of names for the buttons you want queried</param>
     /// 
-
-   
-
     void InitializeButtons(IEnumerable<string> buttonNames)
     {
 
@@ -494,10 +482,12 @@ public class ControllerGUI : EditorWindow
 
     public void physicalControlellerUpdate()
     {
-
-        var pad = manager.GetPadType();
+        var pad = Gamepad.current;
         if (pad == null)
-            return;
+        {
+            Debug.Log("NO GAMEPAD DETECTED");
+        }
+        // Debug.Log($"Pad: {pad}");
       
         Dictionary<string, (buttonType, bool)> physElToButton = new()
         {
@@ -514,8 +504,8 @@ public class ControllerGUI : EditorWindow
             { "left-pad",(buttonType.Left, pad.dpad.left.isPressed)},
             { "right-pad",(buttonType.Right, pad.dpad.right.isPressed)},
 
-            { "left-stick", (buttonType.LStick, pad.leftStickButton.isPressed)},
-            { "right-stick", (buttonType.RStick, pad.rightStickButton.isPressed)}
+            { "left-stick", (buttonType.LeftStick, pad.leftStickButton.isPressed)},
+            { "right-stick", (buttonType.RightStick, pad.rightStickButton.isPressed)}
         };
 
         Dictionary<string, (joystickType, Vector2)> physElToJoystick = new()
@@ -541,6 +531,8 @@ public class ControllerGUI : EditorWindow
 
             if (pressed)
             {
+                if (button == buttonType.A)
+                    emulator.pressButton("A");
                 element.AddToClassList("ButtonPressed");
             }
             else
@@ -566,6 +558,7 @@ public class ControllerGUI : EditorWindow
             // Update fill
             if (fill != null)
                 fill.style.height = new Length(value * 100, LengthUnit.Percent);
+                
 
             if (triggerLabel != null)
             {
@@ -608,7 +601,7 @@ public class ControllerGUI : EditorWindow
             XboxController.SetJoystick(type, input);
         }
       
-        UnityEngine.InputSystem.InputSystem.Update();
+        // UnityEngine.InputSystem.InputSystem.Update();
 
         emulator.emulate();
     }

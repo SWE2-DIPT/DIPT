@@ -87,7 +87,7 @@ public class ControllerComponents
     {
         foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
         {
-            if (button == buttonType.LStick || button == buttonType.RStick)
+            if (button == buttonType.LeftStick || button == buttonType.RightStick)
                 continue;
 
             bool currentState = XboxController.GetButton(button).pressed;
@@ -144,8 +144,8 @@ public class ControllerComponents
             buttonType.View => "View Button",
             buttonType.Share => "Share Button",
             buttonType.Advanced => "Advanced Button",
-            buttonType.LStick => "Left Joystick Press",
-            buttonType.RStick => "Right Joystick Press",
+            buttonType.LeftStick => "Left Joystick Press",
+            buttonType.RightStick => "Right Joystick Press",
             _ => button.ToString()
         };
     }
