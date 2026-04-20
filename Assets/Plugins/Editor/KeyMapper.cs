@@ -18,21 +18,22 @@ using System.Collections.Generic;
 using System.Data;
 
 
-[InitializeOnLoad]
+[InitializeOnLoad] // this allows the static KeyMapper() to run immediately 
 public class KeyMapper : EditorWindow
 {
     private static Dictionary<UnityEngine.InputSystem.Key, buttonType> keyboardBinds = new();
     private static Dictionary<UnityEngine.InputSystem.Key, triggerType> keyboardTriggers = new();
-    private static Dictionary<UnityEngine.InputSystem.Key, Joystick> keyboardJoysticks = new();
+    private static Dictionary<UnityEngine.InputSystem.Key, (joystickType stick, Vector2 direction)> keyboardJoysticks = new();
+    // This a tuple ^^ for the Joysticks
 
     private static bool keyboardWasActive = false; // Variable to keep track if the keyboard was active in the last frame
     private static bool isInitialized = false;
 
     static KeyMapper()
     {
-        // 3. This runs AUTOMATICALLY without you doing anything
+        // This runs automatically without you doing anything
         EnsureInitialized();
-        Debug.Log("KeyMapper Service Initialized and Ready.");
+        Debug.Log("KeyMapper Initialized and Ready.");
     }
 
     [MenuItem("Tools/DIPT/KeyboardMapper")]
@@ -65,9 +66,6 @@ public class KeyMapper : EditorWindow
 
     public static void EnsureInitialized()
     {
-        // WASD for left joystick 
-        // IJKL for right joystick
-
         if (isInitialized) return;
 
         // Start of buttonTypes
@@ -78,13 +76,13 @@ public class KeyMapper : EditorWindow
 
         keyboardBinds.Add(Key.N, buttonType.Y);
         keyboardBinds.Add(Key.M, buttonType.X);
-        keyboardBinds.Add(Key.Comma, buttonType.A);
-        keyboardBinds.Add(Key.Period, buttonType.B); // the , symbol
+        keyboardBinds.Add(Key.Comma, buttonType.A); // the , symbol
+        keyboardBinds.Add(Key.Period, buttonType.B); // the . symbol
 
-        keyboardBinds.Add(Key.Digit1, buttonType.Xbox);
-        keyboardBinds.Add(Key.Digit2, buttonType.Menu);
-        keyboardBinds.Add(Key.Digit3, buttonType.View);
-        keyboardBinds.Add(Key.Digit4, buttonType.Share);
+        keyboardBinds.Add(Key.Digit1, buttonType.Xbox); // Number 1 above the Keyboard, not on Numberpad
+        keyboardBinds.Add(Key.Digit2, buttonType.Menu); // Number 2 above the Keyboard, not on Numberpad
+        keyboardBinds.Add(Key.Digit3, buttonType.View); // Number 3 above the Keyboard, not on Numberpad
+        keyboardBinds.Add(Key.Digit4, buttonType.Share); // Number 4 above the Keyboard, not on Numberpad
 
         keyboardBinds.Add(Key.E, buttonType.LBumper);
         keyboardBinds.Add(Key.U, buttonType.RBumper);
@@ -95,26 +93,22 @@ public class KeyMapper : EditorWindow
         keyboardTriggers.Add(Key.O, triggerType.Right);
         // End of triggerTypes
 
-        /* THIS WILL BE IMPLEMENTED ONCE CUSTOMIZATION IS CREATED
-         * IDEA IS TO CREATE A PRIVATE FUNCTION THAT DEALS WITH THIS
-         * THIS IS JUST THE DEFAULT BUTTONS FOR THE CONSTRUCTOR
-        //Start of Joysticks
-        // Left Joysticks
+        // Start of Joysticks
+        // Start of Left Joystick
         keyboardJoysticks.Add(Key.W, (joystickType.Left, Vector2.up));
         keyboardJoysticks.Add(Key.S, (joystickType.Left, Vector2.down));
         keyboardJoysticks.Add(Key.A, (joystickType.Left, Vector2.left));
         keyboardJoysticks.Add(Key.D, (joystickType.Left, Vector2.right));
+        // End of Left Joystick
 
-        // Right Joysticks
+        // Start of Right Joystick
         keyboardJoysticks.Add(Key.I, (joystickType.Right, Vector2.up));
         keyboardJoysticks.Add(Key.K, (joystickType.Right, Vector2.down));
         keyboardJoysticks.Add(Key.J, (joystickType.Right, Vector2.left));
         keyboardJoysticks.Add(Key.L, (joystickType.Right, Vector2.right));
-        //End of Joysticks
-        */
+        // End of Right Joystick
 
         isInitialized = true;
-
     }
 
     
@@ -128,15 +122,12 @@ public class KeyMapper : EditorWindow
 
         if (!isCurrentlyActive) // Goes into this block every time we are not touching the keyboard
         {
-            // Only reset if we were active in the PREVIOUS frame
+           
             if (keyboardWasActive) // Only goes into this block if we were touching the keyboard in the last frame
             {
                 ResetAllKeyboardStates();
                 emulator.clear(); // Stop emulating when keys are let go
-                emulator.resetLeftJoystick();
-                emulator.resetRightJoystick();
                 keyboardWasActive = false; // Ensures that next time we won't reset because it saying the last frame (now the next) we are not touching
-                // Debug.Log("Keyboard released: Final Reset performed.");
             }
 
             return;
@@ -145,74 +136,47 @@ public class KeyMapper : EditorWindow
         
         keyboardWasActive = true; // If we reach here, the keyboard is being used
 
-
-        //if (Keyboard.current.commaKey.isPressed)
-        //{
-        //    Debug.Log("KeyMapper is trying to set A-Button to TRUE");
-        //}
-
         foreach (var bind in keyboardBinds)
         {
             bool isDown = Keyboard.current[bind.Key].isPressed;
-            XboxController.SetButton(bind.Value, isDown);
 
             if (isDown) emulator.pressButton((int)bind.Value);
             else emulator.releaseButton((int)bind.Value);
-
-            // XboxController.SetButton(bind.Value, Keyboard.current[bind.Key].isPressed);
         }
 
         foreach (var trig in keyboardTriggers)
         {
+            bool isDown = Keyboard.current[trig.Key].isPressed;
+
             float val = Keyboard.current[trig.Key].isPressed ? 1f : 0f;
-            XboxController.SetTrigger(trig.Value, val);
+
             if (trig.Value == triggerType.Left) emulator.pressLeftTrigger(val);
             else emulator.pressRightTrigger(val);
 
-            //bool isDown = Keyboard.current[trig.Key].isPressed;
-            //int press = isDown ? 1 : 0; // C# doesn't evaluate bool as 1 or 0
-
-            //XboxController.SetTrigger(trig.Value, press);
-
-            // if (isDown) {Debug.Log($"Trigger {trig.Key} is pressed");}
-
         }
 
+        Vector2 leftTotal = Vector2.zero;
+        Vector2 rightTotal = Vector2.zero;
 
-        Vector2 leftStick = GetJoystickVector(Key.W, Key.S, Key.A, Key.D);
-        XboxController.SetJoystick(joystickType.Left, leftStick);
-        emulator.moveLeftJoystick(leftStick.x, leftStick.y);
+        foreach (var input in keyboardJoysticks)
+        {
+            if (Keyboard.current[input.Key].isPressed)
+            {
+                // Add the direction (up, down, left, right) to the correct bucket
+                if (input.Value.stick == joystickType.Left)
+                    leftTotal += input.Value.direction;
+                else
+                    rightTotal += input.Value.direction;
+            }
+        }
 
-        Vector2 rightStick = GetJoystickVector(Key.I, Key.K, Key.J, Key.L);
-        XboxController.SetJoystick(joystickType.Right, rightStick);
-        emulator.moveRightJoystick(rightStick.x, rightStick.y);
-
-        // Left Stick (WASD)
-        // XboxController.SetJoystick(joystickType.Left, GetJoystickVector(Key.W, Key.S, Key.A, Key.D));
-
-        // Right Stick (IJKL)
-        // XboxController.SetJoystick(joystickType.Right, GetJoystickVector(Key.I, Key.K, Key.J, Key.L));
-
-
-
+        emulator.moveLeftJoystick(leftTotal.x, leftTotal.y);
+        emulator.moveRightJoystick(rightTotal.x, rightTotal.y);
     }
 
-    private static Vector2 GetJoystickVector(Key up, Key down, Key left, Key right)
-    {
-        float x = 0;
-        float y = 0;
-
-        if (Keyboard.current[up].isPressed) y += 1f;
-        if (Keyboard.current[down].isPressed) y -= 1f;
-        if (Keyboard.current[right].isPressed) x += 1f;
-        if (Keyboard.current[left].isPressed) x -= 1f;
-
-        return Vector2.ClampMagnitude(new Vector2(x, y), 1f); // Returns a vector with a max length of 1
-    }
-
-    private static void ResetAllKeyboardStates() // Function to reset everything back to zero, or unpressed
-    {   // This runs only when the keyboard is not in use
-
+    private static void ResetAllKeyboardStates() 
+    {   // Function to reset everything back to zero, or unpressed
+        // This runs only when the keyboard is not in use AFTER it was (in the last frame)
         foreach (var bind in keyboardBinds)
             XboxController.SetButton(bind.Value, false);
 
@@ -227,37 +191,23 @@ public class KeyMapper : EditorWindow
     {
         if (Keyboard.current == null) return false;
 
-        bool isAnyKeyPressed = false;
-
         // Check Buttons
         foreach (var key in keyboardBinds.Keys)
-            if (Keyboard.current[key].isPressed) { isAnyKeyPressed = true; break; }
+            if (Keyboard.current[key].isPressed) { return true; }
 
         // Check Triggers
-        if (!isAnyKeyPressed)
-            foreach (var key in keyboardTriggers.Keys)
-                if (Keyboard.current[key].isPressed) { isAnyKeyPressed = true; break; }
+        foreach (var key in keyboardTriggers.Keys)
+                if (Keyboard.current[key].isPressed) { return true; }
 
         // Check Joysticks
-        /* if (!isAnyKeyPressed) // CAN USE THIS FOR WHEN WE MAKE CUSTOMIZATION
-            foreach (var key in keyboardJoysticks.Keys)
-                if (Keyboard.current[key].isPressed) { isAnyKeyPressed = true; break; }
-        */
+        foreach (var key in keyboardJoysticks.Keys)
+            if (Keyboard.current[key].isPressed) { return true; }
 
-        bool isJoystickActive =
-        Keyboard.current.wKey.isPressed || Keyboard.current.aKey.isPressed ||
-        Keyboard.current.sKey.isPressed || Keyboard.current.dKey.isPressed ||
-        Keyboard.current.iKey.isPressed || Keyboard.current.jKey.isPressed ||
-        Keyboard.current.kKey.isPressed || Keyboard.current.lKey.isPressed;
-        // These see if any of the WASD or IJKL buttons have been pressed
-
-        return isAnyKeyPressed || isJoystickActive;
-     
+        return false;
     }
 
-    /*public void Update()
+    public static void Update(GamepadEmulator emulator)
     {
-        UpdateKeyboardEmulation();
+        UpdateKeyboardEmulation(emulator);
     }
-    */
 }
