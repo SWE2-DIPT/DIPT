@@ -10,6 +10,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
 
 public class LogPlugin : EditorWindow
 {
@@ -33,6 +34,7 @@ public class LogPlugin : EditorWindow
     private Vector2 scrollPos;
     private InputState activeState;
     private readonly List<LogEntry> allLogs = new List<LogEntry>();
+    private Gamepad currentController;
     private ControllerComponents controllerReader;
     private bool isPolling = true;
 
@@ -70,6 +72,12 @@ public class LogPlugin : EditorWindow
 
         if (controllerReader == null)
             return;
+
+        if (currentController != Gamepad.current)
+        {
+            currentController = Gamepad.current;
+            controllerReader = new ControllerComponents();
+        }
 
         controllerReader.GetJoystickActivity();
         controllerReader.GetTriggerActivity();
