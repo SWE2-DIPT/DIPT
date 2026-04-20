@@ -28,8 +28,8 @@ using static UnityEngine.Rendering.DebugUI;
 /// </summary>
 public class ControllerGUI : EditorWindow
 {
-    private static ControllerManager manager;
-    private static ControllerComponents components;
+    private ControllerManager manager;
+    private ControllerComponents components;
     private GamepadEmulator emulator;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
@@ -62,14 +62,11 @@ public class ControllerGUI : EditorWindow
         { "advanced", buttonType.Advanced }
     };
 
-
-
     Dictionary<string, joystickType> visElToJoystick = new()
     {
         { "left-joystick", joystickType.Left },
         { "right-joystick", joystickType.Right }
     };
-
 
     Dictionary<string, triggerType> visElToTrigger = new()
     {
@@ -79,21 +76,15 @@ public class ControllerGUI : EditorWindow
 
     private void OnEnable()
     {
- 
-        manager = new ControllerManager();
+        // manager = new ControllerManager();
         components = new ControllerComponents();
         emulator = new GamepadEmulator();
-
-    ;
-    
-        EditorApplication.update += physicalControlellerUpdate;
-       
+        // EditorApplication.update += physicalControlellerUpdate;
     }
 
     private void OnDisable()
     {
-        EditorApplication.update -= physicalControlellerUpdate;
-        
+        // EditorApplication.update -= physicalControlellerUpdate;
         emulator.dispose();
     }
 
@@ -111,16 +102,10 @@ public class ControllerGUI : EditorWindow
         LoadUXML();
     }
 
-    
     void Update()
     {
-
         physicalControlellerUpdate();
-
         emulatedControllerUpdate();
-
-       
-
     }
 
     //~LOAD~GUI~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -185,9 +170,6 @@ public class ControllerGUI : EditorWindow
     /// </remarks>
     /// <param name="buttonNames">Array of names for the buttons you want queried</param>
     /// 
-
-   
-
     void InitializeButtons(IEnumerable<string> buttonNames)
     {
 
@@ -500,7 +482,10 @@ public class ControllerGUI : EditorWindow
     {
         var pad = Gamepad.current;
         if (pad == null)
-            return;
+        {
+            Debug.Log("NO GAMEPAD DETECTED");
+        }
+        // Debug.Log($"Pad: {pad}");
       
         Dictionary<string, (buttonType, bool)> physElToButton = new()
         {
@@ -544,6 +529,8 @@ public class ControllerGUI : EditorWindow
 
             if (pressed)
             {
+                if (button == buttonType.A)
+                    emulator.pressButton("A");
                 element.AddToClassList("ButtonPressed");
             }
             else
@@ -612,7 +599,7 @@ public class ControllerGUI : EditorWindow
             XboxController.SetJoystick(type, input);
         }
       
-        UnityEngine.InputSystem.InputSystem.Update();
+        // UnityEngine.InputSystem.InputSystem.Update();
 
         emulator.emulate();
     }
