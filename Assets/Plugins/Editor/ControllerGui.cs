@@ -491,7 +491,7 @@ public class ControllerGUI : EditorWindow
         }
     }
 
-private void PublishPhysicalControllerState()
+    private void PublishPhysicalControllerState()
     {
         if (manager == null)
         {
@@ -502,27 +502,27 @@ private void PublishPhysicalControllerState()
 
         if (pad == null)
         {
-            XboxController.SetButton(buttonType.A, false);
-            XboxController.SetButton(buttonType.B, false);
-            XboxController.SetButton(buttonType.X, false);
-            XboxController.SetButton(buttonType.Y, false);
+            // XboxController.SetButton(buttonType.A, false);
+            // XboxController.SetButton(buttonType.B, false);
+            // XboxController.SetButton(buttonType.X, false);
+            // XboxController.SetButton(buttonType.Y, false);
 
-            XboxController.SetButton(buttonType.RBumper, false);
-            XboxController.SetButton(buttonType.LBumper, false);
+            // XboxController.SetButton(buttonType.RBumper, false);
+            // XboxController.SetButton(buttonType.LBumper, false);
 
-            XboxController.SetButton(buttonType.Up, false);
-            XboxController.SetButton(buttonType.Down, false);
-            XboxController.SetButton(buttonType.Left, false);
-            XboxController.SetButton(buttonType.Right, false);
+            // XboxController.SetButton(buttonType.Up, false);
+            // XboxController.SetButton(buttonType.Down, false);
+            // XboxController.SetButton(buttonType.Left, false);
+            // XboxController.SetButton(buttonType.Right, false);
 
-            XboxController.SetButton(buttonType.LeftStick, false);
-            XboxController.SetButton(buttonType.RightStick, false);
+            // XboxController.SetButton(buttonType.LeftStick, false);
+            // XboxController.SetButton(buttonType.RightStick, false);
 
-            XboxController.SetTrigger(triggerType.Left, 0f);
-            XboxController.SetTrigger(triggerType.Right, 0f);
+            // XboxController.SetTrigger(triggerType.Left, 0f);
+            // XboxController.SetTrigger(triggerType.Right, 0f);
 
-            XboxController.SetJoystick(joystickType.Left, Vector2.zero);
-            XboxController.SetJoystick(joystickType.Right, Vector2.zero);
+            // XboxController.SetJoystick(joystickType.Left, Vector2.zero);
+            // XboxController.SetJoystick(joystickType.Right, Vector2.zero);
 
             return;
         }
