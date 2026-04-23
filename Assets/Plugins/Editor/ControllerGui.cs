@@ -8,6 +8,7 @@
 *******************************************************/
 
 using Codice.Client.BaseCommands;
+using Codice.Client.Common.GameUI;
 using log4net.Filter;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,8 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.DualShock;
+using UnityEngine.InputSystem.XInput;
 using UnityEngine.UIElements;
 using UnityEngine.Windows;
 using static UnityEngine.Rendering.DebugUI;
@@ -31,6 +34,8 @@ public class ControllerGUI : EditorWindow
     private ControllerManager manager;
     private ControllerComponents components;
     private GamepadEmulator emulator;
+
+    private string UXMLPath;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
@@ -51,8 +56,8 @@ public class ControllerGUI : EditorWindow
         { "left-pad", buttonType.Left },
         { "right-pad", buttonType.Right },
 
-        { "left-stick", buttonType.LeftStick },
         { "right-stick", buttonType.RightStick },
+        { "left-stick", buttonType.LeftStick },
 
         { "xbox-button", buttonType.Xbox },
         { "menu-button", buttonType.Menu },
@@ -86,6 +91,7 @@ public class ControllerGUI : EditorWindow
     private void OnDisable()
     {
         InputSystem.onAfterUpdate -= OnInputSystemAfterUpdate;
+        InputSystem.onDeviceChange -= OnControllerCurrentState;
 
         if (emulator != null)
         {
@@ -103,13 +109,14 @@ public class ControllerGUI : EditorWindow
     public static void ShowWindow()
     {
         var window = GetWindow<ControllerGUI>();
-        window.titleContent = new GUIContent("Xbox");
+        window.titleContent = new GUIContent("gamepad");
         window.Show();
     }
 
     public void CreateGUI()
     {
-        LoadUXML();
+        InputSystem.onDeviceChange += OnControllerCurrentState;
+        ControllerUpdateUI(Gamepad.current);
     }
 
     void Update()
@@ -134,26 +141,113 @@ public class ControllerGUI : EditorWindow
     /// </remarks>
     /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
     /// <param name="ussPath">Path from Project directory to .uss file</param>
-    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml")
+    /// \
+    /// 
+    /// 
+    /// 
+    // void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI_XBOX.uxml")
+    // {
+    //     // Load in the UXML and USS:
+    //     var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
+        
+    //     rootVisualElement.Clear();
+    //     visualTree.CloneTree(rootVisualElement);
+
+
+    //     // Initialize Buttons with functions:
+    //     InitializeButtons(visElToButton.Keys);
+    //     InitializeJoysticks(visElToJoystick.Keys);
+    //     InitializeTriggers(visElToTrigger.Keys);
+
+    //     LoadImage("xbox-button-image", "xbox/xbox-symbol.png");
+    //     LoadImage("menu-button-image", "xbox/menu-symbol.png");
+    //     LoadImage("view-button-image", "xbox/view-symbol.png");
+    //     LoadImage("share-button-image", "xbox/share-symbol.png");
+    // }
+ 
+    // void LoadImage(string targetElement, string imageName)
+    // {
+    //     var imageElement = rootVisualElement.Q<Image>(targetElement);
+
+    //     var texture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Plugins/Editor/images/{imageName}");
+                
+    //     if (texture == null)
+    //     {
+    //         Debug.LogError($"Image {imageName} failed to load!");
+    //     }
+    //     imageElement.image = texture;
+    // }
+
+    void OnControllerCurrentState(InputDevice device, InputDeviceChange device_change)
+    {
+        if (!(device is Gamepad gamepad)) return;
+
+        if (device_change == InputDeviceChange.Added || device_change == InputDeviceChange.Reconnected)
+        {
+            ControllerUpdateUI(device);
+        }
+        else //could make another gui thats just a standard issue controller! but this resets it if a controller is disconnected!
+            ControllerUpdateUI(manager.GetArtificialPad());
+    }
+
+    void ControllerUpdateUI (InputDevice device)
+    {
+        Debug.Log("Detected: " + device.displayName + " | Layout: " + device.layout);
+
+        if (manager.GetPhysicalPad() is DualShockGamepad || device.layout.Contains("Dual"))
+        {
+            Debug.Log("playstation controller is active");
+            SetUXMLLayout("Assets/Plugins/Editor/UI_PS.uxml");
+        }
+        else if (manager.GetPhysicalPad() is XInputController)
+        {
+            Debug.Log("Xbox controller is active");
+            SetUXMLLayout("Assets/Plugins/Editor/UI_XBOX.uxml");
+        }
+
+        else
+        {
+            Debug.Log("No conntected gamepad!");
+            SetUXMLLayout("Assets/Plugins/Editor/UI_XBOX.uxml");
+        }
+    }
+
+    void SetUXMLLayout(string path)
+    {
+        UXMLPath = path;
+        LoadUXML(path);
+    }
+    
+
+    void LoadUXML(string path)
     {
         // Load in the UXML and USS:
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(path);
         
         rootVisualElement.Clear();
         visualTree.CloneTree(rootVisualElement);
-
 
         // Initialize Buttons with functions:
         InitializeButtons(visElToButton.Keys);
         InitializeJoysticks(visElToJoystick.Keys);
         InitializeTriggers(visElToTrigger.Keys);
 
-        LoadImage("xbox-button-image", "xbox-symbol.png");
-        LoadImage("menu-button-image", "menu-symbol.png");
-        LoadImage("view-button-image", "view-symbol.png");
-        LoadImage("share-button-image", "share-symbol.png");
+        if(path.Contains("XBOX"))
+        {
+            LoadImage("xbox-button-image", "xbox/xbox-symbol.png");
+            LoadImage("menu-button-image", "xbox/menu-symbol.png");
+            LoadImage("view-button-image", "xbox/view-symbol.png");
+            LoadImage("share-button-image", "xbox/share-symbol.png");
+        }
+        else if(path.Contains("PS"))
+        {
+            LoadImage("xbox-button-image", "playstation/playstation-symbol.png");
+            LoadImage("menu-button-image", "xbox/menu-symbol.png");
+            LoadImage("view-button-image", "xbox/view-symbol.png");
+        }
+           
     }
-
+ 
     void LoadImage(string targetElement, string imageName)
     {
         var imageElement = rootVisualElement.Q<Image>(targetElement);
@@ -269,15 +363,15 @@ public class ControllerGUI : EditorWindow
                     //     ButtonName = "Advanced";
                     //     break;
 
-                    case "left-joystick-button":
-                        ButtonName = "LeftStickButton";
+                    case "left-stick":
+                        ButtonName = "LeftStick";
                         break;
 
-                    case "right-joystick-button":
-                        ButtonName = "RightStickButton";
+                    case "right-stick":
+                        ButtonName = "RightStick";
                         break;
                 }
-                Debug.Log("HE");
+                //removed "HE"
                 emulator.pressButton(ButtonName);
 
                 // Set this button's pressed state to true.
@@ -308,8 +402,6 @@ public class ControllerGUI : EditorWindow
                     image.tintColor = Color.white;
             });
         }
-        
-
     }
 
     void InitializeJoysticks(IEnumerable<string> joystickNames)
@@ -369,14 +461,10 @@ public class ControllerGUI : EditorWindow
                 switch (stick_name)
                 {
                     case "left-joystick":
-                        stick_name = "LeftStick";
-                        
                         emulator.moveLeftJoystick(input.x, input.y);
                         break;
 
                     case "right-joystick":
-                        stick_name = "RightStick";
-                       
                         emulator.moveRightJoystick(input.x, input.y);
                         break;
                 }

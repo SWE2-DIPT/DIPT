@@ -11,9 +11,7 @@ enum ControllerType { physical, artificial }
 
 public class ControllerManager
 {
-    
-    private Gamepad physicalGamepad;
-    private Gamepad artificalGamepad;
+     private bool controller_connected;
 
     public Gamepad GetPhysicalPad()
     {
