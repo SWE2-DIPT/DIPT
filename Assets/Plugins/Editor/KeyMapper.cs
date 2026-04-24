@@ -33,7 +33,7 @@ public class KeyMapper : EditorWindow
     {
         // This runs automatically without you doing anything
         EnsureInitialized();
-        Debug.Log("KeyMapper Initialized and Ready.");
+        // Debug.Log("KeyMapper Initialized and Ready.");
     }
 
     [MenuItem("Tools/DIPT/KeyboardMapper")]
