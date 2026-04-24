@@ -81,55 +81,56 @@
     margin-left: 5px;
 }
 /*TRANSFERED*/
-.ps #Y-button {
-    color:#6BE4DF; /* This is yellow, the default yellow looks stupid */
+.generic #Y-button {
+    color:white; /* This is yellow, the default yellow looks stupid */
     position: absolute;
     border-width: 2px;
     border-color: black;
+
 }
 
-.ps #Y-button.ButtonPressed {
-    background-color:#6BE4DF;
+.generic #Y-button.ButtonPressed {
+    background-color:white;
     color:#1F1F1F;
     position: absolute;
 }
 
 /*TRANSFERED*/
-.ps #B-button {
-    color:#F75F66;
+.generic #B-button {
+    color:white;
     position: absolute;
     border-width: 2px;
     border-color: black;
 }
 
-.ps #B-button.ButtonPressed {
-    background-color:#F75F66;
+.generic #B-button.ButtonPressed {
+    background-color:white;
     color:#1F1F1F;
     position: absolute;
 }
 /*TRANSFERED*/
-.ps #A-button {
-    color:#767EE1;
-    position: absolute;
-    border-width: 2px;
-    border-color: black;
-}
-
-.ps #A-button.ButtonPressed {
-    background-color:#767EE1;
-    color:#1F1F1F;
-    position: absolute;
-}
-/*TRANSFERED*/
-.ps #X-button {
-    color:#f69DC8;
+.generic #A-button {
+    color:white;
     position: absolute;
      border-width: 2px;
     border-color: black;
 }
 
-.ps #X-button.ButtonPressed {
-    background-color:#f69DC8;
+.generic #A-button.ButtonPressed {
+    background-color:white;
+    color:#1F1F1F;
+    position: absolute;
+}
+/*TRANSFERED*/
+.generic #X-button {
+    color:white;
+    position: absolute;
+     border-width: 2px;
+    border-color: black;
+}
+
+.generic #X-button.ButtonPressed {
+    background-color:white;
     color:#1F1F1F;
     position: absolute;
 }
@@ -175,16 +176,12 @@
     border-radius: 8px;
 }
 /*TRANSFERED*/
-.ps #LB-button {
-    border-bottom-right-radius:40%;
-    border-bottom-left-radius:40%;
-     border-width: 2px;
+.generic #LB-button {
+    border-width: 2px;
     border-color: black;
 }
 /*TRANSFERED*/
-.ps #RB-button {
-    border-bottom-right-radius:40%;
-    border-bottom-left-radius:40%;
+.generic #RB-button {
      border-width: 2px;
     border-color: black;
 }
@@ -225,17 +222,6 @@
     left: 0;
 
     background-color: white;
-}
-
-/*TRANSFERED*/
-.ps #LT-button {
-    border-top-left-radius:50%;
-    border-top-right-radius:50%;
-}
-/*TRANSFERED*/
-.ps #RT-button {
-    border-top-right-radius:50%;
-    border-top-left-radius:50%;
 }
 
 /* Base style for the D-pad rectangles 
@@ -382,7 +368,7 @@
     justify-content: center;
     align-items: center;
 }
-/*TRANSFERED*/
+/* TRANSFERED
 .button.horiz {
     background-color:#1F1F1F;
     width:25px;
@@ -390,22 +376,26 @@
     margin:1px;
 }
 /*TRANSFERED*/
-.button.horiz.xbox {
+/* .button.horiz.xbox {
     width:35px;
     height:35px;
 }
 /*TRANSFERED*/
-.xbox.ButtonPressed {
+/* .xbox.ButtonPressed {
     background-color:lime;
-}
+} */
 /*TRANSFERED*/
-.menu.ButtonPressed {
+/* .menu.ButtonPressed {
     background-color:white;
-}
+} */
 /*TRANSFERED*/
-.view.ButtonPressed {
+/* .view.ButtonPressed {
     background-color:white;
-}
+} */
+/*TRANSFERED*/
+/* .share.ButtonPressed {
+    background-color:white;
+}  */
 
 /*TRANSFERED*/
 Image {

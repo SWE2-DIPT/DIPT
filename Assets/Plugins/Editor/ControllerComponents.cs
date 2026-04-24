@@ -9,9 +9,12 @@
 
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.DualShock;
+using UnityEngine.InputSystem.XInput;
 
 [assembly: InternalsVisibleTo("Assembly-CSharp-Editor")]
 
@@ -26,6 +29,8 @@ public class ControllerComponents
 
     private const float joystickThreshold = 0.10f;
     private const float triggerThreshold = 0.05f;
+
+    private ControllerManager manager;
 
     public ControllerComponents()
     {
@@ -124,31 +129,105 @@ public class ControllerComponents
 
     private string GetButtonName(buttonType button)
     {
+        manager = new ControllerManager();
+
+        if(manager.GetPhysicalPad() is XInputController)
+        {
+            return button switch
+            {
+                buttonType.A => "A Button",
+                buttonType.B => "B Button",
+                buttonType.X => "X Button",
+                buttonType.Y => "Y Button",
+                buttonType.Up => "DPad Up",
+                buttonType.Down => "DPad Down",
+                buttonType.Left => "DPad Left",
+                buttonType.Right => "DPad Right",
+                buttonType.LBumper => "LB",
+                buttonType.RBumper => "RB",
+                buttonType.Xbox => "Xbox Button",
+                buttonType.Menu => "Menu Button",
+                buttonType.View => "View Button",
+                buttonType.Share => "Share Button",
+                buttonType.Advanced => "Advanced Button",
+                buttonType.LeftStick => "LS",
+                buttonType.RightStick => "RS",
+                _ => button.ToString()
+            };  
+        }
+        else if(manager.GetPhysicalPad() is DualShockGamepad)
+        {
+            return button switch
+            {
+                buttonType.A => "Cross Button",
+                buttonType.B => "Circle Button",
+                buttonType.X => "Square Button",
+                buttonType.Y => "Trianlge Button",
+                buttonType.Up => "DPad Up",
+                buttonType.Down => "DPad Down",
+                buttonType.Left => "DPad Left",
+                buttonType.Right => "DPad Right",
+                buttonType.LBumper => "L1",
+                buttonType.RBumper => "R1",
+                buttonType.Xbox => "Xbox Button",
+                buttonType.Menu => "Menu Button",
+                buttonType.View => "View Button",
+                buttonType.Share => "Share Button",
+                buttonType.Advanced => "Advanced Button",
+                buttonType.LeftStick => "L3",
+                buttonType.RightStick => "R3",
+                _ => button.ToString()
+            };  
+        }
+
         return button switch
         {
-            buttonType.A => "A Button",
-            buttonType.B => "B Button",
-            buttonType.X => "X Button",
-            buttonType.Y => "Y Button",
+            buttonType.A => "South face Button",
+            buttonType.B => "East face Button",
+            buttonType.X => "West face Button",
+            buttonType.Y => "North face Button",
             buttonType.Up => "DPad Up",
             buttonType.Down => "DPad Down",
             buttonType.Left => "DPad Left",
             buttonType.Right => "DPad Right",
-            buttonType.LBumper => "Left Bumper",
-            buttonType.RBumper => "Right Bumper",
+            buttonType.LBumper => "LB",
+            buttonType.RBumper => "RB",
             buttonType.Xbox => "Xbox Button",
             buttonType.Menu => "Menu Button",
             buttonType.View => "View Button",
             buttonType.Share => "Share Button",
             buttonType.Advanced => "Advanced Button",
-            buttonType.LeftStick => "Left Joystick Press",
-            buttonType.RightStick => "Right Joystick Press",
+            buttonType.LeftStick => "LS",
+            buttonType.RightStick => "RS",
             _ => button.ToString()
-        };
+        };  
     }
 
     private string GetTriggerName(triggerType trigger)
     {
+
+        manager = new ControllerManager();
+
+        if(manager.GetPhysicalPad() is XInputController)
+        {
+            return trigger switch
+            {
+                triggerType.Left => "LT",
+                triggerType.Right => "RT",
+                _ => trigger.ToString()
+            };
+        }
+
+        else if(manager.GetPhysicalPad() is DualShockGamepad)
+        {
+            return trigger switch
+            {
+                triggerType.Left => "L3",
+                triggerType.Right => "R3",
+                _ => trigger.ToString()
+            };
+        }
+
         return trigger switch
         {
             triggerType.Left => "Left",

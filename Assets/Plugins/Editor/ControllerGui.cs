@@ -116,7 +116,7 @@ public class ControllerGUI : EditorWindow
     public void CreateGUI()
     {
         InputSystem.onDeviceChange += OnControllerCurrentState;
-        ControllerUpdateUI(Gamepad.current);
+        ControllerUpdateUI(manager.GetActivePad());
     }
 
     void Update()
@@ -186,8 +186,14 @@ public class ControllerGUI : EditorWindow
         {
             ControllerUpdateUI(device);
         }
-        else //could make another gui thats just a standard issue controller! but this resets it if a controller is disconnected!
+        
+        if (device_change == InputDeviceChange.Removed || device_change == InputDeviceChange.Disconnected)
+        {
+            Debug.Log("Controller disconnected");
+
             ControllerUpdateUI(manager.GetArtificialPad());
+        }
+
     }
 
     void ControllerUpdateUI (InputDevice device)
@@ -208,7 +214,7 @@ public class ControllerGUI : EditorWindow
         else
         {
             Debug.Log("No conntected gamepad!");
-            SetUXMLLayout("Assets/Plugins/Editor/UI_XBOX.uxml");
+            SetUXMLLayout("Assets/Plugins/Editor/UI_GENERIC.uxml");
         }
     }
 
@@ -226,6 +232,17 @@ public class ControllerGUI : EditorWindow
         
         rootVisualElement.Clear();
         visualTree.CloneTree(rootVisualElement);
+
+        rootVisualElement.RemoveFromClassList("xbox");
+        rootVisualElement.RemoveFromClassList("ps");
+        rootVisualElement.RemoveFromClassList("generic");
+
+        if (path.Contains("XBOX"))
+            rootVisualElement.AddToClassList("xbox");
+        else if (path.Contains("PS"))
+            rootVisualElement.AddToClassList("ps");
+        else
+            rootVisualElement.AddToClassList("generic");
 
         // Initialize Buttons with functions:
         InitializeButtons(visElToButton.Keys);
@@ -385,6 +402,7 @@ public class ControllerGUI : EditorWindow
                 if (isInvertable)
                     image.tintColor = Color.black;
             });
+            
             button.RegisterCallback<PointerUpEvent>(evt =>
             {
                 emulator.clear();

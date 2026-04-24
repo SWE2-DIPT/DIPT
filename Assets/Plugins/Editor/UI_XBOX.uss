@@ -81,7 +81,7 @@
     margin-left: 5px;
 }
 /*TRANSFERED*/
-#Y-button {
+.xbox #Y-button {
     color:#FFCC00; /* This is yellow, the default yellow looks stupid */
     position: absolute;
     border-width: 2px;
@@ -89,47 +89,47 @@
 
 }
 
-#Y-button.ButtonPressed {
+.xbox #Y-button.ButtonPressed {
     background-color:#FFCC00;
     color:#1F1F1F;
     position: absolute;
 }
 
 /*TRANSFERED*/
-#B-button {
+.xbox #B-button {
     color:#D83B01;
     position: absolute;
     border-width: 2px;
     border-color: black;
 }
 
-#B-button.ButtonPressed {
+.xbox #B-button.ButtonPressed {
     background-color:#D83B01;
     color:#1F1F1F;
     position: absolute;
 }
 /*TRANSFERED*/
-#A-button {
+.xbox #A-button {
     color:#107C10;
     position: absolute;
      border-width: 2px;
     border-color: black;
 }
 
-#A-button.ButtonPressed {
+.xbox #A-button.ButtonPressed {
     background-color:#107C10;
     color:#1F1F1F;
     position: absolute;
 }
 /*TRANSFERED*/
-#X-button {
+.xbox #X-button {
     color:#0078D4;
     position: absolute;
      border-width: 2px;
     border-color: black;
 }
 
-#X-button.ButtonPressed {
+.xbox #X-button.ButtonPressed {
     background-color:#0078D4;
     color:#1F1F1F;
     position: absolute;
@@ -176,20 +176,18 @@
     border-radius: 8px;
 }
 /*TRANSFERED*/
-#LB-button {
+.xbox #LB-button {
     border-bottom-left-radius:40%;
     border-width: 2px;
     border-color: black;
 }
 /*TRANSFERED*/
-#RB-button {
+.xbox #RB-button {
     border-bottom-right-radius:40%;
      border-width: 2px;
     border-color: black;
 }
 /*TRANSFERED*/
-
-
 
 /*TRANSFERED*/
 .trigger-button {
@@ -227,11 +225,11 @@
 }
 
 /*TRANSFERED*/
-#LT-button {
+.xbox #LT-button {
     border-top-left-radius:50%;
 }
 /*TRANSFERED*/
-#RT-button {
+.xbox #RT-button {
     border-top-right-radius:50%;
 }
 

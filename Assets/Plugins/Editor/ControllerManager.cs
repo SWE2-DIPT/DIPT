@@ -48,6 +48,14 @@ public class ControllerManager
 
         return null;
     }
+    public Gamepad GetActivePad()
+    {
+        var artificial = GetArtificialPad();
+        if (artificial != null)
+            return artificial;
+
+        return GetPhysicalPad();
+    }
     // public Gamepad GetPadType()
     // {
     //     physicalGamepad = null;

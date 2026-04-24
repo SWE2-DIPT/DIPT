@@ -7,8 +7,8 @@
 *    A UXML file that hosts the contents of the GUI
 -->
 
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" stylesheet="UI_PS.uss">
-	<ui:Style src="UI_PS.uss" />
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" stylesheet="UI_GENERIC.uss">
+	<ui:Style src="UI_GENERIC.uss" />
 	<!--TRIGGERS-->
 	<ui:VisualElement class="box-border">
 		<ui:VisualElement class="Bumper-Row trigger-row">
@@ -16,7 +16,7 @@
 			<ui:VisualElement class="Trigger-Wrapper">
 					<ui:VisualElement name="LT-button" class="trigger-button button">
 						<ui:VisualElement name="LT-fill" class="trigger-fill"/>
-						<ui:Label name="LT-label" text="L2" class="button-label"/>
+						<ui:Label name="LT-label" text="LT" class="button-label"/>
 					</ui:VisualElement>
 					<ui:Label name="LT-trigger-value-label"/>
 			</ui:VisualElement>
@@ -24,7 +24,7 @@
 			<ui:VisualElement class="Trigger-Wrapper">
 					<ui:VisualElement name="RT-button" class="trigger-button button">
 						<ui:VisualElement name="RT-fill" class="trigger-fill"/>
-						<ui:Label name="RT-label" text="R2" class="button-label"/>
+						<ui:Label name="RT-label" text="RT" class="button-label"/>
 					</ui:VisualElement>
 					<ui:Label name="RT-trigger-value-label"/>
 			</ui:VisualElement>
@@ -36,61 +36,16 @@
 		<ui:VisualElement class="Bumper-Row">
 			<!--RIGHT BUMPERS-->
 			<ui:VisualElement name="LB-button" class="bumper-button">
-				<ui:Label text="L1" name="LB-label" class="button-label"/>
+				<ui:Label text="LB" name="LB-label" class="button-label"/>
 			</ui:VisualElement>
 			<!--RIGHT BUMPERS-->
 			<ui:VisualElement name="RB-button" class="bumper-button">
-				<ui:Label text="R1" name="RB-label" class="button-label"/>
+				<ui:Label text="RB" name="RB-label" class="button-label"/>
 			</ui:VisualElement>
 		</ui:VisualElement>
 	</ui:VisualElement>
 
 	<!--UPPER-CONTROL-ROW-->
-	<ui:VisualElement class="Controls-Row">
-
-		<!--DPAD-->
-		<ui:VisualElement name="dpad-container" class="box-border" style="width: 170px; height: 170px;">
-			<ui:VisualElement name="up-pad" class="dpad-btn up-pad button" />
-			<ui:VisualElement name="right-pad" class="dpad-btn right-pad button" />
-			<ui:VisualElement name="down-pad" class="dpad-btn down-pad button" />
-			<ui:VisualElement name="left-pad" class="dpad-btn left-pad button" />
-		</ui:VisualElement>
-
-		<!--SYSTEM-BUTTONS-->
-		<ui:VisualElement  class="box-border" style="width: 53px; height: 170px;">
-			<ui:VisualElement class="horizontal-group">
-				<ui:VisualElement name="xbox-button" class="button horiz xbox">
-					<ui:Image name="xbox-button-image" class="icon"/>
-				</ui:VisualElement>
-				<ui:VisualElement name="menu-button" class="button horiz menu">
-					<ui:Image name="menu-button-image" class="icon"/>
-				</ui:VisualElement>
-				<ui:VisualElement name="view-button" class="button horiz view">
-					<ui:Image name="view-button-image" class="icon"/>
-				</ui:VisualElement>
-			</ui:VisualElement>
-		</ui:VisualElement>
-
-		<!--YBAX-BUTTONS-->
-		<ui:VisualElement  class="box-border" style="width: 170px; height: 170px;">
-			<ui:VisualElement name="YBAX-buttons" class="diamond-group">
-					<ui:VisualElement name="Y-button" class="top button">
-						<ui:Label text="Triangle" class="button-label"/>
-					</ui:VisualElement>
-					<ui:VisualElement name="B-button" class="right button">
-						<ui:Label text="Circle" class="button-label"/>
-					</ui:VisualElement>
-					<ui:VisualElement name="A-button" class="bottom button">
-						<ui:Label text="Cross" class="button-label"/>
-					</ui:VisualElement>
-					<ui:VisualElement name="X-button" class="left button">
-						<ui:Label text="Square" class="button-label"/>
-					</ui:VisualElement>
-			</ui:VisualElement>
-		</ui:VisualElement>
-	</ui:VisualElement>
-
-	<!--LOWER-CONTROL-ROW-->
 	<ui:VisualElement class="Controls-Row">
 		<!--LEFT-JOYSTICK-->
 		<ui:VisualElement name="left-joystick" class="box-border" style="width: 170px; height: 170px;">
@@ -119,9 +74,58 @@
 
 			<ui:VisualElement class="value-rows">
 				<ui:VisualElement name="left-stick" class="joystick-button">
-					<ui:Label text="L3" class="button-label"/>
+					<ui:Label text="LS" class="button-label"/>
 				</ui:VisualElement>
 			</ui:VisualElement>
+		</ui:VisualElement>
+
+
+		<!-- SYSTEM-BUTTONS
+		<ui:VisualElement  class="box-border" style="width: 53px; height: 170px;">
+			<ui:VisualElement class="horizontal-group">
+				<ui:VisualElement name="xbox-button" class="button horiz xbox">
+					<ui:Image name="xbox-button-image" class="icon"/>
+				</ui:VisualElement>
+				<ui:VisualElement name="menu-button" class="button horiz menu">
+					<ui:Image name="menu-button-image" class="icon"/>
+				</ui:VisualElement>
+				<ui:VisualElement name="view-button" class="button horiz view">
+					<ui:Image name="view-button-image" class="icon"/>
+				</ui:VisualElement>
+				<ui:VisualElement name="share-button" class="button horiz share">
+					<ui:Image name="share-button-image" class="icon"/>
+				</ui:VisualElement>
+				<ui:Label text="!" style="color: white; background-color:red; font-size: 18px; width:20px; border-radius:50%; -unity-text-align: middle-center;" />
+			</ui:VisualElement>
+		</ui:VisualElement> -->
+
+		<!--YBAX-BUTTONS-->
+		<ui:VisualElement  class="box-border" style="width: 170px; height: 170px;">
+			<ui:VisualElement name="YBAX-buttons" class="diamond-group">
+					<ui:VisualElement name="Y-button" class="top button">
+						<ui:Label text="N" class="button-label"/>
+					</ui:VisualElement>
+					<ui:VisualElement name="B-button" class="right button">
+						<ui:Label text="E" class="button-label"/>
+					</ui:VisualElement>
+					<ui:VisualElement name="A-button" class="bottom button">
+						<ui:Label text="S" class="button-label"/>
+					</ui:VisualElement>
+					<ui:VisualElement name="X-button" class="left button">
+						<ui:Label text="W" class="button-label"/>
+					</ui:VisualElement>
+			</ui:VisualElement>
+		</ui:VisualElement>
+	</ui:VisualElement>
+
+	<!--LOWER-CONTROL-ROW-->
+	<ui:VisualElement class="Controls-Row">
+		<!--DPAD-->
+		<ui:VisualElement name="dpad-container" class="box-border" style="width: 170px; height: 170px;">
+			<ui:VisualElement name="up-pad" class="dpad-btn up-pad button" />
+			<ui:VisualElement name="right-pad" class="dpad-btn right-pad button" />
+			<ui:VisualElement name="down-pad" class="dpad-btn down-pad button" />
+			<ui:VisualElement name="left-pad" class="dpad-btn left-pad button" />
 		</ui:VisualElement>
 
 		<!--ADVANCED-->
@@ -156,7 +160,7 @@
 			
 			<ui:VisualElement class="value-rows">
 				<ui:VisualElement name="right-stick" class="joystick-button">
-					<ui:Label text="R3" class="button-label"/>
+					<ui:Label text="RS" class="button-label"/>
 				</ui:VisualElement>
 			</ui:VisualElement>
 
