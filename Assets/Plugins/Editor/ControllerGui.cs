@@ -35,8 +35,6 @@ public class ControllerGUI : EditorWindow
     private ControllerComponents components;
     private GamepadEmulator emulator;
 
-    private string UXMLPath;
-
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> triggers = new Dictionary<string, VisualElement>();
@@ -203,27 +201,20 @@ public class ControllerGUI : EditorWindow
         if (manager.GetPhysicalPad() is DualShockGamepad || device.layout.Contains("Dual"))
         {
             Debug.Log("playstation controller is active");
-            SetUXMLLayout("Assets/Plugins/Editor/UI_PS.uxml");
+            LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
         }
         else if (manager.GetPhysicalPad() is XInputController)
         {
             Debug.Log("Xbox controller is active");
-            SetUXMLLayout("Assets/Plugins/Editor/UI_XBOX.uxml");
+            LoadUXML("Assets/Plugins/Editor/UI_XBOX.uxml");
         }
 
         else
         {
             Debug.Log("No conntected gamepad!");
-            SetUXMLLayout("Assets/Plugins/Editor/UI_GENERIC.uxml");
+            LoadUXML("Assets/Plugins/Editor/UI_GENERIC.uxml");
         }
     }
-
-    void SetUXMLLayout(string path)
-    {
-        UXMLPath = path;
-        LoadUXML(path);
-    }
-    
 
     void LoadUXML(string path)
     {
