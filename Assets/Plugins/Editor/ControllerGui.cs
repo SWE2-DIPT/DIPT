@@ -7,24 +7,13 @@
 *    in Unity.
 *******************************************************/
 
-using Codice.Client.BaseCommands;
-using Codice.Client.Common.GameUI;
-using log4net.Filter;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq.Expressions;
-using System.Reflection;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.DualShock;
 using UnityEngine.InputSystem.XInput;
 using UnityEngine.UIElements;
-using UnityEngine.Windows;
-using static UnityEngine.Rendering.DebugUI;
-
-
 
 /// <summary>
 /// An example plugin.
