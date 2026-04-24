@@ -87,9 +87,6 @@ public class ControllerComponents
     {
         foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
         {
-            if (button == buttonType.LeftStick || button == buttonType.RightStick)
-                continue;
-
             bool currentState = XboxController.GetButton(button).pressed;
             bool previousState = prevButtons[button];
 

@@ -7,8 +7,8 @@
 *    A UXML file that hosts the contents of the GUI
 -->
 
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" stylesheet="UI.uss">
-	<ui:Style src="UI.uss" />
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" stylesheet="UI_XBOX.uss">
+	<ui:Style src="UI_XBOX.uss" />
 	<!--TRIGGERS-->
 	<ui:VisualElement class="box-border">
 		<ui:VisualElement class="Bumper-Row trigger-row">
@@ -95,6 +95,7 @@
 				<ui:VisualElement name="share-button" class="button horiz share">
 					<ui:Image name="share-button-image" class="icon"/>
 				</ui:VisualElement>
+				<ui:Label text="!" style="color: white; background-color:red; font-size: 18px; width:20px; border-radius:50%; -unity-text-align: middle-center;" />
 			</ui:VisualElement>
 		</ui:VisualElement>
 

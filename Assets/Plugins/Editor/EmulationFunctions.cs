@@ -96,7 +96,7 @@ public class GamepadEmulator
     // simulate press all buttons
     public void pressAllButtons()
     {
-        buttonsPressed = (1u << 14) - 1;
+        buttonsPressed = (1u << 15) - 1;
     }
 
     // simulate release on button
@@ -190,7 +190,7 @@ public class GamepadEmulator
     // param: float of x value & float of y value
     public void moveLeftJoystick(float x, float y)
     {
-        leftStickValues = new Vector2(x, y).normalized;
+        leftStickValues = Vector2.ClampMagnitude(new Vector2(x, y), 1f);
     }
     public void resetLeftJoystick()
     {
@@ -201,7 +201,7 @@ public class GamepadEmulator
     // param: float of x value & float of y value
     public void moveRightJoystick(float x, float y)
     {
-        rightStickValues = new Vector2(x, y).normalized;
+        rightStickValues = Vector2.ClampMagnitude(new Vector2(x, y), 1f);
     }
     public void resetRightJoystick()
     {

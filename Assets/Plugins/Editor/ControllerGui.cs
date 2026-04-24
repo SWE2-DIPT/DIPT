@@ -8,6 +8,7 @@
 *******************************************************/
 
 using Codice.Client.BaseCommands;
+using Codice.Client.Common.GameUI;
 using log4net.Filter;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,6 +18,8 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.DualShock;
+using UnityEngine.InputSystem.XInput;
 using UnityEngine.UIElements;
 using UnityEngine.Windows;
 using static UnityEngine.Rendering.DebugUI;
@@ -31,6 +34,8 @@ public class ControllerGUI : EditorWindow
     private ControllerManager manager;
     private ControllerComponents components;
     private GamepadEmulator emulator;
+
+    private string UXMLPath;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
@@ -51,8 +56,8 @@ public class ControllerGUI : EditorWindow
         { "left-pad", buttonType.Left },
         { "right-pad", buttonType.Right },
 
-        { "left-stick", buttonType.LeftStick },
         { "right-stick", buttonType.RightStick },
+        { "left-stick", buttonType.LeftStick },
 
         { "xbox-button", buttonType.Xbox },
         { "menu-button", buttonType.Menu },
@@ -76,30 +81,42 @@ public class ControllerGUI : EditorWindow
 
     private void OnEnable()
     {
-        // manager = new ControllerManager();
+        manager = new ControllerManager();
         components = new ControllerComponents();
         emulator = new GamepadEmulator();
-        // EditorApplication.update += physicalControlellerUpdate;
+
+        InputSystem.onAfterUpdate += OnInputSystemAfterUpdate;
     }
 
     private void OnDisable()
     {
-        // EditorApplication.update -= physicalControlellerUpdate;
-        emulator.dispose();
+        InputSystem.onAfterUpdate -= OnInputSystemAfterUpdate;
+        InputSystem.onDeviceChange -= OnControllerCurrentState;
+
+        if (emulator != null)
+        {
+            emulator.dispose();
+        }
     }
 
+    private void OnInputSystemAfterUpdate()
+    {
+        PublishPhysicalControllerState();
+        Repaint();
+    }
 
     [MenuItem("Tools/DIPT/InputVisualizer")]
     public static void ShowWindow()
     {
         var window = GetWindow<ControllerGUI>();
-        window.titleContent = new GUIContent("Xbox");
+        window.titleContent = new GUIContent("gamepad");
         window.Show();
     }
 
     public void CreateGUI()
     {
-        LoadUXML();
+        InputSystem.onDeviceChange += OnControllerCurrentState;
+        ControllerUpdateUI(Gamepad.current);
     }
 
     void Update()
@@ -108,6 +125,7 @@ public class ControllerGUI : EditorWindow
 
         physicalControlellerUpdate();
         emulatedControllerUpdate();
+        Repaint();
     }
 
     //~LOAD~GUI~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -123,26 +141,113 @@ public class ControllerGUI : EditorWindow
     /// </remarks>
     /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
     /// <param name="ussPath">Path from Project directory to .uss file</param>
-    void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI.uxml")
+    /// \
+    /// 
+    /// 
+    /// 
+    // void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI_XBOX.uxml")
+    // {
+    //     // Load in the UXML and USS:
+    //     var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
+        
+    //     rootVisualElement.Clear();
+    //     visualTree.CloneTree(rootVisualElement);
+
+
+    //     // Initialize Buttons with functions:
+    //     InitializeButtons(visElToButton.Keys);
+    //     InitializeJoysticks(visElToJoystick.Keys);
+    //     InitializeTriggers(visElToTrigger.Keys);
+
+    //     LoadImage("xbox-button-image", "xbox/xbox-symbol.png");
+    //     LoadImage("menu-button-image", "xbox/menu-symbol.png");
+    //     LoadImage("view-button-image", "xbox/view-symbol.png");
+    //     LoadImage("share-button-image", "xbox/share-symbol.png");
+    // }
+ 
+    // void LoadImage(string targetElement, string imageName)
+    // {
+    //     var imageElement = rootVisualElement.Q<Image>(targetElement);
+
+    //     var texture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Plugins/Editor/images/{imageName}");
+                
+    //     if (texture == null)
+    //     {
+    //         Debug.LogError($"Image {imageName} failed to load!");
+    //     }
+    //     imageElement.image = texture;
+    // }
+
+    void OnControllerCurrentState(InputDevice device, InputDeviceChange device_change)
+    {
+        if (!(device is Gamepad gamepad)) return;
+
+        if (device_change == InputDeviceChange.Added || device_change == InputDeviceChange.Reconnected)
+        {
+            ControllerUpdateUI(device);
+        }
+        else //could make another gui thats just a standard issue controller! but this resets it if a controller is disconnected!
+            ControllerUpdateUI(manager.GetArtificialPad());
+    }
+
+    void ControllerUpdateUI (InputDevice device)
+    {
+        Debug.Log("Detected: " + device.displayName + " | Layout: " + device.layout);
+
+        if (manager.GetPhysicalPad() is DualShockGamepad || device.layout.Contains("Dual"))
+        {
+            Debug.Log("playstation controller is active");
+            SetUXMLLayout("Assets/Plugins/Editor/UI_PS.uxml");
+        }
+        else if (manager.GetPhysicalPad() is XInputController)
+        {
+            Debug.Log("Xbox controller is active");
+            SetUXMLLayout("Assets/Plugins/Editor/UI_XBOX.uxml");
+        }
+
+        else
+        {
+            Debug.Log("No conntected gamepad!");
+            SetUXMLLayout("Assets/Plugins/Editor/UI_XBOX.uxml");
+        }
+    }
+
+    void SetUXMLLayout(string path)
+    {
+        UXMLPath = path;
+        LoadUXML(path);
+    }
+    
+
+    void LoadUXML(string path)
     {
         // Load in the UXML and USS:
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(path);
         
         rootVisualElement.Clear();
         visualTree.CloneTree(rootVisualElement);
-
 
         // Initialize Buttons with functions:
         InitializeButtons(visElToButton.Keys);
         InitializeJoysticks(visElToJoystick.Keys);
         InitializeTriggers(visElToTrigger.Keys);
 
-        LoadImage("xbox-button-image", "xbox-symbol.png");
-        LoadImage("menu-button-image", "menu-symbol.png");
-        LoadImage("view-button-image", "view-symbol.png");
-        LoadImage("share-button-image", "share-symbol.png");
+        if(path.Contains("XBOX"))
+        {
+            LoadImage("xbox-button-image", "xbox/xbox-symbol.png");
+            LoadImage("menu-button-image", "xbox/menu-symbol.png");
+            LoadImage("view-button-image", "xbox/view-symbol.png");
+            LoadImage("share-button-image", "xbox/share-symbol.png");
+        }
+        else if(path.Contains("PS"))
+        {
+            LoadImage("xbox-button-image", "playstation/playstation-symbol.png");
+            LoadImage("menu-button-image", "xbox/menu-symbol.png");
+            LoadImage("view-button-image", "xbox/view-symbol.png");
+        }
+           
     }
-
+ 
     void LoadImage(string targetElement, string imageName)
     {
         var imageElement = rootVisualElement.Q<Image>(targetElement);
@@ -258,15 +363,15 @@ public class ControllerGUI : EditorWindow
                     //     ButtonName = "Advanced";
                     //     break;
 
-                    case "left-joystick-button":
-                        ButtonName = "LeftStickButton";
+                    case "left-stick":
+                        ButtonName = "LeftStick";
                         break;
 
-                    case "right-joystick-button":
-                        ButtonName = "RightStickButton";
+                    case "right-stick":
+                        ButtonName = "RightStick";
                         break;
                 }
-                Debug.Log("HE");
+                //removed "HE"
                 emulator.pressButton(ButtonName);
 
                 // Set this button's pressed state to true.
@@ -297,8 +402,6 @@ public class ControllerGUI : EditorWindow
                     image.tintColor = Color.white;
             });
         }
-        
-
     }
 
     void InitializeJoysticks(IEnumerable<string> joystickNames)
@@ -358,14 +461,10 @@ public class ControllerGUI : EditorWindow
                 switch (stick_name)
                 {
                     case "left-joystick":
-                        stick_name = "LeftStick";
-                        
                         emulator.moveLeftJoystick(input.x, input.y);
                         break;
 
                     case "right-joystick":
-                        stick_name = "RightStick";
-                       
                         emulator.moveRightJoystick(input.x, input.y);
                         break;
                 }
@@ -480,85 +579,137 @@ public class ControllerGUI : EditorWindow
         }
     }
 
-    public void physicalControlellerUpdate()
+    private void PublishPhysicalControllerState()
     {
-        var pad = Gamepad.current;
+        if (manager == null)
+        {
+            return;
+        }
+
+        var pad = manager.GetPhysicalPad();
+
         if (pad == null)
         {
-            Debug.Log("NO GAMEPAD DETECTED");
+            // XboxController.SetButton(buttonType.A, false);
+            // XboxController.SetButton(buttonType.B, false);
+            // XboxController.SetButton(buttonType.X, false);
+            // XboxController.SetButton(buttonType.Y, false);
+
+            // XboxController.SetButton(buttonType.RBumper, false);
+            // XboxController.SetButton(buttonType.LBumper, false);
+
+            // XboxController.SetButton(buttonType.Up, false);
+            // XboxController.SetButton(buttonType.Down, false);
+            // XboxController.SetButton(buttonType.Left, false);
+            // XboxController.SetButton(buttonType.Right, false);
+
+            // XboxController.SetButton(buttonType.LeftStick, false);
+            // XboxController.SetButton(buttonType.RightStick, false);
+
+            // XboxController.SetTrigger(triggerType.Left, 0f);
+            // XboxController.SetTrigger(triggerType.Right, 0f);
+
+            // XboxController.SetJoystick(joystickType.Left, Vector2.zero);
+            // XboxController.SetJoystick(joystickType.Right, Vector2.zero);
+
+            return;
         }
-        // Debug.Log($"Pad: {pad}");
-      
-        Dictionary<string, (buttonType, bool)> physElToButton = new()
+
+        XboxController.SetButton(buttonType.A, pad.buttonSouth.isPressed);
+        XboxController.SetButton(buttonType.B, pad.buttonEast.isPressed);
+        XboxController.SetButton(buttonType.X, pad.buttonWest.isPressed);
+        XboxController.SetButton(buttonType.Y, pad.buttonNorth.isPressed);
+
+        XboxController.SetButton(buttonType.RBumper, pad.rightShoulder.isPressed);
+        XboxController.SetButton(buttonType.LBumper, pad.leftShoulder.isPressed);
+
+        XboxController.SetButton(buttonType.Up, pad.dpad.up.isPressed);
+        XboxController.SetButton(buttonType.Down, pad.dpad.down.isPressed);
+        XboxController.SetButton(buttonType.Left, pad.dpad.left.isPressed);
+        XboxController.SetButton(buttonType.Right, pad.dpad.right.isPressed);
+
+        XboxController.SetButton(buttonType.LeftStick, pad.leftStickButton.isPressed);
+        XboxController.SetButton(buttonType.RightStick, pad.rightStickButton.isPressed);
+
+        XboxController.SetTrigger(triggerType.Left, pad.leftTrigger.ReadValue());
+        XboxController.SetTrigger(triggerType.Right, pad.rightTrigger.ReadValue());
+
+        XboxController.SetJoystick(joystickType.Left, pad.leftStick.ReadValue());
+        XboxController.SetJoystick(joystickType.Right, pad.rightStick.ReadValue());
+    }
+    public void physicalControlellerUpdate()
+    {
+        Dictionary<string, buttonType> physElToButton = new()
         {
-            { "A-button", (buttonType.A, pad.buttonSouth.isPressed)},
-            { "B-button", (buttonType.B, pad.buttonEast.isPressed)},
-            { "X-button", (buttonType.X, pad.buttonWest.isPressed)},
-            { "Y-button", (buttonType.Y, pad.buttonNorth.isPressed)},
+            { "A-button", buttonType.A },
+            { "B-button", buttonType.B },
+            { "X-button", buttonType.X },
+            { "Y-button", buttonType.Y },
 
-            { "RB-button", (buttonType.RBumper, pad.rightShoulder.isPressed)},
-            { "LB-button", (buttonType.LBumper, pad.leftShoulder.isPressed)},
+            { "RB-button", buttonType.RBumper },
+            { "LB-button", buttonType.LBumper },
 
-            { "up-pad", (buttonType.Up, pad.dpad.up.isPressed)},
-            { "down-pad",(buttonType.Down, pad.dpad.down.isPressed)},
-            { "left-pad",(buttonType.Left, pad.dpad.left.isPressed)},
-            { "right-pad",(buttonType.Right, pad.dpad.right.isPressed)},
+            { "up-pad", buttonType.Up },
+            { "down-pad", buttonType.Down },
+            { "left-pad", buttonType.Left },
+            { "right-pad", buttonType.Right },
 
-            { "left-stick", (buttonType.LeftStick, pad.leftStickButton.isPressed)},
-            { "right-stick", (buttonType.RightStick, pad.rightStickButton.isPressed)}
+            { "left-stick", buttonType.LeftStick },
+            { "right-stick", buttonType.RightStick }
         };
 
-        Dictionary<string, (joystickType, Vector2)> physElToJoystick = new()
+        Dictionary<string, joystickType> physElToJoystick = new()
         {
-            {"left-joystick", (joystickType.Left, pad.leftStick.ReadValue())},
-            {"right-joystick", (joystickType.Right, pad.rightStick.ReadValue())},
+            { "left-joystick", joystickType.Left },
+            { "right-joystick", joystickType.Right }
         };
 
-        Dictionary<string, (triggerType, float)> physElToTrigger = new()
+        Dictionary<string, triggerType> physElToTrigger = new()
         {
-            {"RT-button", (triggerType.Right,  pad.rightTrigger.ReadValue())},
-            {"LT-button", (triggerType.Left,  pad.leftTrigger.ReadValue())},
+            { "RT-button", triggerType.Right },
+            { "LT-button", triggerType.Left }
         };
 
         foreach (var tuple in physElToButton)
         {
             string elementName = tuple.Key;
-            buttonType button = tuple.Value.Item1;
-            bool pressed = tuple.Value.Item2;
+            buttonType button = tuple.Value;
+            bool pressed = XboxController.GetButton(button).pressed;
 
             if (!buttons.TryGetValue(elementName, out VisualElement element))
+            {
                 continue;
+            }
 
             if (pressed)
             {
-                if (button == buttonType.A)
-                    emulator.pressButton("A");
                 element.AddToClassList("ButtonPressed");
             }
             else
+            {
                 element.RemoveFromClassList("ButtonPressed");
-
-            XboxController.SetButton(button, pressed);
+            }
         }
 
         foreach (var tuple in physElToTrigger)
         {
             string name = tuple.Key;
-            triggerType type = tuple.Value.Item1;
-            float value = tuple.Value.Item2;
+            triggerType type = tuple.Value;
+            float value = XboxController.GetTrigger(type).pressure;
 
             if (!triggers.TryGetValue(name, out var triggerRoot))
+            {
                 continue;
+            }
 
             var fill = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-fill");
             var triggerLabel = triggerRoot.Q<VisualElement>($"{name.Split('-')[0]}-label");
             var label = triggerRoot.parent.Q<Label>($"{name.Split('-')[0]}-trigger-value-label");
 
-
-            // Update fill
             if (fill != null)
+            {
                 fill.style.height = new Length(value * 100, LengthUnit.Percent);
-                
+            }
 
             if (triggerLabel != null)
             {
@@ -566,29 +717,28 @@ public class ControllerGUI : EditorWindow
                 triggerLabel.style.color = new StyleColor(triggerLabelColor);
             }
 
-            // Update label
             if (label != null)
             {
                 label.style.fontSize = 20f;
                 label.text = $"VAL: {value:F2}";
             }
-
-            XboxController.SetTrigger(type, value);
         }
 
         foreach (var tuple in physElToJoystick)
         {
             string name = tuple.Key;
-            joystickType type = tuple.Value.Item1;
+            joystickType type = tuple.Value;
 
-            var joystickRoot = joysticks[name];
-            if (joystickRoot == null) continue;
+            if (!joysticks.TryGetValue(name, out var joystickRoot))
+            {
+                continue;
+            }
 
             var stick = joystickRoot.Q<VisualElement>(className: "joystick");
             var labelXValue = joystickRoot.Q<Label>($"{name}-value_X");
             var labelYValue = joystickRoot.Q<Label>($"{name}-value_Y");
 
-            Vector2 input = tuple.Value.Item2;
+            Vector2 input = XboxController.GetJoystick(type).position;
 
             UpdateStick(stick, input, 40f);
 
@@ -597,13 +747,7 @@ public class ControllerGUI : EditorWindow
                 labelXValue.text = input.x.ToString("F2");
                 labelYValue.text = input.y.ToString("F2");
             }
-
-            XboxController.SetJoystick(type, input);
         }
-      
-        // UnityEngine.InputSystem.InputSystem.Update();
-
-        emulator.emulate();
     }
 
     public void emulatedControllerUpdate()

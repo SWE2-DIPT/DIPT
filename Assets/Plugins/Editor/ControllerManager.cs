@@ -11,37 +11,70 @@ enum ControllerType { physical, artificial }
 
 public class ControllerManager
 {
-    
-    private Gamepad physicalGamepad;
-    private Gamepad artificalGamepad;
+     private bool controller_connected;
 
-    public Gamepad GetPadType()
+    public Gamepad GetPhysicalPad()
     {
-        physicalGamepad = null;
-        artificalGamepad = null;
-
         foreach (var pad in Gamepad.all)
         {
-            if (pad is XInputController || pad is DualShockGamepad)
+            if (pad is XInputController)
             {
-                physicalGamepad = pad;
-                artificalGamepad = null;
-                Debug.Log($"Physical: {pad.displayName}");
-                break;
+                return pad;
+            }
+
+            if (pad is DualShockGamepad)
+            {
+                return pad;
+            }
+
+            if (pad is DualSenseGamepadHID)
+            {
+                return pad;
             }
         }
 
-        // fallback: anything else that exists
-        if (physicalGamepad == null)
-        {
-            foreach (var pad in Gamepad.all)
-            {
-                artificalGamepad = pad;
-                // Debug.Log($"Fallback: {pad.displayName}");
-                break;
-            }
-        }
-
-        return physicalGamepad ?? artificalGamepad;
+        return null;
     }
+
+    public Gamepad GetArtificialPad()
+    {
+        foreach (var pad in Gamepad.all)
+        {
+            if (!(pad is XInputController) && !(pad is DualShockGamepad))
+            {
+                return pad;
+            }
+        }
+
+        return null;
+    }
+    // public Gamepad GetPadType()
+    // {
+    //     physicalGamepad = null;
+    //     artificalGamepad = null;
+
+    //     foreach (var pad in Gamepad.all)
+    //     {
+    //         if (pad is XInputController || pad is DualShockGamepad)
+    //         {
+    //             physicalGamepad = pad;
+    //             artificalGamepad = null;
+    //             Debug.Log($"Physical: {pad.displayName}");
+    //             break;
+    //         }
+    //     }
+
+    //     // fallback: anything else that exists
+    //     if (physicalGamepad == null)
+    //     {
+    //         foreach (var pad in Gamepad.all)
+    //         {
+    //             artificalGamepad = pad;
+    //             // Debug.Log($"Fallback: {pad.displayName}");
+    //             break;
+    //         }
+    //     }
+
+    //     return physicalGamepad ?? artificalGamepad;
+    // }
 }
