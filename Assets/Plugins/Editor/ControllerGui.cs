@@ -16,12 +16,11 @@ using UnityEngine.InputSystem.XInput;
 using UnityEngine.UIElements;
 
 /// <summary>
-/// An example plugin.
+/// Window displaying GUI for controller input visualizer & emulator.
 /// </summary>
 public class ControllerGUI : EditorWindow
 {
     private ControllerManager manager;
-    private ControllerComponents components;
     private GamepadEmulator emulator;
 
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
@@ -69,7 +68,6 @@ public class ControllerGUI : EditorWindow
     private void OnEnable()
     {
         manager = new ControllerManager();
-        components = new ControllerComponents();
         emulator = new GamepadEmulator();
 
         InputSystem.onAfterUpdate += OnInputSystemAfterUpdate;
