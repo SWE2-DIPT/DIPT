@@ -5,6 +5,33 @@ TextureImporter:
   - first:
       213: 9093055189431706076
     second: square-symbol_0
+  - first:
+      213: -184683776378978804
+    second: square-symbol_1
+  - first:
+      213: -8416252216937207049
+    second: square-symbol_2
+  - first:
+      213: -3128421567277619081
+    second: square-symbol_3
+  - first:
+      213: 2179161612243238976
+    second: square-symbol_4
+  - first:
+      213: 1397894371931546290
+    second: square-symbol_5
+  - first:
+      213: 7344857183935886461
+    second: square-symbol_6
+  - first:
+      213: -4437491126525726825
+    second: square-symbol_7
+  - first:
+      213: 6498702552260314633
+    second: square-symbol_8
+  - first:
+      213: 7187051255767231332
+    second: square-symbol_9
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +73,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -75,7 +102,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -103,10 +130,10 @@ TextureImporter:
       name: square-symbol_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1920
-        height: 1920
+        x: 232
+        y: 1586
+        width: 11
+        height: 12
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -121,11 +148,209 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: square-symbol_1
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 1573
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0e3729751fdf6df0800000000000000
+      internalID: -184683776378978804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: square-symbol_2
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 1527
+        width: 36
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fa2d5d2337733b80800000000000000
+      internalID: -8416252216937207049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: square-symbol_3
+      rect:
+        serializedVersion: 2
+        x: 382
+        y: 382
+        width: 1156
+        height: 1156
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7782fbed82d9594d0800000000000000
+      internalID: -3128421567277619081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: square-symbol_4
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 318
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0400dedc0ffed3e10800000000000000
+      internalID: 2179161612243238976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: square-symbol_5
+      rect:
+        serializedVersion: 2
+        x: 248
+        y: 306
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b26f706681566310800000000000000
+      internalID: 1397894371931546290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: square-symbol_6
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 282
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d74797ea1bc2ee560800000000000000
+      internalID: 7344857183935886461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: square-symbol_7
+      rect:
+        serializedVersion: 2
+        x: 1641
+        y: 284
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79f6c7dc45dda62c0800000000000000
+      internalID: -4437491126525726825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: square-symbol_8
+      rect:
+        serializedVersion: 2
+        x: 282
+        y: 261
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90686682a87003a50800000000000000
+      internalID: 6498702552260314633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: square-symbol_9
+      rect:
+        serializedVersion: 2
+        x: 1627
+        y: 270
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46be78ad9098db360800000000000000
+      internalID: 7187051255767231332
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -136,6 +361,15 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       square-symbol_0: 9093055189431706076
+      square-symbol_1: -184683776378978804
+      square-symbol_2: -8416252216937207049
+      square-symbol_3: -3128421567277619081
+      square-symbol_4: 2179161612243238976
+      square-symbol_5: 1397894371931546290
+      square-symbol_6: 7344857183935886461
+      square-symbol_7: -4437491126525726825
+      square-symbol_8: 6498702552260314633
+      square-symbol_9: 7187051255767231332
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -95,7 +95,6 @@
 				<ui:VisualElement name="share-button" class="button horiz share">
 					<ui:Image name="share-button-image" class="icon" style="background-image: url('images/xbox/share-symbol.png');"/>
 				</ui:VisualElement>
-				<ui:Label text="!" style="color: white; background-color:red; font-size: 18px; width:20px; border-radius:50%; -unity-text-align: middle-center;" />
 			</ui:VisualElement>
 		</ui:VisualElement>
 
