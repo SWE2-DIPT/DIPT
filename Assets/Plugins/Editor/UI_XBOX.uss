@@ -412,3 +412,6 @@ Image {
     height: 100%;
 }
 
+.icon {
+    -unity-background-scale-mode: scale-to-fit;
+}

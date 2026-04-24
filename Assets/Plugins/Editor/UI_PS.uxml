@@ -60,14 +60,16 @@
 		<ui:VisualElement  class="box-border" style="width: 53px; height: 170px;">
 			<ui:VisualElement class="horizontal-group">
 				<ui:VisualElement name="xbox-button" class="button horiz xbox">
-					<ui:Image name="xbox-button-image" class="icon"/>
+					<ui:Image name="xbox-button-image" class="icon" style="background-image: url('images/Playstation/Playstation-symbol.png');"/>
 				</ui:VisualElement>
+				<!--
 				<ui:VisualElement name="menu-button" class="button horiz menu">
-					<ui:Image name="menu-button-image" class="icon"/>
+					<ui:Image name="menu-button-image" class="icon" style="background-image: url('images/xbox/Playstation-symbol.png');"/>
 				</ui:VisualElement>
 				<ui:VisualElement name="view-button" class="button horiz view">
 					<ui:Image name="view-button-image" class="icon"/>
 				</ui:VisualElement>
+				-->
 			</ui:VisualElement>
 		</ui:VisualElement>
 

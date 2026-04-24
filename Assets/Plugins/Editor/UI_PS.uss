@@ -413,3 +413,8 @@ Image {
     height: 100%;
 }
 
+.icon {
+    width: 24px;
+    height: 24px;
+    -unity-background-scale-mode: scale-to-fit;
+}

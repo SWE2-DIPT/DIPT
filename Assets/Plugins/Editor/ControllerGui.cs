@@ -195,11 +195,10 @@ public class ControllerGUI : EditorWindow
             Debug.Log("Xbox controller is active");
             LoadUXML("Assets/Plugins/Editor/UI_XBOX.uxml");
         }
-
         else
         {
             Debug.Log("No conntected gamepad!");
-            LoadUXML("Assets/Plugins/Editor/UI_GENERIC.uxml");
+            LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
         }
     }
 
@@ -225,35 +224,7 @@ public class ControllerGUI : EditorWindow
         // Initialize Buttons with functions:
         InitializeButtons(visElToButton.Keys);
         InitializeJoysticks(visElToJoystick.Keys);
-        InitializeTriggers(visElToTrigger.Keys);
-
-        if(path.Contains("XBOX"))
-        {
-            LoadImage("xbox-button-image", "xbox/xbox-symbol.png");
-            LoadImage("menu-button-image", "xbox/menu-symbol.png");
-            LoadImage("view-button-image", "xbox/view-symbol.png");
-            LoadImage("share-button-image", "xbox/share-symbol.png");
-        }
-        else if(path.Contains("PS"))
-        {
-            LoadImage("xbox-button-image", "playstation/playstation-symbol.png");
-            LoadImage("menu-button-image", "xbox/menu-symbol.png");
-            LoadImage("view-button-image", "xbox/view-symbol.png");
-        }
-           
-    }
- 
-    void LoadImage(string targetElement, string imageName)
-    {
-        var imageElement = rootVisualElement.Q<Image>(targetElement);
-
-        var texture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Plugins/Editor/images/{imageName}");
-                
-        if (texture == null)
-        {
-            Debug.LogError($"Image {imageName} failed to load!");
-        }
-        imageElement.image = texture;
+        InitializeTriggers(visElToTrigger.Keys);  
     }
 
     /// <summary>
