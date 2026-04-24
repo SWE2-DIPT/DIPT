@@ -76,17 +76,14 @@
 		<!--YBAX-BUTTONS-->
 		<ui:VisualElement  class="box-border" style="width: 170px; height: 170px;">
 			<ui:VisualElement name="YBAX-buttons" class="diamond-group">
-					<ui:VisualElement name="Y-button" class="top button">
-						<ui:Label text="Triangle" class="button-label"/>
+					<ui:VisualElement name="Y-button" class="top button" style="background-image: url('images/Playstation/triangle-symbol.png');">
+
 					</ui:VisualElement>
-					<ui:VisualElement name="B-button" class="right button">
-						<ui:Label text="Circle" class="button-label"/>
+					<ui:VisualElement name="B-button" class="right button" style="background-image: url('images/Playstation/circle-symbol.png');">
 					</ui:VisualElement>
-					<ui:VisualElement name="A-button" class="bottom button">
-						<ui:Label text="Cross" class="button-label"/>
+					<ui:VisualElement name="A-button" class="bottom button" style="background-image: url('images/Playstation/cross-symbol.png');">
 					</ui:VisualElement>
-					<ui:VisualElement name="X-button" class="left button">
-						<ui:Label text="Square" class="button-label"/>
+					<ui:VisualElement name="X-button" class="left button" style="background-image: url('images/Playstation/square-symbol.png');">
 					</ui:VisualElement>
 			</ui:VisualElement>
 		</ui:VisualElement>
