@@ -240,6 +240,8 @@ public class GamepadEmulator
             leftStick = leftStickValues,
             rightStick = rightStickValues
         });
+        
+        InputSystem.Update(); 
     }
 
     // get gamepad emulator
