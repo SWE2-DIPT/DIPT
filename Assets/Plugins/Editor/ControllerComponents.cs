@@ -13,7 +13,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.DualShock;
 using UnityEngine.InputSystem.XInput;
 
@@ -21,9 +20,10 @@ using UnityEngine.InputSystem.XInput;
 
 public class ControllerComponents
 {
-    private Dictionary<ButtonControl, bool> prevButtons = new();
-    private Dictionary<ButtonControl, float> prevTriggers = new();
-    private Dictionary<StickControl, Vector2> prevJoysticks = new();
+    private readonly Dictionary<buttonType, bool> prevButtons = new();
+    private readonly Dictionary<triggerType, float> prevTriggers = new();
+    private readonly Dictionary<joystickType, Vector2> prevJoysticks = new();
+    private readonly Dictionary<joystickType, bool> prevJoystickButtons = new();
 
     private bool prevTouchpad;
 
@@ -34,41 +34,16 @@ public class ControllerComponents
 
     public ControllerComponents()
     {
-        var gamepad = Gamepad.current;
-        if (gamepad == null)
-        {
-            return;
-        }
-        ButtonControl[] buttons =
-        {
-            gamepad.buttonSouth,
-            gamepad.buttonNorth,
-            gamepad.buttonEast,
-            gamepad.buttonWest,
-            gamepad.startButton,
-            gamepad.selectButton,
-            gamepad.leftShoulder,
-            gamepad.rightShoulder,
-            gamepad.leftStickButton,
-            gamepad.rightStickButton,
-            gamepad.dpad.up,
-            gamepad.dpad.down,
-            gamepad.dpad.left,
-            gamepad.dpad.right
-        };
-        foreach (ButtonControl button in buttons)
+        foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
             prevButtons[button] = false;
 
-        ButtonControl[] triggers = {gamepad.leftTrigger, gamepad.rightTrigger};
-        foreach (ButtonControl trigger in triggers)
-        {
+        foreach (triggerType trigger in System.Enum.GetValues(typeof(triggerType)))
             prevTriggers[trigger] = 0f;
-        }
 
-        StickControl[] joysticks = {gamepad.leftStick, gamepad.rightStick};
-        foreach (StickControl joystick in joysticks)
+        foreach (joystickType joystick in System.Enum.GetValues(typeof(joystickType)))
         {
             prevJoysticks[joystick] = Vector2.zero;
+            prevJoystickButtons[joystick] = false;
         }
 
         prevTouchpad = false;
@@ -76,45 +51,37 @@ public class ControllerComponents
 
     public void GetJoystickActivity()
     {
-        var gamepad = Gamepad.current;
-        if (gamepad == null)
+        foreach (joystickType joystick in System.Enum.GetValues(typeof(joystickType)))
         {
-            return;
-        }
-        StickControl[] joysticks = {gamepad.leftStick, gamepad.rightStick};
-        
-        foreach (StickControl joystick in joysticks)
-        {
-            Vector2 currentValue = joystick.value;
-            // Debug.Log($"{joystick.value.x} {joystick.value.y}");
+            Vector2 currentValue = XboxController.GetJoystick(joystick).position;
             Vector2 previousValue = prevJoysticks[joystick];
 
             if (Vector2.Distance(currentValue, previousValue) > joystickThreshold)
             {
-                ControllerDebugLogger.LogMovement($"{joystick.name} Joystick moved to X:{currentValue.x:F2} | Y:{currentValue.y:F2}"
+                ControllerDebugLogger.LogMovement($"{GetJoystickName(joystick)} Joystick moved to X:{currentValue.x:F2} | Y:{currentValue.y:F2}"
                 );
                 prevJoysticks[joystick] = currentValue;
             }
+
+            bool currentPressed = XboxController.GetJoystick(joystick).pressed;
+            bool previousPressed = prevJoystickButtons[joystick];
+
+            CheckButtonState($"{GetJoystickName(joystick)} Joystick Press", currentPressed, ref previousPressed);
+
+            prevJoystickButtons[joystick] = previousPressed;
         }
     }
 
     public void GetTriggerActivity()
     {
-        var gamepad = Gamepad.current;
-        if (gamepad == null)
+        foreach (triggerType trigger in System.Enum.GetValues(typeof(triggerType)))
         {
-            return;
-        }
-        ButtonControl[] triggers = {gamepad.leftTrigger, gamepad.rightTrigger};
-
-        foreach (ButtonControl trigger in triggers)
-        {
-            float currentValue = trigger.value;
+            float currentValue = XboxController.GetTrigger(trigger).pressure;
             float previousValue = prevTriggers[trigger];
 
             if (Mathf.Abs(currentValue - previousValue) > triggerThreshold)
             {
-                ControllerDebugLogger.LogMovement($"{trigger.name} Trigger changed to {currentValue:F2}"
+                ControllerDebugLogger.LogMovement($"{GetTriggerName(trigger)} Trigger changed to {currentValue:F2}"
                 );
                 prevTriggers[trigger] = currentValue;
             }
@@ -123,35 +90,12 @@ public class ControllerComponents
 
     public void GetButtonActivity()
     {
-        var gamepad = Gamepad.current;
-        if (gamepad == null)
+        foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
         {
-            return;
-        }
-        ButtonControl[] buttons =
-        {
-            gamepad.buttonSouth,
-            gamepad.buttonNorth,
-            gamepad.buttonEast,
-            gamepad.buttonWest,
-            gamepad.startButton,
-            gamepad.selectButton,
-            gamepad.leftShoulder,
-            gamepad.rightShoulder,
-            gamepad.leftStickButton,
-            gamepad.rightStickButton,
-            gamepad.dpad.up,
-            gamepad.dpad.down,
-            gamepad.dpad.left,
-            gamepad.dpad.right
-        };
-        
-        foreach (ButtonControl button in buttons)
-        {
-            bool currentState = button.isPressed;
+            bool currentState = XboxController.GetButton(button).pressed;
             bool previousState = prevButtons[button];
 
-            CheckButtonState(button.name, currentState, ref previousState);
+            CheckButtonState(GetButtonName(button), currentState, ref previousState);
             prevButtons[button] = previousState;
         }
     }

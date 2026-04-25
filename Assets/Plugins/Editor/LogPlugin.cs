@@ -78,8 +78,6 @@ public class LogPlugin : EditorWindow
             currentController = Gamepad.current;
             controllerReader = new ControllerComponents();
         }
-        
-        // Debug.Log($"In Log Using: {Gamepad.current.name} | id: {Gamepad.current.deviceId} | leftStick: {Gamepad.current.leftStick.value}");
 
         controllerReader.GetJoystickActivity();
         controllerReader.GetTriggerActivity();
