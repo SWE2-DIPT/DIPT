@@ -65,7 +65,7 @@ public class ControllerEmulation : EditorWindow
 
     void OnGUI()
     {
-        // emulator.clear();
+        emulator.clear();
         
         if (GUILayout.RepeatButton("Press All Buttons"))
             {
@@ -216,7 +216,7 @@ public class ControllerEmulation : EditorWindow
         GUI.Box(activeLeftTriggerBox,"");
         GUI.Box(activeRightTriggerBox,"");
 
-        emulator.resetLeftJoystick();
+        
         // moving joystick stick if in left joystick
         if (mouseDrag && inLeftJoystick)
         {
@@ -242,7 +242,6 @@ public class ControllerEmulation : EditorWindow
             emulator.moveLeftJoystick(move.x, -move.y);
         }
 
-        emulator.resetRightJoystick();
         // moving joystick stick if in right joystick
         if (mouseDrag && inRightJoystick)
         {
@@ -275,7 +274,6 @@ public class ControllerEmulation : EditorWindow
 
         // emulate gamepad states for emulated gamepad
         emulator.emulate();
-        Debug.Log($"In Emulator Eventtype {e.type} Using: {Gamepad.current.name} | id: {Gamepad.current.deviceId} | leftStick: {Gamepad.current.leftStick.value}");
     }
 
     // refreshes window every tick
