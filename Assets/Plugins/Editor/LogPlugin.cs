@@ -10,14 +10,12 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using UnityEngine.InputSystem;
 
 public class LogPlugin : EditorWindow
 {
     public enum InputState { All, Pressed, Released, Movement }
 
     Color grey = new Color(0.8f, 0.8f, 0.8f);
-
 
     private class LogEntry
     {
@@ -34,9 +32,6 @@ public class LogPlugin : EditorWindow
     private Vector2 scrollPos;
     private InputState activeState;
     private readonly List<LogEntry> allLogs = new List<LogEntry>();
-    private Gamepad currentController;
-    private ControllerComponents controllerReader;
-    private bool isPolling = true;
 
     [MenuItem("Tools/DIPT/LogPlugin")]
     public static void ShowWindow()
@@ -47,13 +42,10 @@ public class LogPlugin : EditorWindow
     private void OnEnable()
     {
         activeState = InputState.All;
-        controllerReader = new ControllerComponents();
 
         ControllerDebugLogger.OnPressedLog += HandlePressedLog;
         ControllerDebugLogger.OnReleasedLog += HandleReleasedLog;
         ControllerDebugLogger.OnMovementLog += HandleMovementLog;
-
-        EditorApplication.update += EditorUpdate;
     }
 
     private void OnDisable()
@@ -61,27 +53,6 @@ public class LogPlugin : EditorWindow
         ControllerDebugLogger.OnPressedLog -= HandlePressedLog;
         ControllerDebugLogger.OnReleasedLog -= HandleReleasedLog;
         ControllerDebugLogger.OnMovementLog -= HandleMovementLog;
-
-        EditorApplication.update -= EditorUpdate;
-    }
-
-    private void EditorUpdate()
-    {
-        if (!isPolling)
-            return;
-
-        if (controllerReader == null)
-            return;
-
-        if (currentController != Gamepad.current)
-        {
-            currentController = Gamepad.current;
-            controllerReader = new ControllerComponents();
-        }
-
-        controllerReader.GetJoystickActivity();
-        controllerReader.GetTriggerActivity();
-        controllerReader.GetButtonActivity();
     }
 
     private void HandlePressedLog(string message)
@@ -115,32 +86,9 @@ public class LogPlugin : EditorWindow
         DrawFilterButton(InputState.Movement, "Movement");
         EditorGUILayout.EndHorizontal();
 
-        isPolling = EditorGUILayout.Toggle("Polling Enabled", isPolling);
-
         EditorGUILayout.Space(5);
 
         DrawLogArea(ref scrollPos, allLogs, GetFilterTitle());
-
-        EditorGUILayout.Space(5);
-
-        EditorGUILayout.BeginHorizontal(); // DEBUG LINES
-
-        if (GUILayout.Button("Add Pressed Debug", GUILayout.Height(30))) // DEBUG LINES
-        {
-            HandlePressedLog(GetDebugMessage(InputState.Pressed)); // DEBUG LINES
-        }
-
-        if (GUILayout.Button("Add Released Debug", GUILayout.Height(30))) // DEBUG LINES
-        {
-            HandleReleasedLog(GetDebugMessage(InputState.Released)); // DEBUG LINES
-        }
-
-        if (GUILayout.Button("Add Movement Debug", GUILayout.Height(30))) // DEBUG LINES
-        {
-            HandleMovementLog(GetDebugMessage(InputState.Movement)); // DEBUG LINES
-        }
-
-        EditorGUILayout.EndHorizontal(); // DEBUG LINES
 
         EditorGUILayout.Space(5);
 
@@ -150,11 +98,13 @@ public class LogPlugin : EditorWindow
         {
             ClearCurrent();
         }
+
         if (GUILayout.Button("Clear All", GUILayout.Height(30)))
         {
             allLogs.Clear();
             Repaint();
         }
+
         if (GUILayout.Button("Save", GUILayout.Height(30)))
         {
             SaveLogsToFile();
@@ -180,25 +130,6 @@ public class LogPlugin : EditorWindow
         }
     }
 
-    private string GetDebugMessage(InputState state) // DEBUG LINES
-    {
-        string timestamp = System.DateTime.Now.ToString("HH:mm:ss"); // DEBUG LINES
-
-        switch (state) // DEBUG LINES
-        {
-            case InputState.Pressed: // DEBUG LINES
-                return $"[{timestamp}] DEBUG pressed log"; // DEBUG LINES
-
-            case InputState.Released: // DEBUG LINES
-                return $"[{timestamp}] DEBUG released log"; // DEBUG LINES
-
-            case InputState.Movement: // DEBUG LINES
-                return $"[{timestamp}] DEBUG movement log"; // DEBUG LINES
-            default: // DEBUG LINES
-                return $"[{timestamp}] DEBUG log"; // DEBUG LINES
-        }
-    }
-
     private void DrawLogArea(ref Vector2 scrollPos, List<LogEntry> logs, string title)
     {
         DrawFilterTitle(ref scrollPos, title);
@@ -209,9 +140,11 @@ public class LogPlugin : EditorWindow
             {
                 Color originalColor = GUI.backgroundColor;
                 GUI.backgroundColor = GetColorForState(logs[i].state);
+
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                 EditorGUILayout.LabelField(logs[i].message);
                 EditorGUILayout.EndVertical();
+
                 GUI.backgroundColor = originalColor;
             }
         }
@@ -229,18 +162,22 @@ public class LogPlugin : EditorWindow
         {
             allLogs.RemoveAll(log => log.state == activeState);
         }
+
         Repaint();
     }
+
     private Color GetColorForState(InputState state)
     {
         switch (state)
         {
             case InputState.Pressed:
-                return new Color(0.6f, 1f, 0.6f); // light green
+                return new Color(0.6f, 1f, 0.6f);
+
             case InputState.Released:
-                return new Color(1f, 0.6f, 0.6f); // light red
+                return new Color(1f, 0.6f, 0.6f);
+
             case InputState.Movement:
-                return new Color(0.6f, 0.8f, 1f); // light blue
+                return new Color(0.6f, 0.8f, 1f);
 
             default:
                 return Color.white;
@@ -249,10 +186,12 @@ public class LogPlugin : EditorWindow
 
     private void DrawFilterTitle(ref Vector2 scrollPos, string title)
     {
-        Color oColor = GUI.color;
+        Color originalColor = GUI.color;
+
         GUI.color = GetColorForState(activeState);
         EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
-        GUI.color = oColor;
+        GUI.color = originalColor;
+
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandHeight(true));
     }
 
@@ -262,14 +201,13 @@ public class LogPlugin : EditorWindow
         Color originalBackground = GUI.backgroundColor;
 
         GUI.contentColor = GetColorForState(state);
-        // Active button text color
+
         if (activeState == state)
         {
             GUI.backgroundColor = grey;
         }
         else
         {
-            //GUI.contentColor = Color.white;
             GUI.backgroundColor = new Color(0.3f, 0.3f, 0.3f);
         }
 
@@ -278,19 +216,22 @@ public class LogPlugin : EditorWindow
             activeState = state;
         }
 
-        // Restore colors
         GUI.contentColor = originalTextColor;
         GUI.backgroundColor = originalBackground;
     }
 
     private void SaveLogsToFile()
     {
-        string path = EditorUtility.SaveFilePanel("Save Controller Logs", "", "ControllerLogs.txt", "txt");
+        string path = EditorUtility.SaveFilePanel(
+            "Save Controller Logs",
+            "",
+            "ControllerLogs.txt",
+            "txt"
+        );
 
         if (string.IsNullOrEmpty(path))
-        {
             return;
-        }
+
         try
         {
             using (System.IO.StreamWriter writer = new System.IO.StreamWriter(path))

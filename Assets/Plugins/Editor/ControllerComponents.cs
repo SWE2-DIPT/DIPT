@@ -1,17 +1,7 @@
-/*******************************************************
-* Script:      ControllerComponents.cs
-* Author(s):   Nick Stearns, Jarrett Williams (Add yourselves to this!)
-* 
-* Description:
-*    Tracks controller state changes using XboxController
-*    and sends logs through ControllerDebugLogger.
-*******************************************************/
-
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.DualShock;
 using UnityEngine.InputSystem.XInput;
@@ -30,10 +20,12 @@ public class ControllerComponents
     private const float joystickThreshold = 0.10f;
     private const float triggerThreshold = 0.05f;
 
-    private ControllerManager manager;
+    private readonly ControllerManager manager;
 
     public ControllerComponents()
     {
+        manager = new ControllerManager();
+
         foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
             prevButtons[button] = false;
 
@@ -58,15 +50,21 @@ public class ControllerComponents
 
             if (Vector2.Distance(currentValue, previousValue) > joystickThreshold)
             {
-                ControllerDebugLogger.LogMovement($"{GetJoystickName(joystick)} Joystick moved to X:{currentValue.x:F2} | Y:{currentValue.y:F2}"
+                ControllerDebugLogger.LogMovement(
+                    $"{GetJoystickName(joystick)} Joystick moved to X:{currentValue.x:F2} | Y:{currentValue.y:F2}"
                 );
+
                 prevJoysticks[joystick] = currentValue;
             }
 
             bool currentPressed = XboxController.GetJoystick(joystick).pressed;
             bool previousPressed = prevJoystickButtons[joystick];
 
-            CheckButtonState($"{GetJoystickName(joystick)} Joystick Press", currentPressed, ref previousPressed);
+            CheckButtonState(
+                $"{GetJoystickName(joystick)} Joystick Press",
+                currentPressed,
+                ref previousPressed
+            );
 
             prevJoystickButtons[joystick] = previousPressed;
         }
@@ -81,8 +79,10 @@ public class ControllerComponents
 
             if (Mathf.Abs(currentValue - previousValue) > triggerThreshold)
             {
-                ControllerDebugLogger.LogMovement($"{GetTriggerName(trigger)} Trigger changed to {currentValue:F2}"
+                ControllerDebugLogger.LogMovement(
+                    $"{GetTriggerName(trigger)} Trigger changed to {currentValue:F2}"
                 );
+
                 prevTriggers[trigger] = currentValue;
             }
         }
@@ -96,6 +96,7 @@ public class ControllerComponents
             bool previousState = prevButtons[button];
 
             CheckButtonState(GetButtonName(button), currentState, ref previousState);
+
             prevButtons[button] = previousState;
         }
     }
@@ -129,9 +130,9 @@ public class ControllerComponents
 
     private string GetButtonName(buttonType button)
     {
-        manager = new ControllerManager();
+        var pad = manager.GetPhysicalPad();
 
-        if(manager.GetPhysicalPad() is XInputController)
+        if (pad is XInputController)
         {
             return button switch
             {
@@ -150,65 +151,41 @@ public class ControllerComponents
                 buttonType.View => "View Button",
                 buttonType.Share => "Share Button",
                 buttonType.Advanced => "Advanced Button",
-                buttonType.LeftStick => "LS",
-                buttonType.RightStick => "RS",
                 _ => button.ToString()
-            };  
+            };
         }
-        else if(manager.GetPhysicalPad() is DualShockGamepad)
+
+        if (pad is DualShockGamepad)
         {
             return button switch
             {
                 buttonType.A => "Cross Button",
                 buttonType.B => "Circle Button",
                 buttonType.X => "Square Button",
-                buttonType.Y => "Trianlge Button",
+                buttonType.Y => "Triangle Button",
                 buttonType.Up => "DPad Up",
                 buttonType.Down => "DPad Down",
                 buttonType.Left => "DPad Left",
                 buttonType.Right => "DPad Right",
                 buttonType.LBumper => "L1",
                 buttonType.RBumper => "R1",
-                buttonType.Xbox => "Xbox Button",
-                buttonType.Menu => "Menu Button",
-                buttonType.View => "View Button",
+                buttonType.Xbox => "PlayStation Button",
+                buttonType.Menu => "Options Button",
+                buttonType.View => "Create Button",
                 buttonType.Share => "Share Button",
                 buttonType.Advanced => "Advanced Button",
-                buttonType.LeftStick => "L3",
-                buttonType.RightStick => "R3",
                 _ => button.ToString()
-            };  
+            };
         }
 
-        return button switch
-        {
-            buttonType.A => "South face Button",
-            buttonType.B => "East face Button",
-            buttonType.X => "West face Button",
-            buttonType.Y => "North face Button",
-            buttonType.Up => "DPad Up",
-            buttonType.Down => "DPad Down",
-            buttonType.Left => "DPad Left",
-            buttonType.Right => "DPad Right",
-            buttonType.LBumper => "LB",
-            buttonType.RBumper => "RB",
-            buttonType.Xbox => "Xbox Button",
-            buttonType.Menu => "Menu Button",
-            buttonType.View => "View Button",
-            buttonType.Share => "Share Button",
-            buttonType.Advanced => "Advanced Button",
-            buttonType.LeftStick => "LS",
-            buttonType.RightStick => "RS",
-            _ => button.ToString()
-        };  
+        return button.ToString();
     }
 
     private string GetTriggerName(triggerType trigger)
     {
+        var pad = manager.GetPhysicalPad();
 
-        manager = new ControllerManager();
-
-        if(manager.GetPhysicalPad() is XInputController)
+        if (pad is XInputController)
         {
             return trigger switch
             {
@@ -218,22 +195,17 @@ public class ControllerComponents
             };
         }
 
-        else if(manager.GetPhysicalPad() is DualShockGamepad)
+        if (pad is DualShockGamepad)
         {
             return trigger switch
             {
-                triggerType.Left => "L3",
-                triggerType.Right => "R3",
+                triggerType.Left => "L2",
+                triggerType.Right => "R2",
                 _ => trigger.ToString()
             };
         }
 
-        return trigger switch
-        {
-            triggerType.Left => "Left",
-            triggerType.Right => "Right",
-            _ => trigger.ToString()
-        };
+        return trigger.ToString();
     }
 
     private string GetJoystickName(joystickType joystick)
@@ -244,5 +216,63 @@ public class ControllerComponents
             joystickType.Right => "Right",
             _ => joystick.ToString()
         };
+    }
+}
+
+[InitializeOnLoad]
+public static class ControllerComponentsAutoRunner
+{
+    private static ControllerComponents components;
+
+    static ControllerComponentsAutoRunner()
+    {
+        components = new ControllerComponents();
+
+        EditorApplication.update -= Update;
+        EditorApplication.update += Update;
+
+        InputSystem.onAfterUpdate -= ReadInput;
+        InputSystem.onAfterUpdate += ReadInput;
+
+        EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+        EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+    }
+
+    private static void OnPlayModeStateChanged(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.EnteredPlayMode ||
+            state == PlayModeStateChange.EnteredEditMode)
+        {
+            components = new ControllerComponents();
+
+            EditorApplication.update -= Update;
+            EditorApplication.update += Update;
+
+            InputSystem.onAfterUpdate -= ReadInput;
+            InputSystem.onAfterUpdate += ReadInput;
+        }
+    }
+
+    // Reads input in sync with the Input System's own update cycle,
+    // Gamepad.current values are always current in both Edit and Play Mode
+    private static void ReadInput()
+    {
+        bool guiOpen = EditorWindow.HasOpenInstances<ControllerGUI>();
+
+        // GUI handles its own reading via its own onAfterUpdate subscription
+        if (!guiOpen)
+        {
+            ControllerInputReader.ReadPhysicalInputIntoXboxController();
+        }
+    }
+    private static void Update()
+    {
+        if (components == null)
+            components = new ControllerComponents();
+
+        components.GetJoystickActivity();
+        components.GetTriggerActivity();
+        components.GetButtonActivity();
+        components.GetTouchpadActivity();
     }
 }
