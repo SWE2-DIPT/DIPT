@@ -26,45 +26,7 @@ public class ControllerGUI : EditorWindow
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> triggers = new Dictionary<string, VisualElement>();
-
-    Dictionary<string, buttonType> visElToButton = new()
-    {
-        { "A-button", buttonType.A },
-        { "B-button", buttonType.B },
-        { "X-button", buttonType.X },
-        { "Y-button", buttonType.Y },
-
-        { "RB-button", buttonType.RBumper },
-        { "LB-button", buttonType.LBumper },
-
-        { "up-pad", buttonType.Up },
-        { "down-pad", buttonType.Down },
-        { "left-pad", buttonType.Left },
-        { "right-pad", buttonType.Right },
-
-        { "right-stick", buttonType.RightStick },
-        { "left-stick", buttonType.LeftStick },
-
-        { "xbox-button", buttonType.Xbox },
-        { "menu-button", buttonType.Menu },
-        { "view-button", buttonType.View },
-        { "share-button", buttonType.Share },
-
-        { "advanced", buttonType.Advanced }
-    };
-
-    Dictionary<string, joystickType> visElToJoystick = new()
-    {
-        { "left-joystick", joystickType.Left },
-        { "right-joystick", joystickType.Right }
-    };
-
-    Dictionary<string, triggerType> visElToTrigger = new()
-    {
-        { "LT-button", triggerType.Left },
-        { "RT-button", triggerType.Right }
-    };
-
+    
     private void OnEnable()
     {
         manager = new ControllerManager();
@@ -114,55 +76,6 @@ public class ControllerGUI : EditorWindow
     }
 
     //~LOAD~GUI~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    /// <summary>
-    /// Loads the .uxml at <paramref name="uxmlPath"/> and 
-    /// the .uss at <paramref name="ussPath"/> and applies them 
-    /// to the plugin's root visual element.
-    /// </summary>
-    /// <remarks>
-    /// Example usage:
-    /// <c> LoadUXML("Assets/Plugins/Editor/UI.uxml", "Assets/Plugins/Editor/UI.uss"); </c>
-    /// </remarks>
-    /// <param name="uxmlPath">Path from Project directory to .uxml file</param>
-    /// <param name="ussPath">Path from Project directory to .uss file</param>
-    /// \
-    /// 
-    /// 
-    /// 
-    // void LoadUXML(string uxmlPath = "Assets/Plugins/Editor/UI_XBOX.uxml")
-    // {
-    //     // Load in the UXML and USS:
-    //     var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
-        
-    //     rootVisualElement.Clear();
-    //     visualTree.CloneTree(rootVisualElement);
-
-
-    //     // Initialize Buttons with functions:
-    //     InitializeButtons(visElToButton.Keys);
-    //     InitializeJoysticks(visElToJoystick.Keys);
-    //     InitializeTriggers(visElToTrigger.Keys);
-
-    //     LoadImage("xbox-button-image", "xbox/xbox-symbol.png");
-    //     LoadImage("menu-button-image", "xbox/menu-symbol.png");
-    //     LoadImage("view-button-image", "xbox/view-symbol.png");
-    //     LoadImage("share-button-image", "xbox/share-symbol.png");
-    // }
- 
-    // void LoadImage(string targetElement, string imageName)
-    // {
-    //     var imageElement = rootVisualElement.Q<Image>(targetElement);
-
-    //     var texture = AssetDatabase.LoadAssetAtPath<Texture2D>($"Assets/Plugins/Editor/images/{imageName}");
-                
-    //     if (texture == null)
-    //     {
-    //         Debug.LogError($"Image {imageName} failed to load!");
-    //     }
-    //     imageElement.image = texture;
-    // }
-
     void OnControllerCurrentState(InputDevice device, InputDeviceChange device_change)
     {
         if (!(device is Gamepad gamepad)) return;
@@ -188,43 +101,30 @@ public class ControllerGUI : EditorWindow
         if (manager.GetPhysicalPad() is DualShockGamepad || device.layout.Contains("Dual"))
         {
             Debug.Log("playstation controller is active");
-            LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
+            Initializer.LoadUI(rootVisualElement, "Assets/Plugins/Editor/UI_PS.uxml");
+            InitInput();
+            // LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
         }
         else if (manager.GetPhysicalPad() is XInputController)
         {
             Debug.Log("Xbox controller is active");
-            LoadUXML("Assets/Plugins/Editor/UI_XBOX.uxml");
+            Initializer.LoadUI(rootVisualElement, "Assets/Plugins/Editor/UI_XBOX.uxml");
+            InitInput();
+            // LoadUXML("Assets/Plugins/Editor/UI_XBOX.uxml");
         }
         else
         {
             Debug.Log("No conntected gamepad!");
-            LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
+            Initializer.LoadUI(rootVisualElement, "Assets/Plugins/Editor/UI_PS.uxml");  // Should be generic, just switched to PS for testing.
+            InitInput();
+            // LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
         }
     }
 
-    void LoadUXML(string path)
-    {
-        // Load in the UXML and USS:
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(path);
-        
-        rootVisualElement.Clear();
-        visualTree.CloneTree(rootVisualElement);
-
-        rootVisualElement.RemoveFromClassList("xbox");
-        rootVisualElement.RemoveFromClassList("ps");
-        rootVisualElement.RemoveFromClassList("generic");
-
-        if (path.Contains("XBOX"))
-            rootVisualElement.AddToClassList("xbox");
-        else if (path.Contains("PS"))
-            rootVisualElement.AddToClassList("ps");
-        else
-            rootVisualElement.AddToClassList("generic");
-
-        // Initialize Buttons with functions:
-        InitializeButtons(visElToButton.Keys);
-        InitializeJoysticks(visElToJoystick.Keys);
-        InitializeTriggers(visElToTrigger.Keys);  
+    void InitInput() {
+        InitializeButtons(Dictionaries.visElToButton.Keys);
+        InitializeJoysticks(Dictionaries.visElToJoystick.Keys);
+        InitializeTriggers(Dictionaries.visElToTrigger.Keys);  
     }
 
     /// <summary>
@@ -341,7 +241,7 @@ public class ControllerGUI : EditorWindow
                 emulator.pressButton(ButtonName);
 
                 // Set this button's pressed state to true.
-                if (visElToButton.TryGetValue(name, out var type))
+                if (Dictionaries.visElToButton.TryGetValue(name, out var type))
                     XboxController.SetButton(type, true);
 
                 // Special logic for buttons with images
@@ -358,7 +258,7 @@ public class ControllerGUI : EditorWindow
                 // Debug.Log($"{name}: UP");
 
                 // Set this button's pressed state to false.
-                if (visElToButton.TryGetValue(name, out var type))
+                if (Dictionaries.visElToButton.TryGetValue(name, out var type))
                     XboxController.SetButton(type, false);
 
                 // Special logic for buttons with images
@@ -395,7 +295,7 @@ public class ControllerGUI : EditorWindow
             Vector2 clickOffset = Vector2.zero;
 
             // Look up joystick type from dictionary
-            if (!visElToJoystick.TryGetValue(name, out joystickType type))
+            if (!Dictionaries.visElToJoystick.TryGetValue(name, out joystickType type))
             {
                 Debug.LogWarning($"Joystick name '{name}' not mapped to a joystickType!");
                 continue;
@@ -518,7 +418,7 @@ public class ControllerGUI : EditorWindow
                         break;
                 }
 
-                if (visElToTrigger.TryGetValue(name, out var type))
+                if (Dictionaries.visElToTrigger.TryGetValue(name, out var type))
                     XboxController.SetTrigger(type, normalized);
             });
 
@@ -529,7 +429,7 @@ public class ControllerGUI : EditorWindow
                 dragging = false;
                 trigger.ReleasePointer(evt.pointerId);
 
-                if (visElToTrigger.TryGetValue(name, out var type))
+                if (Dictionaries.visElToTrigger.TryGetValue(name, out var type))
                     XboxController.SetTrigger(type, 0f);
             });
 
@@ -537,7 +437,7 @@ public class ControllerGUI : EditorWindow
             {
                 dragging = false;
 
-                if (visElToTrigger.TryGetValue(name, out var type))
+                if (Dictionaries.visElToTrigger.TryGetValue(name, out var type))
                     XboxController.SetTrigger(type, 0f);
 
                 emulator.releaseLeftTrigger();
@@ -719,7 +619,7 @@ public class ControllerGUI : EditorWindow
 
     public void emulatedControllerUpdate()
     {
-        foreach (var pair in visElToButton)
+        foreach (var pair in Dictionaries.visElToButton)
         {
             string elementName = pair.Key;
             buttonType button = pair.Value;
@@ -735,7 +635,7 @@ public class ControllerGUI : EditorWindow
                 element.RemoveFromClassList("ButtonPressed");
         }
 
-        foreach (var pair in visElToJoystick)
+        foreach (var pair in Dictionaries.visElToJoystick)
         {
             string name = pair.Key;
             joystickType type = pair.Value;
@@ -762,7 +662,7 @@ public class ControllerGUI : EditorWindow
             }
         }
 
-        foreach (var pair in visElToTrigger)
+        foreach (var pair in Dictionaries.visElToTrigger)
         {
             string name = pair.Key;
             triggerType type = pair.Value;
