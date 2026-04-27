@@ -231,6 +231,7 @@ public class ControllerGUI : EditorWindow
             {
                 button.RegisterCallback<PointerDownEvent>(pointerEvent =>
                 {
+                    button.tooltip = "Toggle the physical controller on or off. When disabled, only emulator input is used.";
                     var gamepad = ControllerManager.GetPhysicalPad();
 
                     if (gamepad == null)
