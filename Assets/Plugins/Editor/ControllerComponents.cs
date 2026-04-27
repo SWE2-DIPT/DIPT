@@ -71,7 +71,7 @@ public class ControllerComponents
             if (Vector2.Distance(currentPosition, previousPosition) > joystickThreshold)
             {
                 ControllerDebugLogger.LogMovement(
-                    $"{GetJoystickName(controllerJoystick)} Joystick → X:{currentPosition.x:F2} | Y:{currentPosition.y:F2}"
+                    $"{GetJoystickName(controllerJoystick)} Joystick to X:{currentPosition.x:F2} | Y:{currentPosition.y:F2}"
                 );
 
                 previousJoysticks[controllerJoystick] = currentPosition;
@@ -106,7 +106,7 @@ public class ControllerComponents
             if (Mathf.Abs(currentValue - previousValue) > triggerThreshold)
             {
                 ControllerDebugLogger.LogMovement(
-                    $"{GetTriggerName(controllerTrigger)} Trigger → {currentValue:F2}"
+                    $"{GetTriggerName(controllerTrigger)} Trigger to {currentValue:F2}"
                 );
 
                 previousTriggers[controllerTrigger] = currentValue;
