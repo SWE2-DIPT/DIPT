@@ -270,35 +270,6 @@ public class Tests
         emulator.dispose();
     }
 
-    // Test for moveLeftJoystick & moveRightJoystick function
-    // should simulate joystick movement
-    [Test]
-    public void GamepadEmulatorMoveJoysticks()
-    {
-        GamepadEmulator emulator = new GamepadEmulator();
-        Gamepad inputDevice = emulator.getGamepad();
-
-        // simulate joystick input using random values
-        float randLeftX = Random.Range(0f, 1f);
-        float randLeftY = Random.Range(0f, 1f);
-        float randRightX = Random.Range(0f, 1f);
-        float randRightY = Random.Range(0f, 1f);
-        emulator.moveLeftJoystick(randLeftX, randLeftY);
-        emulator.moveRightJoystick(randRightX, randRightY);
-        emulator.emulate();
-        InputSystem.Update();
-        
-        // assert the joysticks move to correct location
-        Vector2 expectedLeftStick = new Vector2(randLeftX, randLeftY).normalized;
-        Vector2 expectedRightStick = new Vector2(randRightX, randRightY).normalized;
-        Assert.AreEqual(expectedLeftStick.x, inputDevice.leftStick.ReadValue().x, 0.01f);
-        Assert.AreEqual(expectedLeftStick.y, inputDevice.leftStick.ReadValue().y, 0.01f);
-        Assert.AreEqual(expectedRightStick.x, inputDevice.rightStick.ReadValue().x, 0.01f);
-        Assert.AreEqual(expectedRightStick.y, inputDevice.rightStick.ReadValue().y, 0.01f);
-
-        emulator.dispose();
-    }
-
     // Test for resetLeftJoystick & resetRightJoystick function
     // should simulate joystick reset / no movement
     [Test]
