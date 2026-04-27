@@ -11,16 +11,21 @@ These debugging tools include:
   - Tracks when buttons are pressed and released, alongside how long they were pressed.
   - Gives values of the joysticks at certain intervals.
   - Allows manual saving of the log file (to prevent clogging up your system).
-- A list of all possible inputs from connected controller.
+  - KeyboardMapper which allows users to control emulation and visualizer
 # HOW TO INSTALL:
 1. Install Unity 6.3 LTS (6000.3.9f1)
 2. Download the ZIP file from GitHub.
-3. Extract the contents to preferred file location.
-4. In the Unity Hub, add project from disk and select the extracted folder. This also includes the dependencies for the project.
-5. Wait for Unity to import the project and open the project.
+3. Extract it and copy the Plugins folder found in Assets > Plugins into your own Unity project’s Assets folder.
+  - This will bring only the plugin into your project for you to use as you please.
+5. Wait for Unity to import your project and open the project.
 6. Navigate to the toolbar at the top of the Unity Editor Window and hover over Tools then DIPT then you can open our 3 tools: InputVisualizer, LogPlugin, and KeyboardMapper
 
 # HOW TO TEST:
 1. Open the project in Unity after downloading
 2. Navigate to the toolbar at the top of the Unity Editor Window and hover over Window then General then click Test Runner to open the window
 3. The tests can be revealed with the dropdown and then can be ran with the buttons at the bottom of the window.
+
+# FUTURE INSTALLATION:
+- In the future, we plan to streamline the installation process by allowing importing through both the Unity Asset store and the editor’s built-in package manager. 
+- To install via package manager, you would navigate to Window > Package Management > Package Manager. From there, click the + v icon in the top left corner, then click Install Package from git URL. It will then give you an input for which you should put a github link similar to the one above into it to install the package (this link does not exist yet and the one above will not work). This will install only the plugin, not including the demo.
+- To install via Unity Asset store, you would then be able to find our project on the asset store with its own link, in which you can simply download and import from the interface into our project (this method also does not work yet, as we do not have an Unity Asset Store link yet). This will also install only the plugin, not including the demo.
