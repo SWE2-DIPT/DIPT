@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 64e14964608f4c34695662002157347e
+guid: acefb4ef18348ce44a616da13923c340
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1401934855553109084
-    second: PlayStationCross_0
+      213: 8394346441392907267
+    second: Playstation-options-symbol_0
+  - first:
+      213: 4159573160138527363
+    second: Playstation-options-symbol_1
+  - first:
+      213: 7704153037154991978
+    second: Playstation-options-symbol_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +52,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,13 +106,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayStationCross_0
+      name: Playstation-options-symbol_0
       rect:
         serializedVersion: 2
-        x: 347
-        y: 55
-        width: 3156
-        height: 3156
+        x: 24
+        y: 69
+        width: 72
+        height: 12
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +121,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4a3b4883da35b8ce0800000000000000
-      internalID: -1401934855553109084
+      spriteID: 304e9c00d95be7470800000000000000
+      internalID: 8394346441392907267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Playstation-options-symbol_1
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 54
+        width: 72
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3825e4330c5c9b930800000000000000
+      internalID: 4159573160138527363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Playstation-options-symbol_2
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 40
+        width: 72
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6fbed27e56aaea60800000000000000
+      internalID: 7704153037154991978
       vertices: []
       indices: 
       edges: []
@@ -125,7 +175,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +185,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PlayStationCross_0: -1401934855553109084
+      Playstation-options-symbol_0: 8394346441392907267
+      Playstation-options-symbol_1: 4159573160138527363
+      Playstation-options-symbol_2: 7704153037154991978
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

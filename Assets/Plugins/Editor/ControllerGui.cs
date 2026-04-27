@@ -9,6 +9,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
+using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -59,6 +60,9 @@ public class ControllerGUI : EditorWindow
         var window = GetWindow<ControllerGUI>();
         window.titleContent = new GUIContent("gamepad");
         window.Show();
+
+        window.maxSize = new Vector2(441f, 771f);
+        window.minSize = new Vector2(441f, 620f);
     }
 
     public void CreateGUI()
@@ -99,13 +103,14 @@ public class ControllerGUI : EditorWindow
     {
         Debug.Log("Detected: " + device.displayName + " | Layout: " + device.layout);
 
-        if (manager.GetPhysicalPad() is DualShockGamepad || device.layout.Contains("Dual"))
+        if (manager.GetPhysicalPad() is DualShockGamepad)
         {
-            Debug.Log("playstation controller is active");
+            Debug.Log("playstation 5 controller is active");
             Initializer.LoadUI(rootVisualElement, "Assets/Plugins/Editor/UI_PS.uxml");
             InitializeInput();
             // LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
         }
+
         else if (manager.GetPhysicalPad() is XInputController)
         {
             Debug.Log("Xbox controller is active");
@@ -116,7 +121,7 @@ public class ControllerGUI : EditorWindow
         else
         {
             Debug.Log("No conntected gamepad!");
-            Initializer.LoadUI(rootVisualElement, "Assets/Plugins/Editor/UI_PS.uxml");  // Should be generic, just switched to PS for testing.
+            Initializer.LoadUI(rootVisualElement, "Assets/Plugins/Editor/UI_GENERIC.uxml");  // Should be generic, just switched to PS for testing.
             InitializeInput();
             // LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
         }
@@ -480,6 +485,9 @@ public class ControllerGUI : EditorWindow
         XboxController.SetButton(buttonType.Left, pad.dpad.left.isPressed);
         XboxController.SetButton(buttonType.Right, pad.dpad.right.isPressed);
 
+        XboxController.SetButton(buttonType.Menu, pad.startButton.isPressed);
+        XboxController.SetButton(buttonType.View, pad.selectButton.isPressed);
+
         XboxController.SetButton(buttonType.LeftStick, pad.leftStickButton.isPressed);
         XboxController.SetButton(buttonType.RightStick, pad.rightStickButton.isPressed);
 
@@ -488,6 +496,7 @@ public class ControllerGUI : EditorWindow
 
         XboxController.SetJoystick(joystickType.Left, pad.leftStick.ReadValue());
         XboxController.SetJoystick(joystickType.Right, pad.rightStick.ReadValue());
+
     }
     public void physicalControlellerUpdate()
     {
@@ -507,7 +516,11 @@ public class ControllerGUI : EditorWindow
             { "right-pad", buttonType.Right },
 
             { "left-stick", buttonType.LeftStick },
-            { "right-stick", buttonType.RightStick }
+            { "right-stick", buttonType.RightStick },
+
+            { "menu-button", buttonType.Menu },
+            { "view-button", buttonType.View },
+            { "share-button", buttonType.Share }
         };
 
         Dictionary<string, joystickType> physElToJoystick = new()

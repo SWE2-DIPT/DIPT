@@ -40,7 +40,7 @@ public class ControllerManager
     {
         foreach (var pad in Gamepad.all)
         {
-            if (!(pad is XInputController) && !(pad is DualShockGamepad))
+            if (!(pad is XInputController) && !(pad is DualShockGamepad) && !(pad is DualSenseGamepadHID))
             {
                 return pad;
             }

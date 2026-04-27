@@ -389,29 +389,32 @@
     width:35px;
     height:35px;
 }
+
 /*TRANSFERED*/
-.xbox.ButtonPressed {
-    background-color:lime;
+.xbox .menu {
+    background-image: url('images/xbox/menu-symbol.png');
 }
-/*TRANSFERED*/
-.menu.ButtonPressed {
+.xbox .menu.ButtonPressed {
     background-color:white;
+    background-image: url('images/xbox/menu-symbol-pressed.png');
 }
-/*TRANSFERED*/
-.view.ButtonPressed {
-    background-color:white;
-}
-/*TRANSFERED*/
-.share.ButtonPressed {
-    background-color:white;
+
+.xbox .view {
+    background-image: url('images/xbox/view-symbol.png');
 }
 
 /*TRANSFERED*/
-Image {
+.xbox .view.ButtonPressed {
+    background-color:white;
+    background-image: url('images/xbox/view-symbol-pressed.png');
+}
+
+/*TRANSFERED*/
+.xbox .image {
     width: 100%;
     height: 100%;
 }
 
-.icon {
+.xbox .icon {
     -unity-background-scale-mode: scale-to-fit;
 }

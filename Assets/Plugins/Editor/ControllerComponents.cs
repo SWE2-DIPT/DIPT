@@ -155,9 +155,9 @@ public class ControllerComponents
             };
         }
 
-        if (pad is DualShockGamepad)
+        if (pad is DualSenseGamepadHID)
         {
-            return button switch
+             return button switch
             {
                 buttonType.A => "Cross Button",
                 buttonType.B => "Circle Button",
@@ -171,8 +171,7 @@ public class ControllerComponents
                 buttonType.RBumper => "R1",
                 buttonType.Xbox => "PlayStation Button",
                 buttonType.Menu => "Options Button",
-                buttonType.View => "Create Button",
-                buttonType.Share => "Share Button",
+                buttonType.View => "Share Button",
                 buttonType.Advanced => "Advanced Button",
                 _ => button.ToString()
             };

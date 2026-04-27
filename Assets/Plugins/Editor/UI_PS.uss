@@ -87,6 +87,7 @@
 .ps #Y-button {
     color:#6BE4DF; /* This is yellow, the default yellow looks stupid */
     position: absolute;
+    background-image: url('images/PlayStation/triangle-symbol.png');
     border-width: 2px;
     border-color: black;
 }
@@ -94,13 +95,17 @@
 .ps #Y-button.ButtonPressed {
     background-color:#6BE4DF;
     color:#1F1F1F;
+    background-image: url('images/PlayStation/triangle-symbol-pressed.png');
+    -unity-background-scale-mode: scale-to-fit;
     position: absolute;
 }
+
 
 /*TRANSFERED*/
 .ps #B-button {
     color:#F75F66;
     position: absolute;
+    background-image: url('images/PlayStation/circle-symbol.png');
     border-width: 2px;
     border-color: black;
 }
@@ -108,12 +113,15 @@
 .ps #B-button.ButtonPressed {
     background-color:#F75F66;
     color:#1F1F1F;
+    background-image: url('images/PlayStation/circle-symbol-pressed.png');
+    -unity-background-scale-mode: scale-to-fit;
     position: absolute;
 }
 /*TRANSFERED*/
 .ps #A-button {
     color:#767EE1;
     position: absolute;
+    background-image: url('images/PlayStation/cross-symbol.png');
     border-width: 2px;
     border-color: black;
 }
@@ -121,19 +129,25 @@
 .ps #A-button.ButtonPressed {
     background-color:#767EE1;
     color:#1F1F1F;
+    background-image: url('images/PlayStation/cross-symbol-pressed.png');
+    -unity-background-scale-mode: scale-to-fit;
     position: absolute;
 }
+
 /*TRANSFERED*/
 .ps #X-button {
     color:#f69DC8;
     position: absolute;
-     border-width: 2px;
+    background-image: url('images/PlayStation/square-symbol.png');
+    border-width: 2px;
     border-color: black;
 }
 
 .ps #X-button.ButtonPressed {
     background-color:#f69DC8;
     color:#1F1F1F;
+    background-image: url('images/PlayStation/square-symbol-pressed.png');
+    -unity-background-scale-mode: scale-to-fit;
     position: absolute;
 }
 /*TRANSFERED*/
@@ -379,7 +393,7 @@
 .horizontal-group {
     background-color:#3b3b3b;
     width:100%;
-    height:100%;
+    height:140%;
     border-radius: 8px;
 
     justify-content: center;
@@ -389,7 +403,7 @@
 .button.horiz {
     background-color:#1F1F1F;
     width:25px;
-    height:25px;
+    height:35px;
     margin:1px;
 }
 /*TRANSFERED*/
@@ -397,16 +411,42 @@
     width:35px;
     height:35px;
 }
-/*TRANSFERED*/
-.xbox.ButtonPressed {
-    background-color:lime;
+.ps .menu{
+    width: 20px;
+    height: 30px;
+    background-color: #1F1F1F;
+    
+    /* Using a fixed pixel value instead of 50% */
+    border-radius: 30px; /* Exactly half the height */
+    border-top-left-radius:35%;
+    border-top-right-radius:35%;
+    border-bottom-right-radius:35%;
+    border-bottom-left-radius:35%;
+    /* OR use a very large value to lock it as a capsule */
+    /* border-radius: 999px; */
 }
 /*TRANSFERED*/
-.menu.ButtonPressed {
+.ps .menu.ButtonPressed {
     background-color:white;
 }
+
+.ps .view {
+    width: 20px;
+    height: 30px;
+    background-color: #1F1F1F;
+    
+    /* Using a fixed pixel value instead of 50% */
+    border-radius: 30px; /* Exactly half the height */
+    border-top-left-radius:35%;
+    border-top-right-radius:35%;
+    border-bottom-right-radius:35%;
+    border-bottom-left-radius:35%;
+
+    translate: 0 25;
+}
+
 /*TRANSFERED*/
-.view.ButtonPressed {
+.ps .view.ButtonPressed {
     background-color:white;
 }
 
@@ -416,13 +456,26 @@ Image {
     height: 100%;
 }
 
-#triangle,
-#circle,
-#square,
-#cross {
+.ps .icon {
     -unity-background-scale-mode: scale-to-fit;
 }
 
-.icon {
-    -unity-background-scale-mode: scale-to-fit;
+.ps .options {
+    position: absolute;
+    top: -25px; 
+    left: 50%;
+    width:25px;
+    height:25px;
+    translate: -50% 0; 
+    background-image: url('images/playstation/playstation-options-symbol.png');
+}
+
+.ps .share {
+    position: absolute;
+    top: 25px; 
+    left: 50%;
+    width:25px;
+    height:25px;
+    translate: -12 -50; 
+    background-image: url('images/playstation/playstation-share-symbol.png');
 }

@@ -38,14 +38,12 @@ public class ControllerEmulation : EditorWindow
      /*7*/ "West", 
      /*8*/ "LeftStick", 
      /*9*/ "RightStick",
-     ///*10*/ "LeftStickButton",
-     ///*11*/ "RightStickButton",
-     /*12*/ "LeftShoulder", 
-     /*13*/ "RightShoulder", 
-     /*14*/ "LeftTrigger",
-     /*15*/ "RightTrigger",
-     /*16*/ "Start", 
-     /*17*/ "Select"
+     /*10*/ "LeftShoulder", 
+     /*11*/ "RightShoulder", 
+     /*12*/ "LeftTrigger",
+     /*13*/ "RightTrigger",
+     /*14*/ "Start", 
+     /*15*/ "Select"
     };
 
     [MenuItem("Tools/DIPT/ControllerEmulation")]
