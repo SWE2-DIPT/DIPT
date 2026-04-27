@@ -43,7 +43,13 @@ public class KeyMapper
     {
         Key.Escape,
         Key.LeftWindows, Key.RightWindows, Key.LeftCommand, Key.RightCommand,
-        Key.Tab, Key.PrintScreen, Key.Pause, Key.Home, Key.End, Key.Delete, Key.Insert
+        Key.Tab, Key.PrintScreen, Key.Pause, Key.Home, Key.End, Key.Delete, Key.Insert,
+        // Avoid Old Unity to New Unity translation, future implementation can remove the numberpad from
+        // being "Forbidden" so users cna make it customizable
+        Key.Numpad0, Key.Numpad1, Key.Numpad2, Key.Numpad3, Key.Numpad4,
+        Key.Numpad5, Key.Numpad6, Key.Numpad7, Key.Numpad8, Key.Numpad9,
+        Key.NumpadEnter, Key.NumpadDivide, Key.NumpadMultiply,
+        Key.NumpadMinus, Key.NumpadPlus, Key.NumpadPeriod
     };
 
     // System.Serializable is an attribute. 
@@ -128,7 +134,7 @@ public class KeyMapper
         keyboardBinds.Add(Key.Digit1, buttonType.Xbox); // Number 1 above the Keyboard, not on Numberpad
         keyboardBinds.Add(Key.Digit2, buttonType.Menu); // Number 2 above the Keyboard, not on Numberpad
         keyboardBinds.Add(Key.Digit3, buttonType.View); // Number 3 above the Keyboard, not on Numberpad
-        keyboardBinds.Add(Key.Digit4, buttonType.Share); // Number 4 above the Keyboard, not on Numberpad
+        // keyboardBinds.Add(Key.Digit4, buttonType.Share); // Number 4 above the Keyboard, not on Numberpad
 
         keyboardBinds.Add(Key.E, buttonType.LBumper);
         keyboardBinds.Add(Key.U, buttonType.RBumper);
@@ -158,7 +164,7 @@ public class KeyMapper
         // End of Right Joystick
 
         SaveBinds();
-        Debug.Log("DIPT: Keybinds reset to factory defaults.");
+        // Debug.Log("DIPT: Keybinds reset to factory defaults.");
     }
 
     public static void SaveBinds()
@@ -189,7 +195,7 @@ public class KeyMapper
         // saftey check, if string json is empty (no file) load default
         if (string.IsNullOrEmpty(json))
         {
-            Debug.Log("DIPT: No save found, loading defaults.");
+            // Debug.Log("DIPT: No save found, loading defaults.");
             ResetToDefaults();
             return;
         }
@@ -218,7 +224,7 @@ public class KeyMapper
             foreach (var entry in wrapper.triggerList) keyboardTriggers[entry.key] = entry.action;
             foreach (var entry in wrapper.joystickList) keyboardJoysticks[entry.key] = (entry.stick, entry.dir);
 
-            Debug.Log("DIPT: Keybinds loaded successfully from EditorPrefs.");
+            // Debug.Log("DIPT: Keybinds loaded successfully from EditorPrefs.");
         }
         catch (Exception e)
         {

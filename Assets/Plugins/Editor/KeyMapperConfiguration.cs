@@ -39,10 +39,9 @@ public class KeyMapperConfiguration : EditorWindow
 
     void OnGUI()
     {
-
         if (isEnteringCustomKeybind) HandleRebindInput(); // If they click the keybind button to change, handle it
 
-        GUILayout.Label("DIPT Input Configuration", EditorStyles.boldLabel);
+        // GUILayout.Label("DIPT Input Configuration", EditorStyles.boldLabel);
 
         // Top of Bar
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -141,31 +140,72 @@ public class KeyMapperConfiguration : EditorWindow
     private void HandleRebindInput()
     {
         Event e = Event.current;
-
-        if (e.type == EventType.KeyDown) // If a Key, any Key was pressed down
+        if (e.type == EventType.KeyDown)
         {
-            if (e.keyCode == KeyCode.Escape) // If they press escape, leaves the listening state 
-            {
-                StopListening();
-                e.Use(); // Tells Unity we are done with this current event
-                return;
+            if (e.keyCode == KeyCode.Escape) 
+            { 
+                StopListening(); 
+                e.Use(); 
+                return; 
             }
 
-            string keyName = e.keyCode.ToString(); // This converts the Unity enum version 
-            // of the KeyCode to a readable string. For example 0 would be "Up"
+            Key detectedKey = Key.None;
 
-            if (Enum.IsDefined(typeof(Key), keyName)) 
+            // To help with translation from old unity system to new
+            if (e.keyCode >= KeyCode.Alpha0 && e.keyCode <= KeyCode.Alpha9)
             {
-                Key detectedKey = (Key)Enum.Parse(typeof(Key), keyName);
-
-                if (!KeyMapper.IsKeyForbidden(detectedKey)) // Key's that are not allowed in KeyMapper.cs
+                switch (e.keyCode)
                 {
-                    ApplyNewBind(detectedKey);
+                    case KeyCode.Alpha0:
+                        detectedKey = Key.Digit0;
+                        break;
+                    case KeyCode.Alpha1: 
+                        detectedKey = Key.Digit1; 
+                        break;
+                    case KeyCode.Alpha2: 
+                        detectedKey = Key.Digit2; 
+                        break;
+                    case KeyCode.Alpha3: 
+                        detectedKey = Key.Digit3; 
+                        break;
+                    case KeyCode.Alpha4: 
+                        detectedKey = Key.Digit4; 
+                        break;
+                    case KeyCode.Alpha5:
+                        detectedKey = Key.Digit5;
+                        break;
+                    case KeyCode.Alpha6:
+                        detectedKey = Key.Digit6;
+                        break;
+                    case KeyCode.Alpha7:
+                        detectedKey = Key.Digit7;
+                        break;
+                    case KeyCode.Alpha8:
+                        detectedKey = Key.Digit8;
+                        break;
+                    case KeyCode.Alpha9:
+                        detectedKey = Key.Digit9;
+                        break;
+                    default:
+                        string keyName = e.keyCode.ToString();
+                        if (Enum.IsDefined(typeof(Key), keyName))
+                            detectedKey = (Key)Enum.Parse(typeof(Key), keyName);
+                        break;
                 }
-
-                StopListening();
-                e.Use();
             }
+            else
+            {
+                string keyName = e.keyCode.ToString();
+                if (Enum.IsDefined(typeof(Key), keyName))
+                    detectedKey = (Key)Enum.Parse(typeof(Key), keyName);
+            }
+
+            if (detectedKey != Key.None && !KeyMapper.IsKeyForbidden(detectedKey))
+            {
+                ApplyNewBind(detectedKey);
+            }
+            StopListening();
+            e.Use();
         }
     }
 
@@ -184,7 +224,7 @@ public class KeyMapperConfiguration : EditorWindow
 
         KeyMapper.SaveBinds(); // Saves to EditorPrefs
 
-        Debug.Log($"DIPT: Successfully bound {pressedKey} and saved to registry.");
+        // Debug.Log($"DIPT: Successfully bound {pressedKey} and saved to registry.");
     }
 
     private void StopListening() { isEnteringCustomKeybind = false; whichBtnType = null; Repaint(); }
