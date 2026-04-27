@@ -37,8 +37,24 @@ public static class Initializer
         visualTree.CloneTree(root);  // Clones UI to root.
     }
 
-    /*
-    public static Dictionary<string, VisualElement> LoadButtonFunctions(IEnumerable<string> buttonNames)
+
+
+    /// <summary>
+    /// Finds all buttons listed in <paramref name="buttonNames"/> and assigns them
+    /// their functionalities.
+    /// </summary>
+    /// <remarks>
+    /// Example usage:
+    /// <c> 
+    /// InitializeButtons(new string[] {
+    ///    "A-button", "Y-button", "B-button", "X-button",
+    ///    "RB-button", "LB-button",
+    ///    "LT-button", "RT-button",
+    /// }); 
+    /// </c>
+    /// </remarks>
+    /// <param name="buttonNames">Array of names for the buttons you want queried</param>
+    public static Dictionary<string, VisualElement> LoadButtonFunctions(VisualElement rootVisualElement, IEnumerable<string> buttonNames, GamepadEmulator emulator)
     {
         Dictionary<string, VisualElement> buttons = new();
 
@@ -56,88 +72,13 @@ public static class Initializer
 
             // Put into dictionary (hash table);
             buttons[name] = button;
-            string ButtonName = name;
             // Assign pressed events:;
             button.RegisterCallback<PointerDownEvent>(evt =>
             {
-                Debug.Log($"{name}: DOWN");
-                //HELL
-                
-                switch (ButtonName)
-                {
-                    case "A-button":
-                        ButtonName = "A";
-                        break;
-
-                    case "B-button":
-                        ButtonName = "B";
-                        break;
-
-                    case "X-button":
-                        ButtonName = "X";
-                        break;
-
-                    case "Y-button":
-                        ButtonName = "Y";
-                        break;
-
-                    case "RB-button":
-                        ButtonName = "RightShoulder";
-                        break;
-
-                    case "LB-button":
-                        ButtonName = "LeftShoulder";
-                        break;
-
-                    case "up-pad":
-                        ButtonName = "DpadUp";
-                        break;
-
-                    case "down-pad":
-                        ButtonName = "DpadDown";
-                        break;
-
-                    case "left-pad":
-                        ButtonName = "DpadLeft";
-                        break;
-
-                    case "right-pad":
-                        ButtonName = "DpadRight";
-                        break;
-
-                    // case "xbox-button":
-                    //     ButtonName = "Xbox";
-                    //     break;
-
-                    case "menu-button":
-                        ButtonName = "Start";
-                        break;
-
-                    case "view-button":
-                        ButtonName = "Select";
-                        break;
-
-                    // case "share-button":
-                    //     ButtonName = "Share";
-                    //     break;
-
-                    // case "advanced":
-                    //     ButtonName = "Advanced";
-                    //     break;
-
-                    case "left-stick":
-                        ButtonName = "LeftStick";
-                        break;
-
-                    case "right-stick":
-                        ButtonName = "RightStick";
-                        break;
-                }
-                //removed "HE"
-                emulator.pressButton(ButtonName);
+                emulator.pressButton(Dictionaries.visElToEmulatorButton[name]);
 
                 // Set this button's pressed state to true.
-                if (visElToButton.TryGetValue(name, out var type))
+                if (Dictionaries.visElToButton.TryGetValue(name, out var type))
                     XboxController.SetButton(type, true);
 
                 // Special logic for buttons with images
@@ -154,7 +95,7 @@ public static class Initializer
                 Debug.Log($"{name}: UP");
 
                 // Set this button's pressed state to false.
-                if (visElToButton.TryGetValue(name, out var type))
+                if (Dictionaries.visElToButton.TryGetValue(name, out var type))
                     XboxController.SetButton(type, false);
 
                 // Special logic for buttons with images
@@ -167,5 +108,4 @@ public static class Initializer
         }
         return buttons;
     }
-    */
 }

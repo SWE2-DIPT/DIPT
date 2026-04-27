@@ -8,6 +8,7 @@
 *******************************************************/
 
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,7 +27,7 @@ public class ControllerGUI : EditorWindow
     Dictionary<string, VisualElement> buttons = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> joysticks = new Dictionary<string, VisualElement>();
     Dictionary<string, VisualElement> triggers = new Dictionary<string, VisualElement>();
-    
+
     private void OnEnable()
     {
         manager = new ControllerManager();
@@ -102,47 +103,31 @@ public class ControllerGUI : EditorWindow
         {
             Debug.Log("playstation controller is active");
             Initializer.LoadUI(rootVisualElement, "Assets/Plugins/Editor/UI_PS.uxml");
-            InitInput();
+            InitializeInput();
             // LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
         }
         else if (manager.GetPhysicalPad() is XInputController)
         {
             Debug.Log("Xbox controller is active");
             Initializer.LoadUI(rootVisualElement, "Assets/Plugins/Editor/UI_XBOX.uxml");
-            InitInput();
+            InitializeInput();
             // LoadUXML("Assets/Plugins/Editor/UI_XBOX.uxml");
         }
         else
         {
             Debug.Log("No conntected gamepad!");
             Initializer.LoadUI(rootVisualElement, "Assets/Plugins/Editor/UI_PS.uxml");  // Should be generic, just switched to PS for testing.
-            InitInput();
+            InitializeInput();
             // LoadUXML("Assets/Plugins/Editor/UI_PS.uxml");
         }
     }
 
-    void InitInput() {
+    void InitializeInput() {
         InitializeButtons(Dictionaries.visElToButton.Keys);
         InitializeJoysticks(Dictionaries.visElToJoystick.Keys);
         InitializeTriggers(Dictionaries.visElToTrigger.Keys);  
     }
 
-    /// <summary>
-    /// Finds all buttons listed in <paramref name="buttonNames"/> and assigns them
-    /// their functionalities.
-    /// </summary>
-    /// <remarks>
-    /// Example usage:
-    /// <c> 
-    /// InitializeButtons(new string[] {
-    ///    "A-button", "Y-button", "B-button", "X-button",
-    ///    "RB-button", "LB-button",
-    ///    "LT-button", "RT-button",
-    /// }); 
-    /// </c>
-    /// </remarks>
-    /// <param name="buttonNames">Array of names for the buttons you want queried</param>
-    /// 
     void InitializeButtons(IEnumerable<string> buttonNames)
     {
 

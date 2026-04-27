@@ -41,4 +41,23 @@ public static class Dictionaries
         { "left-joystick", joystickType.Left },
         { "right-joystick", joystickType.Right }
     };
+
+    public static readonly Dictionary<string, string> visElToEmulatorButton = new()
+    {
+        { "A-button", "A" },
+        { "B-button", "B" },
+        { "X-button", "X" },
+        { "Y-button", "Y" },
+
+        { "RB-button", "RightShoulder" },
+        { "LB-button", "LeftShoulder" },
+
+        { "up-pad", "DpadUp" },
+        { "down-pad", "DpadDown" },
+        { "left-pad", "DpadLeft" },
+        { "right-pad", "DpadRight" },
+
+        { "right-stick", "RightStick" },
+        { "left-stick", "LeftStick" },
+    };
 }
