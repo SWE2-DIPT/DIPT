@@ -1,3 +1,17 @@
+/*******************************************************
+* Script:      ControllerComponents.cs
+* Authors:     Nicholas Stearns
+* Description:
+*    Tracks controller input changes and sends readable log
+*    messages to ControllerDebugLogger. This file compares the
+*    current controller state against the previous state so it
+*    only logs changes, including button presses, button releases,
+*    joystick movement, trigger movement, and PlayStation touchpad
+*    input. It also runs automatically in the Unity Editor so the
+*    log can work without the input visualizer window being open.
+*******************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEditor;
@@ -10,131 +24,169 @@ using UnityEngine.InputSystem.XInput;
 
 public class ControllerComponents
 {
-    private readonly Dictionary<buttonType, bool> prevButtons = new();
-    private readonly Dictionary<triggerType, float> prevTriggers = new();
-    private readonly Dictionary<joystickType, Vector2> prevJoysticks = new();
-    private readonly Dictionary<joystickType, bool> prevJoystickButtons = new();
+    private readonly Dictionary<buttonType, bool> previousButtons = new();
+    private readonly Dictionary<triggerType, float> previousTriggers = new();
+    private readonly Dictionary<joystickType, Vector2> previousJoysticks = new();
+    private readonly Dictionary<joystickType, bool> previousJoystickButtons = new();
 
-    private bool prevTouchpad;
+    private bool previousTouchpad;
 
     private const float joystickThreshold = 0.10f;
     private const float triggerThreshold = 0.05f;
 
-    private readonly ControllerManager manager;
-
+    /// <summary>
+    /// Initializes previous input values so future updates can detect changes.
+    /// </summary>
     public ControllerComponents()
     {
-        manager = new ControllerManager();
-
-        foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
-            prevButtons[button] = false;
-
-        foreach (triggerType trigger in System.Enum.GetValues(typeof(triggerType)))
-            prevTriggers[trigger] = 0f;
-
-        foreach (joystickType joystick in System.Enum.GetValues(typeof(joystickType)))
+        foreach (buttonType controllerButton in Enum.GetValues(typeof(buttonType)))
         {
-            prevJoysticks[joystick] = Vector2.zero;
-            prevJoystickButtons[joystick] = false;
+            previousButtons[controllerButton] = false;
         }
 
-        prevTouchpad = false;
+        foreach (triggerType controllerTrigger in Enum.GetValues(typeof(triggerType)))
+        {
+            previousTriggers[controllerTrigger] = 0f;
+        }
+
+        foreach (joystickType controllerJoystick in Enum.GetValues(typeof(joystickType)))
+        {
+            previousJoysticks[controllerJoystick] = Vector2.zero;
+            previousJoystickButtons[controllerJoystick] = false;
+        }
+
+        previousTouchpad = false;
     }
 
+    /// <summary>
+    /// Logs joystick movement and joystick button press or release changes.
+    /// </summary>
     public void GetJoystickActivity()
     {
-        foreach (joystickType joystick in System.Enum.GetValues(typeof(joystickType)))
+        foreach (joystickType controllerJoystick in Enum.GetValues(typeof(joystickType)))
         {
-            Vector2 currentValue = XboxController.GetJoystick(joystick).position;
-            Vector2 previousValue = prevJoysticks[joystick];
+            Vector2 currentPosition = Controller.GetJoystick(controllerJoystick);
+            Vector2 previousPosition = previousJoysticks[controllerJoystick];
 
-            if (Vector2.Distance(currentValue, previousValue) > joystickThreshold)
+            if (Vector2.Distance(currentPosition, previousPosition) > joystickThreshold)
             {
                 ControllerDebugLogger.LogMovement(
-                    $"{GetJoystickName(joystick)} Joystick moved to X:{currentValue.x:F2} | Y:{currentValue.y:F2}"
+                    $"{GetJoystickName(controllerJoystick)} Joystick → X:{currentPosition.x:F2} | Y:{currentPosition.y:F2}"
                 );
 
-                prevJoysticks[joystick] = currentValue;
+                previousJoysticks[controllerJoystick] = currentPosition;
             }
 
-            bool currentPressed = XboxController.GetJoystick(joystick).pressed;
-            bool previousPressed = prevJoystickButtons[joystick];
+            bool currentPressed = Controller.GetButton(
+                controllerJoystick == joystickType.Left ? buttonType.LeftStick : buttonType.RightStick
+            );
+
+            bool previousPressed = previousJoystickButtons[controllerJoystick];
 
             CheckButtonState(
-                $"{GetJoystickName(joystick)} Joystick Press",
+                $"{GetJoystickName(controllerJoystick)} Joystick",
                 currentPressed,
                 ref previousPressed
             );
 
-            prevJoystickButtons[joystick] = previousPressed;
+            previousJoystickButtons[controllerJoystick] = previousPressed;
         }
     }
 
+    /// <summary>
+    /// Logs trigger value changes when the trigger moves past the threshold.
+    /// </summary>
     public void GetTriggerActivity()
     {
-        foreach (triggerType trigger in System.Enum.GetValues(typeof(triggerType)))
+        foreach (triggerType controllerTrigger in Enum.GetValues(typeof(triggerType)))
         {
-            float currentValue = XboxController.GetTrigger(trigger).pressure;
-            float previousValue = prevTriggers[trigger];
+            float currentValue = Controller.GetTrigger(controllerTrigger);
+            float previousValue = previousTriggers[controllerTrigger];
 
             if (Mathf.Abs(currentValue - previousValue) > triggerThreshold)
             {
                 ControllerDebugLogger.LogMovement(
-                    $"{GetTriggerName(trigger)} Trigger changed to {currentValue:F2}"
+                    $"{GetTriggerName(controllerTrigger)} Trigger → {currentValue:F2}"
                 );
 
-                prevTriggers[trigger] = currentValue;
+                previousTriggers[controllerTrigger] = currentValue;
             }
         }
     }
 
+    /// <summary>
+    /// Logs regular button press and release changes.
+    /// </summary>
     public void GetButtonActivity()
     {
-        foreach (buttonType button in System.Enum.GetValues(typeof(buttonType)))
+        foreach (buttonType controllerButton in Enum.GetValues(typeof(buttonType)))
         {
-            bool currentState = XboxController.GetButton(button).pressed;
-            bool previousState = prevButtons[button];
+            if (controllerButton == buttonType.LeftStick || controllerButton == buttonType.RightStick)
+            {
+                continue;
+            }
 
-            CheckButtonState(GetButtonName(button), currentState, ref previousState);
+            bool currentPressed = Controller.GetButton(controllerButton);
+            bool previousPressed = previousButtons[controllerButton];
 
-            prevButtons[button] = previousState;
+            CheckButtonState(GetButtonName(controllerButton), currentPressed, ref previousPressed);
+            previousButtons[controllerButton] = previousPressed;
         }
     }
 
+    /// <summary>
+    /// Logs PlayStation touchpad press and release changes when a supported controller is connected.
+    /// </summary>
     public void GetTouchpadActivity()
     {
-        var gamepad = Gamepad.current;
+        var gamepad = ControllerManager.GetPhysicalPad();
 
-        if (gamepad is not DualShockGamepad dualShock)
+        if (gamepad is not DualShockGamepad dualShockGamepad)
+        {
             return;
+        }
 
-        bool currentTouchpad = dualShock.touchpadButton.isPressed;
+        bool currentTouchpad = dualShockGamepad.touchpadButton.isPressed;
 
-        if (currentTouchpad && !prevTouchpad)
+        if (currentTouchpad && !previousTouchpad)
+        {
             ControllerDebugLogger.LogPressed("Touchpad");
-        else if (!currentTouchpad && prevTouchpad)
+        }
+        else if (!currentTouchpad && previousTouchpad)
+        {
             ControllerDebugLogger.LogReleased("Touchpad");
+        }
 
-        prevTouchpad = currentTouchpad;
+        previousTouchpad = currentTouchpad;
     }
 
+    /// <summary>
+    /// Compares current and previous button states and logs only when the state changes.
+    /// </summary>
     internal void CheckButtonState(string buttonName, bool currentState, ref bool previousState)
     {
         if (currentState && !previousState)
+        {
             ControllerDebugLogger.LogPressed(buttonName);
+        }
         else if (!currentState && previousState)
+        {
             ControllerDebugLogger.LogReleased(buttonName);
+        }
 
         previousState = currentState;
     }
 
-    private string GetButtonName(buttonType button)
+    /// <summary>
+    /// Returns the display name for a button based on the connected controller type.
+    /// </summary>
+    private string GetButtonName(buttonType controllerButton)
     {
-        var pad = manager.GetPhysicalPad();
+        var gamepad = ControllerManager.GetPhysicalPad();
 
-        if (pad is XInputController)
+        if (gamepad is XInputController)
         {
-            return button switch
+            return controllerButton switch
             {
                 buttonType.A => "A Button",
                 buttonType.B => "B Button",
@@ -151,13 +203,13 @@ public class ControllerComponents
                 buttonType.View => "View Button",
                 buttonType.Share => "Share Button",
                 buttonType.Advanced => "Advanced Button",
-                _ => button.ToString()
+                _ => controllerButton.ToString()
             };
         }
 
-        if (pad is DualSenseGamepadHID)
+        if (gamepad is DualShockGamepad || gamepad is DualSenseGamepadHID)
         {
-             return button switch
+            return controllerButton switch
             {
                 buttonType.A => "Cross Button",
                 buttonType.B => "Circle Button",
@@ -173,47 +225,53 @@ public class ControllerComponents
                 buttonType.Menu => "Options Button",
                 buttonType.View => "Share Button",
                 buttonType.Advanced => "Advanced Button",
-                _ => button.ToString()
+                _ => controllerButton.ToString()
             };
         }
 
-        return button.ToString();
+        return controllerButton.ToString();
     }
 
-    private string GetTriggerName(triggerType trigger)
+    /// <summary>
+    /// Returns the display name for a trigger based on the connected controller type.
+    /// </summary>
+    private string GetTriggerName(triggerType controllerTrigger)
     {
-        var pad = manager.GetPhysicalPad();
+        var gamepad = ControllerManager.GetPhysicalPad();
 
-        if (pad is XInputController)
+        if (gamepad is XInputController)
         {
-            return trigger switch
+            return controllerTrigger switch
             {
                 triggerType.Left => "LT",
                 triggerType.Right => "RT",
-                _ => trigger.ToString()
+                _ => controllerTrigger.ToString()
             };
         }
 
-        if (pad is DualShockGamepad)
+        if (gamepad is DualShockGamepad)
         {
-            return trigger switch
+            return controllerTrigger switch
             {
                 triggerType.Left => "L2",
                 triggerType.Right => "R2",
-                _ => trigger.ToString()
+                _ => controllerTrigger.ToString()
             };
         }
 
-        return trigger.ToString();
+        return controllerTrigger.ToString();
     }
 
-    private string GetJoystickName(joystickType joystick)
+    /// <summary>
+    /// Returns the display name for a joystick.
+    /// </summary>
+    private string GetJoystickName(joystickType controllerJoystick)
     {
-        return joystick switch
+        return controllerJoystick switch
         {
             joystickType.Left => "Left",
             joystickType.Right => "Right",
-            _ => joystick.ToString()
+            _ => controllerJoystick.ToString()
         };
     }
 }
@@ -223,6 +281,9 @@ public static class ControllerComponentsAutoRunner
 {
     private static ControllerComponents components;
 
+    /// <summary>
+    /// Starts automatic input reading and logging when the Unity Editor loads.
+    /// </summary>
     static ControllerComponentsAutoRunner()
     {
         components = new ControllerComponents();
@@ -237,6 +298,9 @@ public static class ControllerComponentsAutoRunner
         EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
     }
 
+    /// <summary>
+    /// Resets input tracking when Unity switches between edit mode and play mode.
+    /// </summary>
     private static void OnPlayModeStateChanged(PlayModeStateChange state)
     {
         if (state == PlayModeStateChange.EnteredPlayMode ||
@@ -252,22 +316,23 @@ public static class ControllerComponentsAutoRunner
         }
     }
 
-    // Reads input in sync with the Input System's own update cycle,
-    // Gamepad.current values are always current in both Edit and Play Mode
+    /// <summary>
+    /// Reads physical controller input into the shared Controller state after Input System updates.
+    /// </summary>
     private static void ReadInput()
     {
-        bool guiOpen = EditorWindow.HasOpenInstances<ControllerGUI>();
-
-        // GUI handles its own reading via its own onAfterUpdate subscription
-        if (!guiOpen)
-        {
-            ControllerInputReader.ReadPhysicalInputIntoXboxController();
-        }
+        ControllerInputReader.ReadPhysicalInputIntoController();
     }
+
+    /// <summary>
+    /// Checks for controller activity changes and sends logs when needed.
+    /// </summary>
     private static void Update()
     {
         if (components == null)
+        {
             components = new ControllerComponents();
+        }
 
         components.GetJoystickActivity();
         components.GetTriggerActivity();

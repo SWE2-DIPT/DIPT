@@ -1,8 +1,18 @@
+/*******************************************************
+* Script:      Dictionaries.cs
+* 
+* Description:
+*    Stores shared lookup tables used by the controller
+*    visualizer and emulator. These dictionaries connect
+*    UXML visual element names to internal button, trigger,
+*    joystick, and emulator input identifiers so each system
+*    can refer to the same controller input consistently.
+*******************************************************/
+
 using System.Collections.Generic;
 
 /// <summary>
-/// Dictionaries <see langword="for"/> converting between different identifiers that describe similar
-/// buttons.  
+/// Stores mappings between visual UI element names and controller input identifiers.
 /// </summary>
 public static class Dictionaries
 {
@@ -31,11 +41,13 @@ public static class Dictionaries
 
         { "advanced", buttonType.Advanced }
     };
+
     public static readonly Dictionary<string, triggerType> visElToTrigger = new()
     {
         { "LT-button", triggerType.Left },
         { "RT-button", triggerType.Right }
     };
+
     public static readonly Dictionary<string, joystickType> visElToJoystick = new()
     {
         { "left-joystick", joystickType.Left },
@@ -58,6 +70,6 @@ public static class Dictionaries
         { "right-pad", "DpadRight" },
 
         { "right-stick", "RightStick" },
-        { "left-stick", "LeftStick" },
+        { "left-stick", "LeftStick" }
     };
 }

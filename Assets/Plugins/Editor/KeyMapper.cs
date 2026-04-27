@@ -3,61 +3,93 @@
 * Author(s):   Andrew Bradnao (Add yourselves to this!)
 * 
 * Description:
-*    Allows user to map keybinds to interact with GUI.
+*    Handles keyboard-to-controller input mapping for the
+*    DIPT controller emulator. This file stores default
+*    keyboard bindings, saves and loads custom bindings using
+*    Unity EditorPrefs, prevents unsafe keys from being used,
+*    and converts keyboard input into emulated controller
+*    buttons, triggers, and joystick movement.
 *    
-* Notes: How to find the JSON file to manually inspect, clear, or delete
-* - WINDOWS: Run 'regedit' -> HKEY_CURRENT_USER\Software\Unity Technologies\Unity Editor 5.x
-* - MACOS:   ~/Library/Preferences/com.unity3d.UnityEditor5.x.plist
-* - LINUX:   ~/.config/unity3d/UnityEditor5.x
-*   File paths written April 2026
-*   Windows path confirmed by Developer, MACOS and LINUX pathways provided by Gemini AI (Google)
-*   
-*   BE CAREFUL NOT TO EDIT ANYTHING UNLESS YOU KNOW EXACTLY WHAT YOU ARE DOING
-*   IF YOU EDIT THE WRONG FILE, OR DELETE THE WRONG FILE, IT MAY AFFECT YOUR MACHINE'S SYSTEM
-*   File name of JSON file that saves Keybinds is the string saved in the class variable SAVE_KEY
+* Notes:
+*    Saved keybinds are stored in Unity EditorPrefs under:
+*    DIPT_KeyBinds_JSON
+*    How to find the JSON file to manually inspect, clear, or delete
+* -  WINDOWS: Run 'regedit' -> HKEY_CURRENT_USER\Software\Unity Technologies\Unity Editor 5.x
+* -  MACOS:   ~/Library/Preferences/com.unity3d.UnityEditor5.x.plist
+* -  LINUX:   ~/.config/unity3d/UnityEditor5.x
 *******************************************************/
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.InputSystem;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Collections;
 
-[InitializeOnLoad] // this allows the static KeyMapper() to run immediately
-                   // For debugging, if you want to disconnect this file 
-                   // comment out InitializeOnLoad line
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+[InitializeOnLoad]
 public class KeyMapper
 {
-    private static Dictionary<UnityEngine.InputSystem.Key, buttonType> keyboardBinds = new();
-    private static Dictionary<UnityEngine.InputSystem.Key, triggerType> keyboardTriggers = new();
-    private static Dictionary<UnityEngine.InputSystem.Key, (joystickType stick, Vector2 direction)> keyboardJoysticks = new();
-    // This a tuple ^^ for the Joysticks
+    private static Dictionary<Key, buttonType> keyboardBinds = new();
+    private static Dictionary<Key, triggerType> keyboardTriggers = new();
+    private static Dictionary<Key, (joystickType stick, Vector2 direction)> keyboardJoysticks = new();
 
-    private const string SAVE_KEY = "DIPT_KeyBinds_JSON"; // Type of JSON file for saving custom Keybinds
-    private static bool keyboardWasActive = false; // Variable to keep track if the keyboard was active in the last frame
+    private const string SAVE_KEY = "DIPT_KeyBinds_JSON";
+    private static bool keyboardWasActive = false;
     private static bool isInitialized = false;
 
-    // Prevent users from getting stuck in their editor/plugin
-    private static readonly HashSet<Key> ForbiddenKeys = new() // Used to cancel rebinding
+    private static readonly HashSet<Key> ForbiddenKeys = new()
     {
         Key.Escape,
-        Key.LeftWindows, Key.RightWindows, Key.LeftCommand, Key.RightCommand,
-        Key.Tab, Key.PrintScreen, Key.Pause, Key.Home, Key.End, Key.Delete, Key.Insert,
-        // Avoid Old Unity to New Unity translation, future implementation can remove the numberpad from
-        // being "Forbidden" so users cna make it customizable
-        Key.Numpad0, Key.Numpad1, Key.Numpad2, Key.Numpad3, Key.Numpad4,
-        Key.Numpad5, Key.Numpad6, Key.Numpad7, Key.Numpad8, Key.Numpad9,
-        Key.NumpadEnter, Key.NumpadDivide, Key.NumpadMultiply,
-        Key.NumpadMinus, Key.NumpadPlus, Key.NumpadPeriod
+        Key.LeftWindows,
+        Key.RightWindows,
+        Key.LeftCommand,
+        Key.RightCommand,
+        Key.Tab,
+        Key.PrintScreen,
+        Key.Pause,
+        Key.Home,
+        Key.End,
+        Key.Delete,
+        Key.Insert,
+        Key.Numpad0,
+        Key.Numpad1,
+        Key.Numpad2,
+        Key.Numpad3,
+        Key.Numpad4,
+        Key.Numpad5,
+        Key.Numpad6,
+        Key.Numpad7,
+        Key.Numpad8,
+        Key.Numpad9,
+        Key.NumpadEnter,
+        Key.NumpadDivide,
+        Key.NumpadMultiply,
+        Key.NumpadMinus,
+        Key.NumpadPlus,
+        Key.NumpadPeriod
     };
 
-    // System.Serializable is an attribute. 
-    // Tells Unity this class is safe to save, without this, JsonUtility won't be able 
-    // to see or write these variables to save the file.
-    [System.Serializable] private class ButtonEntry { public Key key; public buttonType action; }
-    [System.Serializable] private class TriggerEntry { public Key key; public triggerType action; }
-    [System.Serializable] private class JoystickEntry { public Key key; public joystickType stick; public Vector2 dir; }
+    [System.Serializable]
+    private class ButtonEntry
+    {
+        public Key key;
+        public buttonType action;
+    }
+
+    [System.Serializable]
+    private class TriggerEntry
+    {
+        public Key key;
+        public triggerType action;
+    }
+
+    [System.Serializable]
+    private class JoystickEntry
+    {
+        public Key key;
+        public joystickType stick;
+        public Vector2 direction;
+    }
 
     [System.Serializable]
     private class BindWrapper
@@ -67,41 +99,72 @@ public class KeyMapper
         public List<JoystickEntry> joystickList = new();
     }
 
+    /// <summary>
+    /// Runs when Unity loads the editor and prepares the saved keybind data.
+    /// </summary>
     static KeyMapper()
     {
-        // This runs automatically without you doing anything
         EnsureInitialized();
-        // Debug.Log("KeyMapper Initialized and Ready.");
     }
 
-
-    // Getter functions
+    /// <summary>
+    /// Returns the keyboard key currently assigned to a controller button.
+    /// </summary>
     public static string GetKeyForButton(buttonType action)
     {
-        var pair = keyboardBinds.FirstOrDefault(x => x.Value == action); // Functino to check everything and stops at first match
-        // if finds nothing returns a sort of empty container
-        return pair.Key == Key.None ? "[ Unassigned ]" : pair.Key.ToString();
+        var binding = keyboardBinds.FirstOrDefault(keyBind => keyBind.Value == action);
+
+        if (binding.Key == Key.None)
+        {
+            return "[ Unassigned ]";
+        }
+
+        return binding.Key.ToString();
     }
 
+    /// <summary>
+    /// Returns the keyboard key currently assigned to a controller trigger.
+    /// </summary>
     public static string GetKeyForTrigger(triggerType action)
     {
-        var pair = keyboardTriggers.FirstOrDefault(x => x.Value == action);
-        return pair.Key == Key.None ? "[ Unassigned ]" : pair.Key.ToString();
+        var binding = keyboardTriggers.FirstOrDefault(keyBind => keyBind.Value == action);
+
+        if (binding.Key == Key.None)
+        {
+            return "[ Unassigned ]";
+        }
+
+        return binding.Key.ToString();
     }
 
+    /// <summary>
+    /// Returns the keyboard key currently assigned to a joystick direction.
+    /// </summary>
     public static string GetKeyForJoystick(joystickType stick, Vector2 direction)
     {
-        var pair = keyboardJoysticks.FirstOrDefault(x =>
-            x.Value.stick == stick && x.Value.direction == direction);
-        return pair.Key == Key.None ? "[ Unassigned ]" : pair.Key.ToString();
-    }
-    // End of getter functions
+        var binding = keyboardJoysticks.FirstOrDefault(keyBind =>
+            keyBind.Value.stick == stick && keyBind.Value.direction == direction
+        );
 
+        if (binding.Key == Key.None)
+        {
+            return "[ Unassigned ]";
+        }
+
+        return binding.Key.ToString();
+    }
+
+    /// <summary>
+    /// Loads saved keybinds once, or creates default keybinds if no save exists.
+    /// </summary>
     public static void EnsureInitialized()
     {
-        if (isInitialized) return;
+        if (isInitialized)
+        {
+            return;
+        }
 
-        if (EditorPrefs.HasKey(SAVE_KEY)) // if the file already exists with keybinds
+        if (EditorPrefs.HasKey(SAVE_KEY))
         {
             LoadBinds();
         }
@@ -113,14 +176,15 @@ public class KeyMapper
         isInitialized = true;
     }
 
+    /// <summary>
+    /// Restores all keyboard mappings to the default controller layout and saves them.
+    /// </summary>
     public static void ResetToDefaults()
     {
-        keyboardBinds.Clear(); // clear the dictionarys
+        keyboardBinds.Clear();
         keyboardTriggers.Clear();
         keyboardJoysticks.Clear();
 
-
-        // Start of buttonTypes
         keyboardBinds.Add(Key.Z, buttonType.Up);
         keyboardBinds.Add(Key.X, buttonType.Left);
         keyboardBinds.Add(Key.C, buttonType.Down);
@@ -128,74 +192,83 @@ public class KeyMapper
 
         keyboardBinds.Add(Key.N, buttonType.Y);
         keyboardBinds.Add(Key.M, buttonType.X);
-        keyboardBinds.Add(Key.Comma, buttonType.A); // the , symbol
-        keyboardBinds.Add(Key.Period, buttonType.B); // the . symbol
+        keyboardBinds.Add(Key.Comma, buttonType.A);
+        keyboardBinds.Add(Key.Period, buttonType.B);
 
-        keyboardBinds.Add(Key.Digit1, buttonType.Xbox); // Number 1 above the Keyboard, not on Numberpad
-        keyboardBinds.Add(Key.Digit2, buttonType.Menu); // Number 2 above the Keyboard, not on Numberpad
-        keyboardBinds.Add(Key.Digit3, buttonType.View); // Number 3 above the Keyboard, not on Numberpad
-        // keyboardBinds.Add(Key.Digit4, buttonType.Share); // Number 4 above the Keyboard, not on Numberpad
+        keyboardBinds.Add(Key.Digit1, buttonType.Xbox);
+        keyboardBinds.Add(Key.Digit2, buttonType.Menu);
+        keyboardBinds.Add(Key.Digit3, buttonType.View);
 
         keyboardBinds.Add(Key.E, buttonType.LBumper);
         keyboardBinds.Add(Key.U, buttonType.RBumper);
 
         keyboardBinds.Add(Key.F, buttonType.LeftStick);
         keyboardBinds.Add(Key.H, buttonType.RightStick);
-        // End of buttonTypes
 
-        // Start of triggerTypes
         keyboardTriggers.Add(Key.Q, triggerType.Left);
         keyboardTriggers.Add(Key.O, triggerType.Right);
-        // End of triggerTypes
 
-        // Start of Joysticks
-        // Start of Left Joystick
         keyboardJoysticks.Add(Key.W, (joystickType.Left, Vector2.up));
         keyboardJoysticks.Add(Key.S, (joystickType.Left, Vector2.down));
         keyboardJoysticks.Add(Key.A, (joystickType.Left, Vector2.left));
         keyboardJoysticks.Add(Key.D, (joystickType.Left, Vector2.right));
-        // End of Left Joystick
 
-        // Start of Right Joystick
         keyboardJoysticks.Add(Key.I, (joystickType.Right, Vector2.up));
         keyboardJoysticks.Add(Key.K, (joystickType.Right, Vector2.down));
         keyboardJoysticks.Add(Key.J, (joystickType.Right, Vector2.left));
         keyboardJoysticks.Add(Key.L, (joystickType.Right, Vector2.right));
-        // End of Right Joystick
 
         SaveBinds();
-        // Debug.Log("DIPT: Keybinds reset to factory defaults.");
     }
 
+    /// <summary>
+    /// Saves the current button, trigger, and joystick keybinds into Unity EditorPrefs.
+    /// </summary>
     public static void SaveBinds()
     {
-        BindWrapper wrapper = new BindWrapper(); // A place to hold all the infromation 
-        //BindWrapper, ButtonEntry, TriggerEntry, and JoystickEntry are all self declared variables
-        // at the top of the file
+        BindWrapper wrapper = new BindWrapper();
 
-        foreach (var KeyValuePair in keyboardBinds)
-            wrapper.buttonList.Add(new ButtonEntry { key = KeyValuePair.Key, action = KeyValuePair.Value });
+        foreach (var buttonBind in keyboardBinds)
+        {
+            wrapper.buttonList.Add(new ButtonEntry
+            {
+                key = buttonBind.Key,
+                action = buttonBind.Value
+            });
+        }
 
-        foreach (var KeyValuePair in keyboardTriggers)
-            wrapper.triggerList.Add(new TriggerEntry { key = KeyValuePair.Key, action = KeyValuePair.Value });
+        foreach (var triggerBind in keyboardTriggers)
+        {
+            wrapper.triggerList.Add(new TriggerEntry
+            {
+                key = triggerBind.Key,
+                action = triggerBind.Value
+            });
+        }
 
-        foreach (var KeyValuePair in keyboardJoysticks)
-            wrapper.joystickList.Add(new JoystickEntry { key = KeyValuePair.Key, stick = KeyValuePair.Value.stick, dir = KeyValuePair.Value.direction });
+        foreach (var joystickBind in keyboardJoysticks)
+        {
+            wrapper.joystickList.Add(new JoystickEntry
+            {
+                key = joystickBind.Key,
+                stick = joystickBind.Value.stick,
+                direction = joystickBind.Value.direction
+            });
+        }
 
-        string json = JsonUtility.ToJson(wrapper); // turns everything in to JSON
-        EditorPrefs.SetString(SAVE_KEY, json);      // Saved within Unity's Editor settings place
-
+        string json = JsonUtility.ToJson(wrapper);
+        EditorPrefs.SetString(SAVE_KEY, json);
     }
 
+    /// <summary>
+    /// Loads saved keybinds from Unity EditorPrefs and falls back to defaults if loading fails.
+    /// </summary>
     private static void LoadBinds()
     {
-        // Get the string from Editor Preferences
         string json = EditorPrefs.GetString(SAVE_KEY, "");
 
-        // saftey check, if string json is empty (no file) load default
         if (string.IsNullOrEmpty(json))
         {
-            // Debug.Log("DIPT: No save found, loading defaults.");
             ResetToDefaults();
             return;
         }
@@ -204,185 +277,285 @@ public class KeyMapper
         {
             BindWrapper wrapper = JsonUtility.FromJson<BindWrapper>(json);
 
-            // saftey check to see if any of the lists are empty
-            if (wrapper == null || (wrapper.buttonList.Count == 0 &&
-                                    wrapper.triggerList.Count == 0 &&
-                                    wrapper.joystickList.Count == 0))
+            if (wrapper == null ||
+                (wrapper.buttonList.Count == 0 &&
+                wrapper.triggerList.Count == 0 &&
+                wrapper.joystickList.Count == 0))
             {
                 Debug.LogWarning("DIPT: Saved binds were empty or corrupted. Resetting to defaults.");
                 ResetToDefaults();
                 return;
             }
 
-            // These can probably be more optimized, instead of clearing the whole list, 
-            // Use an alternative method
             keyboardBinds.Clear();
             keyboardTriggers.Clear();
             keyboardJoysticks.Clear();
 
-            foreach (var entry in wrapper.buttonList) keyboardBinds[entry.key] = entry.action;
-            foreach (var entry in wrapper.triggerList) keyboardTriggers[entry.key] = entry.action;
-            foreach (var entry in wrapper.joystickList) keyboardJoysticks[entry.key] = (entry.stick, entry.dir);
+            foreach (var entry in wrapper.buttonList)
+            {
+                keyboardBinds[entry.key] = entry.action;
+            }
 
-            // Debug.Log("DIPT: Keybinds loaded successfully from EditorPrefs.");
+            foreach (var entry in wrapper.triggerList)
+            {
+                keyboardTriggers[entry.key] = entry.action;
+            }
+
+            foreach (var entry in wrapper.joystickList)
+            {
+                keyboardJoysticks[entry.key] = (entry.stick, entry.direction);
+            }
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            Debug.LogError($"DIPT: Failed to parse keybinds. Error: {e.Message}");
+            Debug.LogError($"DIPT: Failed to parse keybinds. Error: {exception.Message}");
             ResetToDefaults();
         }
     }
 
-
+    /// <summary>
+    /// Converts currently pressed keyboard keys into emulated controller input.
+    /// </summary>
     public static void UpdateKeyboardEmulation(GamepadEmulator emulator)
     {
-        EnsureInitialized(); // saftey check
+        EnsureInitialized();
 
-        if (Keyboard.current == null || emulator == null) { return; }
+        if (Keyboard.current == null || emulator == null)
+        {
+            return;
+        }
 
         bool isCurrentlyActive = CheckKeyboardSignal();
 
-        if (!isCurrentlyActive) // Goes into this block every time we are not touching the keyboard
+        if (!isCurrentlyActive)
         {
-
-            if (keyboardWasActive) // Only goes into this block if we were touching the keyboard in the last frame
+            if (keyboardWasActive)
             {
                 ResetAllKeyboardStates();
-                emulator.clear(); // Stop emulating when keys are let go
-                keyboardWasActive = false; // Ensures that next time we won't reset because it
-                                           // saying the last frame (now the next) we are not touching
+                emulator.clear();
+                keyboardWasActive = false;
             }
 
             return;
         }
 
+        keyboardWasActive = true;
 
-        keyboardWasActive = true; // If we reach here, the keyboard is being used
-
-        foreach (var bind in keyboardBinds)
+        foreach (var buttonBind in keyboardBinds)
         {
-            bool isDown = Keyboard.current[bind.Key].isPressed;
+            bool isPressed = Keyboard.current[buttonBind.Key].isPressed;
 
-            if (isDown) emulator.pressButton((int)bind.Value);
-            else emulator.releaseButton((int)bind.Value);
-        }
-
-        foreach (var trig in keyboardTriggers)
-        {
-            bool isDown = Keyboard.current[trig.Key].isPressed;
-
-            float val = Keyboard.current[trig.Key].isPressed ? 1f : 0f;
-
-            if (trig.Value == triggerType.Left) emulator.pressLeftTrigger(val);
-            else emulator.pressRightTrigger(val);
-
-        }
-
-        Vector2 leftTotal = Vector2.zero;
-        Vector2 rightTotal = Vector2.zero;
-
-        foreach (var input in keyboardJoysticks)
-        {
-            if (Keyboard.current[input.Key].isPressed)
+            if (isPressed)
             {
-                // Add the direction (up, down, left, right) to the correct bucket
-                if (input.Value.stick == joystickType.Left)
-                    leftTotal += input.Value.direction;
+                emulator.pressButton((int)buttonBind.Value);
+            }
+            else
+            {
+                emulator.releaseButton((int)buttonBind.Value);
+            }
+
+            Controller.SetEmulatedButton(buttonBind.Value, isPressed);
+        }
+
+        foreach (var triggerBind in keyboardTriggers)
+        {
+            float triggerValue = Keyboard.current[triggerBind.Key].isPressed ? 1f : 0f;
+
+            if (triggerBind.Value == triggerType.Left)
+            {
+                emulator.pressLeftTrigger(triggerValue);
+            }
+            else
+            {
+                emulator.pressRightTrigger(triggerValue);
+            }
+
+            Controller.SetEmulatedTrigger(triggerBind.Value, triggerValue);
+        }
+
+        Vector2 leftJoystickTotal = Vector2.zero;
+        Vector2 rightJoystickTotal = Vector2.zero;
+
+        foreach (var joystickBind in keyboardJoysticks)
+        {
+            if (Keyboard.current[joystickBind.Key].isPressed)
+            {
+                if (joystickBind.Value.stick == joystickType.Left)
+                {
+                    leftJoystickTotal += joystickBind.Value.direction;
+                }
                 else
-                    rightTotal += input.Value.direction;
+                {
+                    rightJoystickTotal += joystickBind.Value.direction;
+                }
             }
         }
 
-        emulator.moveLeftJoystick(leftTotal.x, leftTotal.y);
-        emulator.moveRightJoystick(rightTotal.x, rightTotal.y);
+        leftJoystickTotal = Vector2.ClampMagnitude(leftJoystickTotal, 1f);
+        rightJoystickTotal = Vector2.ClampMagnitude(rightJoystickTotal, 1f);
+
+        emulator.moveLeftJoystick(leftJoystickTotal.x, leftJoystickTotal.y);
+        emulator.moveRightJoystick(rightJoystickTotal.x, rightJoystickTotal.y);
+
+        Controller.SetEmulatedJoystick(joystickType.Left, leftJoystickTotal);
+        Controller.SetEmulatedJoystick(joystickType.Right, rightJoystickTotal);
     }
 
+    /// <summary>
+    /// Clears every emulated keyboard input from the shared Controller state.
+    /// </summary>
     private static void ResetAllKeyboardStates()
-    {   // Function to reset everything back to zero, or unpressed
-        // This runs only when the keyboard is not in use AFTER it was (in the last frame)
-        foreach (var bind in keyboardBinds)
-            XboxController.SetButton(bind.Value, false);
+    {
+        foreach (var buttonBind in keyboardBinds)
+        {
+            Controller.SetEmulatedButton(buttonBind.Value, false);
+        }
 
-        foreach (var trig in keyboardTriggers)
-            XboxController.SetTrigger(trig.Value, 0f);
+        foreach (var triggerBind in keyboardTriggers)
+        {
+            Controller.SetEmulatedTrigger(triggerBind.Value, 0f);
+        }
 
-        XboxController.SetJoystick(joystickType.Left, Vector2.zero);
-        XboxController.SetJoystick(joystickType.Right, Vector2.zero);
+        Controller.SetEmulatedJoystick(joystickType.Left, Vector2.zero);
+        Controller.SetEmulatedJoystick(joystickType.Right, Vector2.zero);
     }
 
-    private static bool CheckKeyboardSignal() // Checks if the keyboard is being touched
+    /// <summary>
+    /// Checks whether any mapped keyboard input is currently pressed.
+    /// </summary>
+    private static bool CheckKeyboardSignal()
     {
-        if (Keyboard.current == null) return false;
+        if (Keyboard.current == null)
+        {
+            return false;
+        }
 
-        // Check Buttons
         foreach (var key in keyboardBinds.Keys)
-            if (Keyboard.current[key].isPressed) { return true; }
+        {
+            if (Keyboard.current[key].isPressed)
+            {
+                return true;
+            }
+        }
 
-        // Check Triggers
         foreach (var key in keyboardTriggers.Keys)
-            if (Keyboard.current[key].isPressed) { return true; }
+        {
+            if (Keyboard.current[key].isPressed)
+            {
+                return true;
+            }
+        }
 
-        // Check Joysticks
         foreach (var key in keyboardJoysticks.Keys)
-            if (Keyboard.current[key].isPressed) { return true; }
+        {
+            if (Keyboard.current[key].isPressed)
+            {
+                return true;
+            }
+        }
 
         return false;
     }
 
+    /// <summary>
+    /// Updates keyboard input and applies it to the emulator.
+    /// </summary>
     public static void Update(GamepadEmulator emulator)
     {
         UpdateKeyboardEmulation(emulator);
     }
 
+    /// <summary>
+    /// Returns whether a key is blocked from being used as a custom binding.
+    /// </summary>
     public static bool IsKeyForbidden(Key key)
     {
         return ForbiddenKeys.Contains(key);
     }
 
-    // This ensures a key is used in only one place
+    /// <summary>
+    /// Removes a key from all binding dictionaries so it can only control one input.
+    /// </summary>
     private static void ClearKeyEverywhere(Key key)
     {
-        if (keyboardBinds.ContainsKey(key)) keyboardBinds.Remove(key);
-        if (keyboardTriggers.ContainsKey(key)) keyboardTriggers.Remove(key);
-        if (keyboardJoysticks.ContainsKey(key)) keyboardJoysticks.Remove(key);
+        if (keyboardBinds.ContainsKey(key))
+        {
+            keyboardBinds.Remove(key);
+        }
+
+        if (keyboardTriggers.ContainsKey(key))
+        {
+            keyboardTriggers.Remove(key);
+        }
+
+        if (keyboardJoysticks.ContainsKey(key))
+        {
+            keyboardJoysticks.Remove(key);
+        }
     }
 
+    /// <summary>
+    /// Assigns a keyboard key to a controller button and removes conflicting bindings.
+    /// </summary>
     public static void SetButtonBind(Key newKey, buttonType action)
     {
-        if (IsKeyForbidden(newKey)) return;
-        
-        var oldKey = keyboardBinds.FirstOrDefault(x => x.Value == action).Key; // From the LINQ library 
-        if (oldKey != Key.None) keyboardBinds.Remove(oldKey); // Takes out the old keybind
+        if (IsKeyForbidden(newKey))
+        {
+            return;
+        }
+
+        var oldKey = keyboardBinds.FirstOrDefault(keyBind => keyBind.Value == action).Key;
+
+        if (oldKey != Key.None)
+        {
+            keyboardBinds.Remove(oldKey);
+        }
 
         ClearKeyEverywhere(newKey);
-        // E.x. If Z is D-pad up, and they make Z map to Left bumper, D-Pad up becomes unassigned
-
         keyboardBinds.Add(newKey, action);
     }
 
+    /// <summary>
+    /// Assigns a keyboard key to a controller trigger and removes conflicting bindings.
+    /// </summary>
     public static void SetTriggerBind(Key newKey, triggerType action)
-    { // same as SetButtonBind just with trigger dictionary
-        if (IsKeyForbidden(newKey)) return;
+    {
+        if (IsKeyForbidden(newKey))
+        {
+            return;
+        }
 
-        var oldKey = keyboardTriggers.FirstOrDefault(x => x.Value == action).Key;
-        if (oldKey != Key.None) keyboardTriggers.Remove(oldKey);
+        var oldKey = keyboardTriggers.FirstOrDefault(keyBind => keyBind.Value == action).Key;
+
+        if (oldKey != Key.None)
+        {
+            keyboardTriggers.Remove(oldKey);
+        }
 
         ClearKeyEverywhere(newKey);
-
         keyboardTriggers.Add(newKey, action);
     }
 
+    /// <summary>
+    /// Assigns a keyboard key to a joystick direction and removes conflicting bindings.
+    /// </summary>
     public static void SetJoystickBind(Key newKey, joystickType stick, Vector2 direction)
-    { // Basically same as SetButtonBind and SetTriggerBind but with the tuple
-        if (IsKeyForbidden(newKey)) return;
+    {
+        if (IsKeyForbidden(newKey))
+        {
+            return;
+        }
 
-        var oldKey = keyboardJoysticks.FirstOrDefault(x =>
-            x.Value.stick == stick && x.Value.direction == direction).Key;
+        var oldKey = keyboardJoysticks.FirstOrDefault(keyBind =>
+            keyBind.Value.stick == stick && keyBind.Value.direction == direction
+        ).Key;
 
-        if (oldKey != Key.None) keyboardJoysticks.Remove(oldKey);
+        if (oldKey != Key.None)
+        {
+            keyboardJoysticks.Remove(oldKey);
+        }
 
         ClearKeyEverywhere(newKey);
-
         keyboardJoysticks.Add(newKey, (stick, direction));
     }
 }

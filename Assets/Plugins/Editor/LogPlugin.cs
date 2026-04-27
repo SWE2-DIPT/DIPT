@@ -3,19 +3,28 @@
 * Author(s):   Nick Stearns (Add yourselves to this!)
 * 
 * Description:
-*    A example plugin meant to showcase how to create plugins
-*    in Unity.
+*    Unity Editor window that displays controller input logs
+*    from ControllerDebugLogger. The window separates pressed,
+*    released, and movement events, allows filtering by input
+*    type, supports clearing logs, and can save the current
+*    filtered log view to a text file.
 *******************************************************/
 
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class LogPlugin : EditorWindow
 {
-    public enum InputState { All, Pressed, Released, Movement }
+    public enum InputState
+    {
+        All,
+        Pressed,
+        Released,
+        Movement
+    }
 
-    Color grey = new Color(0.8f, 0.8f, 0.8f);
+    private Color selectedFilterColor = new Color(0.8f, 0.8f, 0.8f);
 
     private class LogEntry
     {
@@ -29,16 +38,22 @@ public class LogPlugin : EditorWindow
         }
     }
 
-    private Vector2 scrollPos;
+    private Vector2 scrollPosition;
     private InputState activeState;
     private readonly List<LogEntry> allLogs = new List<LogEntry>();
 
+    /// <summary>
+    /// Opens the controller debug log window from the Unity Tools menu.
+    /// </summary>
     [MenuItem("Tools/DIPT/LogPlugin")]
     public static void ShowWindow()
     {
         GetWindow<LogPlugin>("Controller Debug Log");
     }
 
+    /// <summary>
+    /// Sets the default filter and subscribes to controller log events.
+    /// </summary>
     private void OnEnable()
     {
         activeState = InputState.All;
@@ -48,6 +63,9 @@ public class LogPlugin : EditorWindow
         ControllerDebugLogger.OnMovementLog += HandleMovementLog;
     }
 
+    /// <summary>
+    /// Unsubscribes from controller log events when the window closes or reloads.
+    /// </summary>
     private void OnDisable()
     {
         ControllerDebugLogger.OnPressedLog -= HandlePressedLog;
@@ -55,27 +73,39 @@ public class LogPlugin : EditorWindow
         ControllerDebugLogger.OnMovementLog -= HandleMovementLog;
     }
 
+    /// <summary>
+    /// Adds a pressed input message to the log list.
+    /// </summary>
     private void HandlePressedLog(string message)
     {
         allLogs.Add(new LogEntry(InputState.Pressed, message));
-        scrollPos.y = Mathf.Infinity;
+        scrollPosition.y = Mathf.Infinity;
         Repaint();
     }
 
+    /// <summary>
+    /// Adds a released input message to the log list.
+    /// </summary>
     private void HandleReleasedLog(string message)
     {
         allLogs.Add(new LogEntry(InputState.Released, message));
-        scrollPos.y = Mathf.Infinity;
+        scrollPosition.y = Mathf.Infinity;
         Repaint();
     }
 
+    /// <summary>
+    /// Adds a movement input message to the log list.
+    /// </summary>
     private void HandleMovementLog(string message)
     {
         allLogs.Add(new LogEntry(InputState.Movement, message));
-        scrollPos.y = Mathf.Infinity;
+        scrollPosition.y = Mathf.Infinity;
         Repaint();
     }
 
+    /// <summary>
+    /// Draws the log window controls, filter buttons, log area, and action buttons.
+    /// </summary>
     private void OnGUI()
     {
         EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
@@ -88,7 +118,7 @@ public class LogPlugin : EditorWindow
 
         EditorGUILayout.Space(5);
 
-        DrawLogArea(ref scrollPos, allLogs, GetFilterTitle());
+        DrawLogArea(ref scrollPosition, allLogs, GetFilterTitle());
 
         EditorGUILayout.Space(5);
 
@@ -113,36 +143,46 @@ public class LogPlugin : EditorWindow
         EditorGUILayout.EndHorizontal();
     }
 
+    /// <summary>
+    /// Returns the heading text that matches the active log filter.
+    /// </summary>
     private string GetFilterTitle()
     {
         switch (activeState)
         {
             case InputState.All:
                 return "ALL LOGS";
+
             case InputState.Pressed:
                 return "PRESSED LOGS";
+
             case InputState.Released:
                 return "RELEASED LOGS";
+
             case InputState.Movement:
                 return "MOVEMENT LOGS";
+
             default:
                 return "LOGS";
         }
     }
 
-    private void DrawLogArea(ref Vector2 scrollPos, List<LogEntry> logs, string title)
+    /// <summary>
+    /// Draws the filtered log messages inside a scrollable area.
+    /// </summary>
+    private void DrawLogArea(ref Vector2 scrollPosition, List<LogEntry> logs, string title)
     {
-        DrawFilterTitle(ref scrollPos, title);
+        DrawFilterTitle(ref scrollPosition, title);
 
-        for (int i = 0; i < logs.Count; i++)
+        for (int logIndex = 0; logIndex < logs.Count; logIndex++)
         {
-            if (activeState == InputState.All || logs[i].state == activeState)
+            if (activeState == InputState.All || logs[logIndex].state == activeState)
             {
                 Color originalColor = GUI.backgroundColor;
-                GUI.backgroundColor = GetColorForState(logs[i].state);
+                GUI.backgroundColor = GetColorForState(logs[logIndex].state);
 
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-                EditorGUILayout.LabelField(logs[i].message);
+                EditorGUILayout.LabelField(logs[logIndex].message);
                 EditorGUILayout.EndVertical();
 
                 GUI.backgroundColor = originalColor;
@@ -152,6 +192,9 @@ public class LogPlugin : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 
+    /// <summary>
+    /// Clears either the current filtered log group or all logs.
+    /// </summary>
     private void ClearCurrent()
     {
         if (activeState == InputState.All)
@@ -160,12 +203,15 @@ public class LogPlugin : EditorWindow
         }
         else
         {
-            allLogs.RemoveAll(log => log.state == activeState);
+            allLogs.RemoveAll(logEntry => logEntry.state == activeState);
         }
 
         Repaint();
     }
 
+    /// <summary>
+    /// Returns the display color used for each log type.
+    /// </summary>
     private Color GetColorForState(InputState state)
     {
         switch (state)
@@ -184,7 +230,10 @@ public class LogPlugin : EditorWindow
         }
     }
 
-    private void DrawFilterTitle(ref Vector2 scrollPos, string title)
+    /// <summary>
+    /// Draws the current filter title and starts the scroll view.
+    /// </summary>
+    private void DrawFilterTitle(ref Vector2 scrollPosition, string title)
     {
         Color originalColor = GUI.color;
 
@@ -192,9 +241,12 @@ public class LogPlugin : EditorWindow
         EditorGUILayout.LabelField(title, EditorStyles.boldLabel);
         GUI.color = originalColor;
 
-        scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.ExpandHeight(true));
+        scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandHeight(true));
     }
 
+    /// <summary>
+    /// Draws one toolbar filter button and updates the active filter when clicked.
+    /// </summary>
     private void DrawFilterButton(InputState state, string label)
     {
         Color originalTextColor = GUI.contentColor;
@@ -204,7 +256,7 @@ public class LogPlugin : EditorWindow
 
         if (activeState == state)
         {
-            GUI.backgroundColor = grey;
+            GUI.backgroundColor = selectedFilterColor;
         }
         else
         {
@@ -220,6 +272,9 @@ public class LogPlugin : EditorWindow
         GUI.backgroundColor = originalBackground;
     }
 
+    /// <summary>
+    /// Saves the current filtered log view to a text file.
+    /// </summary>
     private void SaveLogsToFile()
     {
         string path = EditorUtility.SaveFilePanel(
@@ -230,26 +285,28 @@ public class LogPlugin : EditorWindow
         );
 
         if (string.IsNullOrEmpty(path))
+        {
             return;
+        }
 
         try
         {
             using (System.IO.StreamWriter writer = new System.IO.StreamWriter(path))
             {
-                for (int i = 0; i < allLogs.Count; i++)
+                for (int logIndex = 0; logIndex < allLogs.Count; logIndex++)
                 {
-                    if (activeState == InputState.All || allLogs[i].state == activeState)
+                    if (activeState == InputState.All || allLogs[logIndex].state == activeState)
                     {
-                        writer.WriteLine($"[{allLogs[i].state}] {allLogs[i].message}");
+                        writer.WriteLine($"[{allLogs[logIndex].state}] {allLogs[logIndex].message}");
                     }
                 }
             }
 
             Debug.Log("Logs saved to: " + path);
         }
-        catch (System.Exception e)
+        catch (System.Exception exception)
         {
-            Debug.LogError("Failed to save logs: " + e.Message);
+            Debug.LogError("Failed to save logs: " + exception.Message);
         }
     }
 }
