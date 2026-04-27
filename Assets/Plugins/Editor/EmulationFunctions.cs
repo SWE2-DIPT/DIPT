@@ -286,6 +286,34 @@ public class GamepadEmulator
     /// </summary>
     public void emulate()
     {
+        bool hasInput = buttonsPressed != 0 ||
+            leftStickValues != Vector2.zero ||
+            rightStickValues != Vector2.zero ||
+            leftTriggerValue != 0f ||
+            rightTriggerValue != 0f;
+
+        var physicalPad = ControllerManager.GetPhysicalPad();
+
+        if (hasInput)
+        {
+            if (physicalPad != null && physicalPad.enabled)
+            {
+                InputSystem.DisableDevice(physicalPad);
+            }
+        }
+        else
+        {
+            if (physicalPad != null && !physicalPad.enabled)
+            {
+                InputSystem.EnableDevice(physicalPad);
+            }
+        }
+
+        if (!emulator.enabled)
+        {
+            InputSystem.EnableDevice(emulator);
+        }
+
         InputSystem.QueueStateEvent(emulator, new GamepadState
         {
             buttons = buttonsPressed,
