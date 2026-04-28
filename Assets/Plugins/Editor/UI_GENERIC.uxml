@@ -14,18 +14,18 @@
 		<ui:VisualElement class="Bumper-Row trigger-row">
 			<!--LEFT TRIGGERS-->
 			<ui:VisualElement class="Trigger-Wrapper">
-					<ui:VisualElement name="LT-button" class="trigger-button button">
-						<ui:VisualElement name="LT-fill" class="trigger-fill"/>
-						<ui:Label name="LT-label" text="LT" class="button-label"/>
-					</ui:VisualElement>
+						<ui:VisualElement name="LT-button" class="trigger-button button">
+							<ui:VisualElement name="LT-fill" class="trigger-fill"/>
+							<ui:Label name="LT-label" text="LT" class="button-label"/>
+						</ui:VisualElement>
 					<ui:Label name="LT-trigger-value-label"/>
 			</ui:VisualElement>
 			<!--RIGHT TRIGGERS-->
 			<ui:VisualElement class="Trigger-Wrapper">
-					<ui:VisualElement name="RT-button" class="trigger-button button">
-						<ui:VisualElement name="RT-fill" class="trigger-fill"/>
-						<ui:Label name="RT-label" text="RT" class="button-label"/>
-					</ui:VisualElement>
+						<ui:VisualElement name="RT-button" class="trigger-button button">
+							<ui:VisualElement name="RT-fill" class="trigger-fill"/>
+							<ui:Label name="RT-label" text="RT" class="button-label"/>
+						</ui:VisualElement>
 					<ui:Label name="RT-trigger-value-label"/>
 			</ui:VisualElement>
 		</ui:VisualElement>
@@ -59,14 +59,14 @@
 			<ui:VisualElement style="flex-direction: column; position: absolute">
 				<ui:VisualElement class="value-rows" style="flex-direction: row;">
 					<ui:Label text="X:" class="X" 
-					style="font-size: 20px; margin-left: -75px; width: 25px; flex-shrink: 0;"/>
+					style="font-size: 20px; margin-left: -65px; width: 25px; flex-shrink: 0;"/>
 					<ui:Label name="left-joystick-value_X" 
 					style="font-size: 20px; width: 60px; unity-text-align: middle-left;"/>
 				</ui:VisualElement>
 
 				<ui:VisualElement class="value-rows" style="flex-direction: row;">
 					<ui:Label text="Y:" class="Y" 
-					style="font-size: 20px; margin-left: -75px; width: 25px; flex-shrink: 0;"/>
+					style="font-size: 20px; margin-left: -65px; width: 25px; flex-shrink: 0;"/>
 					<ui:Label name="left-joystick-value_Y" 
 					style="font-size: 20px; width: 60px; unity-text-align: middle-left;"/>
 				</ui:VisualElement>
@@ -79,31 +79,33 @@
 			</ui:VisualElement>
 		</ui:VisualElement>
 		
-		<!-- <ui:VisualElement  class="box-border" style="width: 53px; height: 170px;">
+		<ui:VisualElement class="box-border" style="width: 100px; height: 170px;">
 			<ui:VisualElement class="horizontal-group">
 				<ui:VisualElement name="menu-button" class="button horiz menu">
-					<ui:Label text="Start" class="menu-buttons"/>
+						<ui:Label text="start" class="start-label"/>
 				</ui:VisualElement>
+
 				<ui:VisualElement name="view-button" class="button horiz view">
-					<ui:Label text="Select" class="menu-buttons"/>
+					<ui:Label text="select" class="select-label"/>
 				</ui:VisualElement>
+
 			</ui:VisualElement>
-		</ui:VisualElement> -->
+		</ui:VisualElement>
 
 		<!--YBAX-BUTTONS-->
 		<ui:VisualElement  class="box-border" style="width: 170px; height: 170px;">
 			<ui:VisualElement name="YBAX-buttons" class="diamond-group">
 					<ui:VisualElement name="Y-button" class="top button">
-						<ui:Label text="N" class="button-label"/>
+						<ui:Label text="Y" class="button-label"/>
 					</ui:VisualElement>
 					<ui:VisualElement name="B-button" class="right button">
-						<ui:Label text="E" class="button-label"/>
+						<ui:Label text="B" class="button-label"/>
 					</ui:VisualElement>
 					<ui:VisualElement name="A-button" class="bottom button">
-						<ui:Label text="S" class="button-label"/>
+						<ui:Label text="A" class="button-label"/>
 					</ui:VisualElement>
 					<ui:VisualElement name="X-button" class="left button">
-						<ui:Label text="W" class="button-label"/>
+						<ui:Label text="X" class="button-label"/>
 					</ui:VisualElement>
 			</ui:VisualElement>
 		</ui:VisualElement>

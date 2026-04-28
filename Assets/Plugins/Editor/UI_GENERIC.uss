@@ -385,13 +385,45 @@
     background-color:lime;
 } */
 /*TRANSFERED*/
-/* .menu.ButtonPressed {
+
+.generic .menu {
+    width: 70px;
+    height: 40px;
+    color: white;
+    background-color:#1F1F1F;
+    border-radius: 8px;
+    font-size: 23px;
+    translate: 0 -25;
+}
+
+.generic .menu.ButtonPressed {
     background-color:white;
-} */
+    color: #333;
+}
+
+.generic .view {
+    width: 70px;
+    height: 40px;
+    color: white;
+    background-color:#1F1F1F;
+    border-radius: 8px;
+    font-size: 23px;
+    translate: 0 25;
+}
+
 /*TRANSFERED*/
-/* .view.ButtonPressed {
+.generic .view.ButtonPressed {
     background-color:white;
-} */
+    color: #333;
+}
+
+.generic .start-label {
+    translate: 7 5;
+}
+
+.generic .select-label {
+    translate: 1 5;
+}
 /*TRANSFERED*/
 /* .share.ButtonPressed {
     background-color:white;
