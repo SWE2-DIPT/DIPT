@@ -14,7 +14,7 @@ These debugging tools include:
   - KeyboardMapper which allows users to control emulation and visualizer
 # HOW TO INSTALL:
 1. Install Unity 6.3 LTS (6000.3.9f1)
-2. Download the ZIP file from GitHub.
+2. Download the ZIP file from the GitHub release page from this repository.
 3. Extract it and copy the Plugins folder found in Assets > Plugins into your own Unity project’s Assets folder.
   - This will bring only the plugin into your project for you to use as you please.
 5. Wait for Unity to import your project and open the project.
