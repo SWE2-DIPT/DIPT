@@ -22,8 +22,13 @@ These debugging tools include:
 
 # HOW TO TEST:
 1. Open the project in Unity after downloading
-2. Navigate to the toolbar at the top of the Unity Editor Window and hover over Window then General then click Test Runner to open the window
-3. The tests can be revealed with the dropdown and then can be ran with the buttons at the bottom of the window.
+2. Add the tests folder from the ZIP file to the Unity project folder
+3. Navigate to the toolbar at the top of the Unity Editor Window and hover over Window then General then click Test Runner to open the window
+4. The tests can be revealed with the dropdown and then can be ran with the buttons at the bottom of the window.
+
+# TESTS CONTINUED
+1. If you want a quick play mode tester include the GameModeTestFiles folder and paste in the Unity project assets then dobule click TestScene
+2. After following all HOW TO INSTALL steps to open the visualizer window, you can then use a controller or the emulator to see it fully emulate button inputs
 
 # FUTURE INSTALLATION:
 - In the future, we plan to streamline the installation process by allowing importing through both the Unity Asset store and the editor’s built-in package manager. 
