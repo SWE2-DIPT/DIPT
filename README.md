@@ -26,7 +26,7 @@ These debugging tools include:
 3. Navigate to the toolbar at the top of the Unity Editor Window and hover over Window then General then click Test Runner to open the window
 4. The tests can be revealed with the dropdown and then can be ran with the buttons at the bottom of the window.
 
-# TESTS CONTINUED
+# TESTS CONTINUED:
 1. If you want a quick play mode tester include the GameModeTestFiles folder and paste in the Unity project assets then dobule click TestScene
 2. After following all HOW TO INSTALL steps to open the visualizer window, you can then use a controller or the emulator to see it fully emulate button inputs
 
